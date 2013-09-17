@@ -1,0 +1,55 @@
+<project name="messaging" default="all" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="project" value="messaging"/>
+  <property name="src" location="src"/>
+  <property name="test" location="test"/>
+  <property name="build-root" location="build"/>
+  <property name="build" location="${build-root}/classes"/>
+  <property name="build-test" location="${build-root}/test-test"/>
+  <property name="dist"  location="dist"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build-test}"/>
+    <!-- Copy package-info.java file to src directory prior to compile -->
+    <copy todir="${src}">
+      <fileset dir=".">
+        <include name="package-info.java"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="compile" depends="init" description="compile the source" >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}"/>
+    <!-- Compile the java code from ${test} into ${build-test} -->
+    <javac srcdir="${test}" destdir="${build-test}"/>
+  </target>
+
+  <target name="dist" depends="compile" description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}/lib"/>
+    <!-- Put everything in ${build} into the ${project}-${DSTAMP}.jar file -->
+    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}"/>
+    <!-- Put everything in ${build-test} into the ${project}-test-${DSTAMP}.jar file -->
+    <jar destfile="${dist}/lib/${project}-test.jar" basedir="${build-test}"/>
+  </target>
+
+  <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
+  </target>
+
+  <target name="all" depends="clean,deploy" />
+
+  <target name="clean" description="clean up" >
+    <!-- Delete the ${build}, ${build-test} and ${dist} directory trees -->
+    <delete dir="${build-root}"/>
+    <delete dir="${dist}"/>
+    <delete file="${src}/package-info.java"/>
+  </target>
+
+</project>
+

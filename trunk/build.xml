@@ -1,0 +1,40 @@
+<project name="Messaggi" default="all" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="project" value="Messagi"/>
+  <property environment="ENV"/>
+  <property file="deploy.properties" />
+  <property file="build.properties" />
+  <property name="j2ee.webapps" value="${tomcat.home}${file.separator}webapps"/>
+
+  <target name="init">
+  </target>
+
+  <target name="compile" depends="init" description="compile the source" >
+    <subant target="compile">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="dist" depends="compile" description="generate the distribution" >
+    <subant target="dist">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
+    <subant target="deploy">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+  <target name="all" depends="clean,deploy" />
+
+  <target name="clean" description="clean up" >
+    <subant target="clean">
+      <fileset dir="." includes="*/build.xml"/>
+    </subant>
+  </target>
+
+</project>
+
