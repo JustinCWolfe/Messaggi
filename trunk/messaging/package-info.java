@@ -1,1 +1,1 @@
-package com.messagi.messaging;
+package com.messaggi.messaging;

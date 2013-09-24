@@ -2,12 +2,8 @@
 <classpath>
 	<classpathentry kind="src" output="base/classes" path="base/src"/>
 	<classpathentry kind="src" output="base/test-classes" path="base/test"/>
-	<classpathentry kind="src" output="util/classes" path="util/src"/>
-	<classpathentry kind="src" output="util/test-classes" path="util/test"/>
 	<classpathentry kind="src" output="messaging/classes" path="messaging/src"/>
 	<classpathentry kind="src" output="messaging/test-classes" path="messaging/test"/>
-	<classpathentry kind="src" output="services/classes" path="services/src"/>
-	<classpathentry kind="src" output="services/test-classes" path="services/test"/>
 	<classpathentry kind="src" output="admin/classes" path="admin/src"/>
 	<classpathentry kind="src" output="admin/test-classes" path="admin/test"/>
 	<classpathentry kind="src" output="web/classes" path="web/src"/>

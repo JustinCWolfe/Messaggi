@@ -1,1 +1,1 @@
-package com.messagi.util;
+package com.messaggi.util;
