@@ -28,6 +28,7 @@
     <javac srcdir="${src}" destdir="${build}"/>
     <!-- Compile the java code from ${test} into ${build-test} -->
     <javac srcdir="${test}" destdir="${build-test}"/>
+    <delete file="${src}/package-info.java"/>
   </target>
 
   <target name="dist" depends="compile" description="generate the distribution" >
