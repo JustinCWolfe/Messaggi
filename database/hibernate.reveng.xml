@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+  <table-filter match-schema="public" match-name="application"/>
+  <table-filter match-schema="public" match-name="application_platform"/>
+  <table-filter match-schema="public" match-name="application_platform_attributes"/>
+  <table-filter match-schema="public" match-name="application_platform_device"/>
+  <table-filter match-schema="public" match-name="application_platform_key"/>
+  <table-filter match-schema="public" match-name="application_platform_msg_log"/>
+  <table-filter match-schema="public" match-name="device"/>
+  <table-filter match-schema="public" match-name="device_attributes"/>
+  <table-filter match-schema="public" match-name="device_key"/>
+  <table-filter match-schema="public" match-name="platform"/>
+  <table-filter match-schema="public" match-name="user"/>
+  <table-filter match-schema="public" match-name="user_application"/>
+</hibernate-reverse-engineering>
