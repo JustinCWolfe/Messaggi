@@ -11,6 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/Users/jwolfe/src_tree/Messaggi/database/postgresql-9.2-1003.jdbc4.jar"/>
+	<classpathentry kind="lib" path="database/postgresql-9.2-1003.jdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
