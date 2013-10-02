@@ -9,6 +9,10 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/admin/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/web/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/web/test"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/dao/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/dao/test"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/domain/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/domain/test"/>
         <property name="context-root" value="Messaggi"/>
         <property name="java-output-path" value="/Messaggi/bin"/>
     </wb-module>
