@@ -1,7 +1,7 @@
-<project name="beans" default="all" basedir=".">
+<project name="dao" default="all" basedir=".">
 
   <!-- set global properties for this build -->
-  <property name="project" value="beans"/>
+  <property name="project" value="dao"/>
   <property name="src" location="src"/>
   <property name="test" location="test"/>
   <property name="build-root" location="build"/>
