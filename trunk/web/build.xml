@@ -1,4 +1,5 @@
 <project name="web" default="all" basedir=".">
+  <import file="../build.module.xml"/>
 
   <!-- set global properties for this build -->
   <property name="project" value="web"/>
@@ -6,8 +7,20 @@
   <property name="test" location="test"/>
   <property name="build-root" location="build"/>
   <property name="build" location="${build-root}/classes"/>
-  <property name="build-test" location="${build-root}/test-test"/>
+  <property name="build-test" location="${build-root}/test-classes"/>
   <property name="dist"  location="dist"/>
+
+  <path id="classpath">
+      <pathelement location="classes"/>
+  </path>
+
+  <path id="classpath.test">
+      <pathelement location="classes"/>
+      <pathelement location="test-classes"/>
+      <path refid="classpath"/>
+      <fileset refid="junit.lib"/>
+      <fileset refid="hamcrest.lib"/>
+  </path>
 
   <target name="init">
     <!-- Create the time stamp -->
