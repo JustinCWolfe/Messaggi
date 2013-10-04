@@ -9,8 +9,8 @@
 	<classpathentry kind="src" output="base/test-classes" path="base/test"/>
 	<classpathentry kind="src" output="domain/classes" path="domain/src"/>
 	<classpathentry kind="src" output="domain/test-classes" path="domain/test"/>
-	<classpathentry kind="src" output="doa/classes" path="dao/src"/>
-	<classpathentry kind="src" output="doa/test-classes" path="dao/test"/>
+	<classpathentry kind="src" output="dao/classes" path="dao/src"/>
+	<classpathentry kind="src" output="dao/test-classes" path="dao/test"/>
 	<classpathentry kind="src" output="messaging/classes" path="messaging/src"/>
 	<classpathentry kind="src" output="messaging/test-classes" path="messaging/test"/>
 	<classpathentry kind="src" output="admin/classes" path="admin/src"/>
