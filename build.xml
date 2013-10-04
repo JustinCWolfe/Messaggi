@@ -12,19 +12,40 @@
 
   <target name="compile" depends="init" description="compile the source" >
     <subant target="compile">
-      <fileset dir="." includes="*/build.xml"/>
+      <filelist dir=".">       
+        <file name="domain/build.xml"/>
+        <file name="dao/build.xml"/>
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
     </subant>
   </target>
 
   <target name="dist" depends="compile" description="generate the distribution" >
     <subant target="dist">
-      <fileset dir="." includes="*/build.xml"/>
+      <filelist dir=".">       
+        <file name="domain/build.xml"/>
+        <file name="dao/build.xml"/>
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
     </subant>
   </target>
 
   <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
     <subant target="deploy">
-      <fileset dir="." includes="*/build.xml"/>
+      <filelist dir=".">       
+        <file name="domain/build.xml"/>
+        <file name="dao/build.xml"/>
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
     </subant>
   </target>
 
@@ -32,7 +53,14 @@
 
   <target name="clean" description="clean up" >
     <subant target="clean">
-      <fileset dir="." includes="*/build.xml"/>
+      <filelist dir=".">       
+        <file name="domain/build.xml"/>
+        <file name="dao/build.xml"/>
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
     </subant>
   </target>
 
