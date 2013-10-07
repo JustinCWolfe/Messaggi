@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 7, 2013 3:43:22 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="ApplicationPlatformMsgLog" table="application_platform_msg_log" schema="public">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="applicationPlatform" class="ApplicationPlatform" fetch="select">
+            <column name="application_platform_id" not-null="true" />
+        </many-to-one>
+        <property name="date" type="timestamp">
+            <column name="date" length="29" not-null="true">
+                <comment>Note that all timezones are stored in UTC format.</comment>
+            </column>
+        </property>
+        <property name="msgCount" type="int">
+            <column name="msg_count" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

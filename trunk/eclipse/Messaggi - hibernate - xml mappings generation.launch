@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.hibernate.eclipse.launch.CodeGenerationLaunchConfigurationType">
 <stringAttribute key="org.hibernate.tools.configurationname" value="hibernate"/>
-<booleanAttribute key="org.hibernate.tools.ejb3" value="false"/>
+<booleanAttribute key="org.hibernate.tools.ejb3" value="true"/>
 <listAttribute key="org.hibernate.tools.exporters">
 <listEntry value="org.hibernate.tools.hbm2java"/>
 <listEntry value="org.hibernate.tools.hbm2hbmxml"/>
@@ -29,10 +29,10 @@
 <booleanAttribute key="org.hibernate.tools.exporters.org.hibernate.tools.query" value="false"/>
 <stringAttribute key="org.hibernate.tools.exporters.org.hibernate.tools.query.extension_id" value="org.hibernate.tools.query"/>
 <booleanAttribute key="org.hibernate.tools.jdk5" value="true"/>
-<stringAttribute key="org.hibernate.tools.outputdir" value="\Messaggi\domain\src"/>
-<stringAttribute key="org.hibernate.tools.package" value="com.messaggi.domain"/>
+<stringAttribute key="org.hibernate.tools.outputdir" value="/Messaggi/database/mappings"/>
+<stringAttribute key="org.hibernate.tools.package" value=""/>
 <booleanAttribute key="org.hibernate.tools.prefercompositeids" value="false"/>
-<stringAttribute key="org.hibernate.tools.revEngFile" value="\Messaggi\database\hibernate.reveng.xml"/>
+<stringAttribute key="org.hibernate.tools.revEngFile" value="/Messaggi/database/hibernate.reveng.xml"/>
 <booleanAttribute key="org.hibernate.tools.reveng.detect_many_to_many" value="true"/>
 <booleanAttribute key="org.hibernate.tools.reveng.detect_one_to_one" value="true"/>
 <booleanAttribute key="org.hibernate.tools.reveng.detect_optimistc_lock" value="true"/>
