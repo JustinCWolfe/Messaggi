@@ -2,6 +2,7 @@ package com.messaggi.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -73,7 +74,7 @@ public class TestDomainObjects
         long id = 123;
         Platform p = new Platform();
         Application a = new Application();
-        String t = "Some token";
+        UUID t = UUID.randomUUID();
         ApplicationPlatform ap2 = new ApplicationPlatform(id, p, a, t);
         Assert.assertEquals(id, ap2.getId());
         Assert.assertSame(p, ap2.getPlatform());
@@ -82,16 +83,21 @@ public class TestDomainObjects
         Assert.assertEquals(0, ap2.getApplicationPlatformMsgLogs().size());
         Assert.assertEquals(0, ap2.getApplicationPlatformAttributes().size());
 
-        /*
-         * Set<ApplicationPlatform> aps = new HashSet<>(); ApplicationPlatform
-         * ap = new ApplicationPlatform(); aps.add(ap); ApplicationPlatform up =
-         * new ApplicationPlatform(); Application ap3 = new Application(id,
-         * active, aps, up); Assert.assertEquals(id, ap3.getId());
-         * Assert.assertEquals(active, ap3.isActive()); Assert.assertEquals(1,
-         * ap3.getApplicationPlatforms().size()); Assert.assertSame(ap,
-         * ap3.getApplicationPlatforms().toArray()[0]); Assert.assertSame(up,
-         * ap3.getUserApplication());
-         */
+        ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+        Set<ApplicationPlatformMsgLog> apmls = new HashSet<> ();
+        apmls.add(apml);
+        ApplicationPlatformAttribute apm = new ApplicationPlatformAttribute();
+        Set<ApplicationPlatformAttribute> apms = new HashSet<> ();
+        apms.add(apm);
+        ApplicationPlatform ap3 = new ApplicationPlatform(id, p, a, t, apmls, apms);
+        Assert.assertEquals(id, ap3.getId());
+        Assert.assertSame(p, ap3.getPlatform());
+        Assert.assertSame(a, ap3.getApplication());
+        Assert.assertSame(t, ap3.getToken());
+        Assert.assertEquals(1, ap3.getApplicationPlatformMsgLogs().size());
+        Assert.assertSame(apml, ap3.getApplicationPlatformMsgLogs().toArray()[0]);
+        Assert.assertEquals(1, ap3.getApplicationPlatformAttributes().size());
+        Assert.assertSame(apm, ap3.getApplicationPlatformAttributes().toArray()[0]);
     }
 
     @Test
@@ -107,6 +113,26 @@ public class TestDomainObjects
     @Test
     public void testApplicationPlatformKey()
     {
+        ApplicationPlatformKey apk1 = new ApplicationPlatformKey();
+        Assert.assertNull(apk1.getKey());
+        Assert.assertNull(apk1.getDescription());
+        Assert.assertEquals(0, apk1.getApplicationPlatformAttributes().size());
+
+        String key = "BUNDLE_ID";
+        String description = "Apple Application Bundle Identifier";
+        ApplicationPlatformKey apk2 = new ApplicationPlatformKey(key, description);
+        Assert.assertEquals(key, apk2.getKey());
+        Assert.assertEquals(description, apk2.getDescription());
+        Assert.assertEquals(0, apk2.getApplicationPlatformAttributes().size());
+
+        Set<DeviceAttribute> das = new HashSet<>();
+        DeviceAttribute da = new DeviceAttribute();
+        das.add(da);
+        ApplicationPlatformKey apk3 = new ApplicationPlatformKey(key, description, das);
+        Assert.assertEquals(key, apk3.getKey());
+        Assert.assertEquals(description, apk3.getDescription());
+        Assert.assertEquals(1, apk3.getApplicationPlatformAttributes().size());
+        Assert.assertSame(da, apk3.getApplicationPlatformAttributes().toArray()[0]);
     }
 
     @Test
