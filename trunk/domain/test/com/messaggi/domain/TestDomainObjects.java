@@ -1,5 +1,6 @@
 package com.messaggi.domain;
 
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -125,19 +126,34 @@ public class TestDomainObjects
         Assert.assertEquals(description, apk2.getDescription());
         Assert.assertEquals(0, apk2.getApplicationPlatformAttributes().size());
 
-        Set<DeviceAttribute> das = new HashSet<>();
-        DeviceAttribute da = new DeviceAttribute();
-        das.add(da);
-        ApplicationPlatformKey apk3 = new ApplicationPlatformKey(key, description, das);
+        Set<ApplicationPlatformAttribute> apas = new HashSet<>();
+        ApplicationPlatformAttribute apa = new ApplicationPlatformAttribute();
+        apas.add(apa);
+        ApplicationPlatformKey apk3 = new ApplicationPlatformKey(key, description, apas);
         Assert.assertEquals(key, apk3.getKey());
         Assert.assertEquals(description, apk3.getDescription());
         Assert.assertEquals(1, apk3.getApplicationPlatformAttributes().size());
-        Assert.assertSame(da, apk3.getApplicationPlatformAttributes().toArray()[0]);
+        Assert.assertSame(apa, apk3.getApplicationPlatformAttributes().toArray()[0]);
     }
 
     @Test
     public void testApplicationPlatformMsgLog()
     {
+        ApplicationPlatformMsgLog apml1 = new ApplicationPlatformMsgLog();
+        Assert.assertEquals(0, apml1.getId());
+        Assert.assertNull(apml1.getApplicationPlatform());
+        Assert.assertNull(apml1.getDate());
+        Assert.assertEquals(0, apml1.getMsgCount());
+
+        long id = 123;
+        ApplicationPlatform ap = new ApplicationPlatform();
+        Date date = new Date(System.currentTimeMillis());
+        int msgCount = 100;
+        ApplicationPlatformMsgLog apml2 = new ApplicationPlatformMsgLog(id, ap, date, msgCount);
+        Assert.assertEquals(id, apml2.getId());
+        Assert.assertSame(ap, apml2.getApplicationPlatform());
+        Assert.assertSame(date, apml2.getDate());
+        Assert.assertEquals(msgCount, apml2.getMsgCount());
     }
 
     @Test
