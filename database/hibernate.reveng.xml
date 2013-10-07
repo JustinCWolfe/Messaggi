@@ -2,23 +2,31 @@
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
 
 <hibernate-reverse-engineering>
-	
+
 	<type-mapping>
 		<!-- jdbc-type is name for java.sql.Types -->
 		<sql-type jdbc-type="OTHER" hibernate-type="PostgresUUIDType" />
 	</type-mapping>
 
-	<table-filter match-schema="public" match-name="application"/>
-	<table-filter match-schema="public" match-name="application_platform"/>
-	<table-filter match-schema="public" match-name="application_platform_attribute"/>
-	<table-filter match-schema="public" match-name="application_platform_device"/>
-	<table-filter match-schema="public" match-name="application_platform_key"/>
-	<table-filter match-schema="public" match-name="application_platform_msg_log"/>
-	<table-filter match-schema="public" match-name="device"/>
-	<table-filter match-schema="public" match-name="device_attribute"/>
-	<table-filter match-schema="public" match-name="device_key"/>
-	<table-filter match-schema="public" match-name="platform"/>
-	<table-filter match-schema="public" match-name="user"/>
-	<table-filter match-schema="public" match-name="user_application"/>
-	
+	<table-filter match-schema="public" match-name="application" />
+	<table-filter match-schema="public"
+		match-name="application_platform" />
+	<table-filter match-schema="public"
+		match-name="application_platform_attribute" />
+	<table-filter match-schema="public"
+		match-name="application_platform_device" />
+	<table-filter match-schema="public"
+		match-name="application_platform_key" />
+	<table-filter match-schema="public"
+		match-name="application_platform_msg_log" />
+	<table-filter match-schema="public" match-name="device" />
+	<table-filter match-schema="public" match-name="device_attribute" />
+	<table-filter match-schema="public" match-name="device_key" />
+	<table-filter match-schema="public" match-name="platform" />
+	<table-filter match-schema="public" match-name="user" />
+	<table-filter match-schema="public" match-name="user_application" />
+
+	<table schema="public" name="application_platform">
+		<column name="token" jdbc-type="OTHER" property="token" type="PostgresUUIDType"></column>
+	</table>
 </hibernate-reverse-engineering>

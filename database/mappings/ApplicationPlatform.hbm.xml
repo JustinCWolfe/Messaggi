@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 7, 2013 3:43:22 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="ApplicationPlatform" table="application_platform" schema="public">
+        <comment>Link table between application and platform. An application can be linked to multiple platforms. A platform can be used across multiple applications.</comment>
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="platform" class="Platform" fetch="select">
+            <column name="platform_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="application" class="Application" fetch="select">
+            <column name="application_id" not-null="true" />
+        </many-to-one>
+        <property name="token" type="PostgresUUIDType">
+            <column name="token" not-null="true">
+                <comment>Token used by Messaggi service generated off the application platform attributes. This token will be generated when the service consumer registers their
+                application for the mobile platforms it supports and provides the relevant application/platform identifiers (bundle id for example). This token will be passed for
+                subsequent service calls.</comment>
+            </column>
+        </property>
+        <set name="applicationPlatformMsgLogs" table="application_platform_msg_log" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="application_platform_id" not-null="true" />
+            </key>
+            <one-to-many class="ApplicationPlatformMsgLog" />
+        </set>
+        <set name="applicationPlatformAttributes" table="application_platform_attribute" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="application_platform_id" not-null="true" />
+            </key>
+            <one-to-many class="ApplicationPlatformAttribute" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,15 +1,12 @@
 package com.messaggi.dao;
 
-// Generated Oct 2, 2013 11:09:04 AM by Hibernate Tools 4.0.0
+// Generated Oct 7, 2013 3:43:26 PM by Hibernate Tools 4.0.0
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.messaggi.domain.Application;
 
 /**
  * Home object for domain model class Application.

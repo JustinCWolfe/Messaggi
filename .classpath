@@ -17,7 +17,7 @@
 	<classpathentry kind="src" output="admin/test-classes" path="admin/test"/>
 	<classpathentry kind="src" output="web/classes" path="web/src"/>
 	<classpathentry kind="src" output="web/test-classes" path="web/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java1.7.0_40">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/Java1.7.0_40">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>

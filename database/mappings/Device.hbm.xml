@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 7, 2013 3:43:22 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="Device" table="device" schema="public">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <property name="active" type="boolean">
+            <column name="active" not-null="true" />
+        </property>
+        <set name="deviceAttributes" table="device_attribute" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="device_id" not-null="true" />
+            </key>
+            <one-to-many class="DeviceAttribute" />
+        </set>
+    </class>
+</hibernate-mapping>
