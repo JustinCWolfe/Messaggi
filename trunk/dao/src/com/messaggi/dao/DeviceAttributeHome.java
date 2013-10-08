@@ -5,8 +5,12 @@ package com.messaggi.dao;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.messaggi.domain.DeviceAttribute;
+import com.messaggi.domain.DeviceAttributeId;
 
 /**
  * Home object for domain model class DeviceAttribute.
