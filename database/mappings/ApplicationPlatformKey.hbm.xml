@@ -1,22 +1,21 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="ApplicationPlatformKey" schema="public" table="application_platform_key">
-  <id name="key" type="string">
-   <column length="20" name="key"/>
-   <generator class="assigned"/>
-  </id>
-  <property generated="never" lazy="false" name="description" type="string">
-   <column length="1024" name="description" not-null="true"/>
-  </property>
-  <set fetch="select" inverse="true" lazy="true"
-   name="applicationPlatformAttributes" sort="unsorted" table="application_platform_attribute">
-   <key>
-    <column length="20" name="key" not-null="true"/>
-   </key>
-   <one-to-many class="ApplicationPlatformAttribute"/>
-  </set>
- </class>
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.ApplicationPlatformKey" table="application_platform_key" schema="public">
+        <id name="key" type="string">
+            <column name="key" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="description" type="string">
+            <column name="description" length="1024" not-null="true" />
+        </property>
+        <set name="applicationPlatformAttributes" table="application_platform_attribute" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="key" length="20" not-null="true" />
+            </key>
+            <one-to-many class="com.messaggi.domain.ApplicationPlatformAttribute" />
+        </set>
+    </class>
 </hibernate-mapping>

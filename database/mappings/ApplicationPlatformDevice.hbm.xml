@@ -1,17 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="ApplicationPlatformDevice" schema="public" table="application_platform_device">
-  <composite-id class="ApplicationPlatformDeviceId" mapped="false"
-   name="id" unsaved-value="undefined">
-   <key-property name="applicationPlatformId" type="long">
-    <column name="application_platform_id"/>
-   </key-property>
-   <key-property name="deviceId" type="long">
-    <column name="device_id"/>
-   </key-property>
-  </composite-id>
- </class>
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.ApplicationPlatformDevice" table="application_platform_device" schema="public">
+        <composite-id name="id" class="com.messaggi.domain.ApplicationPlatformDeviceId">
+            <key-property name="applicationPlatformId" type="long">
+                <column name="application_platform_id" />
+            </key-property>
+            <key-property name="deviceId" type="long">
+                <column name="device_id" />
+            </key-property>
+        </composite-id>
+    </class>
 </hibernate-mapping>

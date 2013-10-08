@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="UserApplication" schema="public" table="user_application">
-  <comment>Link table between user and application. A user can manage multiple applications but an application can only be managed by a single user.</comment>
-  <id name="applicationId" type="long">
-   <column name="application_id"/>
-   <generator class="assigned"/>
-  </id>
-  <many-to-one class="User" fetch="select" name="user">
-   <column name="user_id" not-null="true"/>
-  </many-to-one>
- </class>
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.UserApplication" table="user_application" schema="public">
+        <comment>Link table between user and application. A user can manage multiple applications but an application can only be managed by a single user.</comment>
+        <id name="applicationId" type="long">
+            <column name="application_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="user" class="com.messaggi.domain.User" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
+    </class>
 </hibernate-mapping>
