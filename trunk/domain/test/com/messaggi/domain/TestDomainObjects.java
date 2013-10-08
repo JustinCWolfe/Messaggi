@@ -5,35 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestDomainObjects
 {
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    }
-
-    @Before
-    public void setUp() throws Exception
-    {
-    }
-
-    @After
-    public void tearDown() throws Exception
-    {
-    }
-
     @Test
     public void testApplication()
     {
@@ -102,13 +78,111 @@ public class TestDomainObjects
     }
 
     @Test
+    public void testApplicationPlatformAttributeId()
+    {
+        ApplicationPlatformAttributeId apaid1 = new ApplicationPlatformAttributeId();
+        Assert.assertNull(apaid1.getApplicationPlatform());
+        Assert.assertNull(apaid1.getApplicationPlatformKey());
+
+        ApplicationPlatform ap1 = new ApplicationPlatform();
+        ApplicationPlatformKey apk1 = new ApplicationPlatformKey();
+        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(ap1, apk1);
+        Assert.assertEquals(ap1, apaid2.getApplicationPlatform());
+        Assert.assertEquals(apk1, apaid2.getApplicationPlatformKey());
+        Assert.assertNotSame(apaid1, apaid2);
+        Assert.assertNotEquals(apaid1, apaid2);
+
+        ApplicationPlatformAttributeId apaid3 = new ApplicationPlatformAttributeId(ap1, apk1);
+        Assert.assertEquals(ap1, apaid3.getApplicationPlatform());
+        Assert.assertEquals(apk1, apaid3.getApplicationPlatformKey());
+        Assert.assertNotSame(apaid2, apaid3);
+        Assert.assertEquals(apaid2, apaid3);
+        Assert.assertEquals(apaid2.hashCode(), apaid3.hashCode());
+
+        ApplicationPlatform ap2 = new ApplicationPlatform();
+        ApplicationPlatformKey apk2 = new ApplicationPlatformKey();
+        ApplicationPlatformAttributeId apaid4 = new ApplicationPlatformAttributeId(ap2, apk2);
+        Assert.assertEquals(ap2, apaid4.getApplicationPlatform());
+        Assert.assertEquals(apk2, apaid4.getApplicationPlatformKey());
+        Assert.assertNotSame(apaid3, apaid4);
+        Assert.assertNotEquals(apaid3, apaid4);
+        Assert.assertNotEquals(apaid3.hashCode(), apaid4.hashCode());
+    }
+
+    @Test
     public void testApplicationPlatformAttribute()
     {
+        ApplicationPlatformAttribute apa1 = new ApplicationPlatformAttribute();
+        Assert.assertNull(apa1.getId());
+        Assert.assertNull(apa1.getValue());
+
+        ApplicationPlatformAttributeId apaid1 = new ApplicationPlatformAttributeId();
+        String value = "some attribute value";
+        ApplicationPlatformAttribute apa2 = new ApplicationPlatformAttribute(apaid1, value);
+        Assert.assertEquals(apaid1, apa2.getId());
+        Assert.assertEquals(value, apa2.getValue());
+
+        ApplicationPlatform ap = new ApplicationPlatform();
+        ApplicationPlatformKey apk = new ApplicationPlatformKey();
+        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(ap, apk);
+        ApplicationPlatformAttribute apa3 = new ApplicationPlatformAttribute(apaid2, value);
+        Assert.assertEquals(apaid2, apa3.getId());
+        Assert.assertEquals(ap, apa3.getId().getApplicationPlatform());
+        Assert.assertEquals(apk, apa3.getId().getApplicationPlatformKey());
+        Assert.assertEquals(value, apa3.getValue());
+    }
+
+    @Test
+    public void testApplicationPlatformDeviceId()
+    {
+        ApplicationPlatformDeviceId apdid1 = new ApplicationPlatformDeviceId();
+        Assert.assertEquals(0, apdid1.getApplicationPlatformId());
+        Assert.assertEquals(0, apdid1.getDeviceId());
+
+        long deviceId1 = 123;
+        long platformId1 = 456;
+        ApplicationPlatformDeviceId apdid2 = new ApplicationPlatformDeviceId(platformId1, deviceId1);
+        Assert.assertEquals(platformId1, apdid2.getApplicationPlatformId());
+        Assert.assertEquals(deviceId1, apdid2.getDeviceId());
+        Assert.assertNotSame(apdid1, apdid2);
+        Assert.assertNotEquals(apdid1, apdid2);
+
+        ApplicationPlatformDeviceId apdid3 = new ApplicationPlatformDeviceId(platformId1, deviceId1);
+        Assert.assertEquals(platformId1, apdid3.getApplicationPlatformId());
+        Assert.assertEquals(deviceId1, apdid3.getDeviceId());
+        Assert.assertNotSame(apdid2, apdid3);
+        Assert.assertEquals(apdid2, apdid3);
+        Assert.assertEquals(apdid2.hashCode(), apdid3.hashCode());
+
+        long deviceId2 = 789;
+        long platformId2 = 012;
+        ApplicationPlatformDeviceId apdid4 = new ApplicationPlatformDeviceId(platformId2, deviceId2);
+        Assert.assertEquals(platformId2, apdid4.getApplicationPlatformId());
+        Assert.assertEquals(deviceId2, apdid4.getDeviceId());
+        Assert.assertNotSame(apdid3, apdid4);
+        Assert.assertNotEquals(apdid3, apdid4);
+        Assert.assertNotEquals(apdid3.hashCode(), apdid4.hashCode());
     }
 
     @Test
     public void testApplicationPlatformDevice()
     {
+        ApplicationPlatformDevice apd1 = new ApplicationPlatformDevice();
+        Assert.assertNull(apd1.getId());
+
+        ApplicationPlatformDeviceId apdid1 = new ApplicationPlatformDeviceId();
+        ApplicationPlatformDevice apd2 = new ApplicationPlatformDevice(apdid1);
+        Assert.assertEquals(apdid1, apd2.getId());
+        Assert.assertEquals(0, apd2.getId().getApplicationPlatformId());
+        Assert.assertEquals(0, apd2.getId().getDeviceId());
+
+        long deviceId1 = 123;
+        long platformId1 = 456;
+        ApplicationPlatformDeviceId apdid2 = new ApplicationPlatformDeviceId(platformId1, deviceId1);
+        ApplicationPlatformDevice apd3 = new ApplicationPlatformDevice(apdid2);
+        Assert.assertEquals(apdid2, apd3.getId());
+        Assert.assertEquals(platformId1, apd3.getId().getApplicationPlatformId());
+        Assert.assertEquals(deviceId1, apd3.getId().getDeviceId());
     }
 
     @Test
@@ -182,25 +256,58 @@ public class TestDomainObjects
     }
 
     @Test
+    public void testDeviceAttributeId()
+    {
+        DeviceAttributeId daid1 = new DeviceAttributeId();
+        Assert.assertNull(daid1.getDevice());
+        Assert.assertNull(daid1.getDeviceKey());
+
+        Device d1 = new Device();
+        DeviceKey dk1 = new DeviceKey();
+        DeviceAttributeId daid2 = new DeviceAttributeId(d1, dk1);
+        Assert.assertEquals(d1, daid2.getDevice());
+        Assert.assertEquals(dk1, daid2.getDeviceKey());
+        Assert.assertNotSame(daid1, daid2);
+        Assert.assertNotEquals(daid1, daid2);
+
+        DeviceAttributeId daid3 = new DeviceAttributeId(d1, dk1);
+        Assert.assertEquals(d1, daid3.getDevice());
+        Assert.assertEquals(dk1, daid3.getDeviceKey());
+        Assert.assertNotSame(daid2, daid3);
+        Assert.assertEquals(daid2, daid3);
+        Assert.assertEquals(daid2.hashCode(), daid3.hashCode());
+
+        Device d2 = new Device();
+        DeviceKey dk2 = new DeviceKey();
+        DeviceAttributeId daid4 = new DeviceAttributeId(d2, dk2);
+        Assert.assertEquals(d2, daid4.getDevice());
+        Assert.assertEquals(dk2, daid4.getDeviceKey());
+        Assert.assertNotSame(daid3, daid4);
+        Assert.assertNotEquals(daid3, daid4);
+        Assert.assertNotEquals(daid3.hashCode(), daid4.hashCode());
+    }
+
+    @Test
     public void testDeviceAttribute()
     {
-        /*
-         * DeviceAttribute da1 = new DeviceAttribute(); Assert.assertEquals(0,
-         * da1.getId()); Assert.assertEquals(false, da1.isActive());
-         * Assert.assertEquals(0, da1.getDeviceAttributes().size());
-         * 
-         * long id = 123; boolean active = true; DeviceAttribute da2 = new
-         * DeviceAttribute(id, active); Assert.assertEquals(serviceName,
-         * p2.getServiceName()); Assert.assertEquals(0,
-         * da2.getDeviceAttributes().size());
-         * 
-         * Set<DeviceAttribute> das = new HashSet<>(); DeviceAttribute da = new
-         * DeviceAttribute(); das.add(da); DeviceAttribute da3 = new
-         * DeviceAttribute(id, active, das); Assert.assertEquals(id,
-         * da3.getId()); Assert.assertEquals(active, da3.isActive());
-         * Assert.assertEquals(1, da3.getDeviceAttributes().size());
-         * Assert.assertSame(da, da3.getDeviceAttributes().toArray()[0]);
-         */
+        DeviceAttribute da1 = new DeviceAttribute();
+        Assert.assertNull(da1.getId());
+        Assert.assertNull(da1.getValue());
+
+        DeviceAttributeId daid1 = new DeviceAttributeId();
+        String value = "some attribute value";
+        DeviceAttribute da2 = new DeviceAttribute(daid1, value);
+        Assert.assertEquals(daid1, da2.getId());
+        Assert.assertEquals(value, da2.getValue());
+
+        Device d = new Device();
+        DeviceKey dk = new DeviceKey();
+        DeviceAttributeId daid2 = new DeviceAttributeId(d, dk);
+        DeviceAttribute da3 = new DeviceAttribute(daid2, value);
+        Assert.assertEquals(daid2, da3.getId());
+        Assert.assertEquals(d, da3.getId().getDevice());
+        Assert.assertEquals(dk, da3.getId().getDeviceKey());
+        Assert.assertEquals(value, da3.getValue());
     }
 
     @Test
