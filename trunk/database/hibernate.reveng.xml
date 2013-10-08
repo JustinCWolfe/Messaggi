@@ -5,7 +5,7 @@
 
 <type-mapping>
 	<!-- jdbc-type is name for java.sql.Types -->
-	<sql-type jdbc-type="OTHER" hibernate-type="PostgresUUIDType" />
+	<sql-type jdbc-type="OTHER" hibernate-type="pg-uuid" />
 </type-mapping>
 
 <table-filter match-schema="public" match-name="application" />
@@ -27,6 +27,6 @@
 	<table-filter match-schema="public" match-name="user_application" />
 
 	<table schema="public" name="application_platform">
-		<column name="token" jdbc-type="OTHER" property="token" type="PostgresUUIDType"></column>
+		<column name="token" jdbc-type="OTHER" property="token" type="pg-uuid"></column>
 	</table>
 </hibernate-reverse-engineering>

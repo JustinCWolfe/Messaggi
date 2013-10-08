@@ -1,20 +1,19 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="ApplicationPlatformAttribute" schema="public" table="application_platform_attribute">
-  <composite-id class="ApplicationPlatformAttributeId" mapped="false"
-   name="id" unsaved-value="undefined">
-   <key-many-to-one class="ApplicationPlatform" name="applicationPlatform">
-    <column name="application_platform_id"/>
-   </key-many-to-one>
-   <key-many-to-one class="ApplicationPlatformKey" name="applicationPlatformKey">
-    <column length="20" name="key"/>
-   </key-many-to-one>
-  </composite-id>
-  <property generated="never" lazy="false" name="value" type="string">
-   <column length="1024" name="value" not-null="true"/>
-  </property>
- </class>
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.ApplicationPlatformAttribute" table="application_platform_attribute" schema="public">
+        <composite-id name="id" class="com.messaggi.domain.ApplicationPlatformAttributeId">
+            <key-many-to-one name="applicationPlatform" class="com.messaggi.domain.ApplicationPlatform">
+                <column name="application_platform_id" />
+            </key-many-to-one>
+            <key-many-to-one name="applicationPlatformKey" class="com.messaggi.domain.ApplicationPlatformKey">
+                <column name="key" length="20" />
+            </key-many-to-one>
+        </composite-id>
+        <property name="value" type="string">
+            <column name="value" length="1024" not-null="true" />
+        </property>
+    </class>
 </hibernate-mapping>

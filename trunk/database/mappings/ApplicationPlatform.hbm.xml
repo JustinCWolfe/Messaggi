@@ -1,40 +1,38 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="ApplicationPlatform" schema="public" table="application_platform">
-  <comment>Link table between application and platform. An application can be linked to multiple platforms. A platform can be used across multiple applications.</comment>
-  <id name="id" type="long">
-   <column name="id"/>
-   <generator class="assigned"/>
-  </id>
-  <many-to-one class="Platform" fetch="select" name="platform">
-   <column name="platform_id" not-null="true"/>
-  </many-to-one>
-  <many-to-one class="Application" fetch="select" name="application">
-   <column name="application_id" not-null="true"/>
-  </many-to-one>
-  <property generated="never" lazy="false" name="token">
-   <column name="token" not-null="true" sql-type="OTHER">
-    <comment>Token used by Messaggi service generated off the application platform attributes. This token will be generated when the service consumer registers their
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.ApplicationPlatform" table="application_platform" schema="public">
+        <comment>Link table between application and platform. An application can be linked to multiple platforms. A platform can be used across multiple applications.</comment>
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="platform" class="com.messaggi.domain.Platform" fetch="select">
+            <column name="platform_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="application" class="com.messaggi.domain.Application" fetch="select">
+            <column name="application_id" not-null="true" />
+        </many-to-one>
+        <property name="token" type="pg-uuid">
+            <column name="token" not-null="true">
+                <comment>Token used by Messaggi service generated off the application platform attributes. This token will be generated when the service consumer registers their
                 application for the mobile platforms it supports and provides the relevant application/platform identifiers (bundle id for example). This token will be passed for
                 subsequent service calls.</comment>
-   </column>
-  </property>
-  <set fetch="select" inverse="true" lazy="true"
-   name="applicationPlatformMsgLogs" sort="unsorted" table="application_platform_msg_log">
-   <key>
-    <column name="application_platform_id" not-null="true"/>
-   </key>
-   <one-to-many class="ApplicationPlatformMsgLog"/>
-  </set>
-  <set fetch="select" inverse="true" lazy="true"
-   name="applicationPlatformAttributes" sort="unsorted" table="application_platform_attribute">
-   <key>
-    <column name="application_platform_id" not-null="true"/>
-   </key>
-   <one-to-many class="ApplicationPlatformAttribute"/>
-  </set>
- </class>
+            </column>
+        </property>
+        <set name="applicationPlatformMsgLogs" table="application_platform_msg_log" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="application_platform_id" not-null="true" />
+            </key>
+            <one-to-many class="com.messaggi.domain.ApplicationPlatformMsgLog" />
+        </set>
+        <set name="applicationPlatformAttributes" table="application_platform_attribute" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="application_platform_id" not-null="true" />
+            </key>
+            <one-to-many class="com.messaggi.domain.ApplicationPlatformAttribute" />
+        </set>
+    </class>
 </hibernate-mapping>

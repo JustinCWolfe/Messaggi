@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 8, 2013 1:16:17 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping package="com.messaggi.domain">
- <class name="DeviceAttribute" schema="public" table="device_attribute">
-  <composite-id class="DeviceAttributeId" mapped="false" name="id" unsaved-value="undefined">
-   <key-many-to-one class="Device" name="device">
-    <column name="device_id"/>
-   </key-many-to-one>
-   <key-many-to-one class="DeviceKey" name="deviceKey">
-    <column length="20" name="key"/>
-   </key-many-to-one>
-  </composite-id>
-  <property generated="never" lazy="false" name="value" type="string">
-   <column length="1024" name="value" not-null="true">
-    <comment>Stores the value for the associated platform specific device identifier key. For example: An iOS phone will have a device token so the key will be token,
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 1:34:36 PM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.domain.DeviceAttribute" table="device_attribute" schema="public">
+        <composite-id name="id" class="com.messaggi.domain.DeviceAttributeId">
+            <key-many-to-one name="device" class="com.messaggi.domain.Device">
+                <column name="device_id" />
+            </key-many-to-one>
+            <key-many-to-one name="deviceKey" class="com.messaggi.domain.DeviceKey">
+                <column name="key" length="20" />
+            </key-many-to-one>
+        </composite-id>
+        <property name="value" type="string">
+            <column name="value" length="1024" not-null="true">
+                <comment>Stores the value for the associated platform specific device identifier key. For example: An iOS phone will have a device token so the key will be token,
                 the value will be XYZ. An Android phone will have an device id so the key will be device_id, the value will be 123.</comment>
-   </column>
-  </property>
- </class>
+            </column>
+        </property>
+    </class>
 </hibernate-mapping>
