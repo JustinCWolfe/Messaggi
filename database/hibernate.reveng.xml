@@ -3,12 +3,12 @@
 
 <hibernate-reverse-engineering>
 
-	<type-mapping>
-		<!-- jdbc-type is name for java.sql.Types -->
-		<sql-type jdbc-type="OTHER" hibernate-type="PostgresUUIDType" />
-	</type-mapping>
+<type-mapping>
+	<!-- jdbc-type is name for java.sql.Types -->
+	<sql-type jdbc-type="OTHER" hibernate-type="PostgresUUIDType" />
+</type-mapping>
 
-	<table-filter match-schema="public" match-name="application" />
+<table-filter match-schema="public" match-name="application" />
 	<table-filter match-schema="public"
 		match-name="application_platform" />
 	<table-filter match-schema="public"

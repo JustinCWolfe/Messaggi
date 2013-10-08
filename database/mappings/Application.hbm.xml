@@ -1,23 +1,24 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 7, 2013 3:43:22 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping>
-    <class name="Application" table="application" schema="public">
-        <comment>Applications will not be deleted from the system but instead their active field will be set to false.</comment>
-        <id name="id" type="long">
-            <column name="id" />
-            <generator class="assigned" />
-        </id>
-        <property name="active" type="boolean">
-            <column name="active" not-null="true" />
-        </property>
-        <set name="applicationPlatforms" table="application_platform" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="application_id" not-null="true" />
-            </key>
-            <one-to-many class="ApplicationPlatform" />
-        </set>
-        <one-to-one name="userApplication" class="UserApplication"></one-to-one>
-    </class>
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 10:02:56 AM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping package="com.messaggi.domain">
+ <class name="Application" schema="public" table="application">
+  <comment>Applications will not be deleted from the system but instead their active field will be set to false.</comment>
+  <id name="id" type="long">
+   <column name="id"/>
+   <generator class="assigned"/>
+  </id>
+  <property generated="never" lazy="false" name="active" type="boolean">
+   <column name="active" not-null="true"/>
+  </property>
+  <set fetch="select" inverse="true" lazy="true"
+   name="applicationPlatforms" sort="unsorted" table="application_platform">
+   <key>
+    <column name="application_id" not-null="true"/>
+   </key>
+   <one-to-many class="ApplicationPlatform"/>
+  </set>
+  <one-to-one class="UserApplication" name="userApplication"/>
+ </class>
 </hibernate-mapping>

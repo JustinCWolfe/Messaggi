@@ -1,21 +1,22 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Oct 7, 2013 3:43:22 PM by Hibernate Tools 4.0.0 -->
-<hibernate-mapping>
-    <class name="DeviceKey" table="device_key" schema="public">
-        <id name="key" type="string">
-            <column name="key" length="20" />
-            <generator class="assigned" />
-        </id>
-        <property name="description" type="string">
-            <column name="description" length="1024" not-null="true" />
-        </property>
-        <set name="deviceAttributes" table="device_attribute" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="key" length="20" not-null="true" />
-            </key>
-            <one-to-many class="DeviceAttribute" />
-        </set>
-    </class>
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 8, 2013 10:02:56 AM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping package="com.messaggi.domain">
+ <class name="DeviceKey" schema="public" table="device_key">
+  <id name="key" type="string">
+   <column length="20" name="key"/>
+   <generator class="assigned"/>
+  </id>
+  <property generated="never" lazy="false" name="description" type="string">
+   <column length="1024" name="description" not-null="true"/>
+  </property>
+  <set fetch="select" inverse="true" lazy="true" name="deviceAttributes"
+   sort="unsorted" table="device_attribute">
+   <key>
+    <column length="20" name="key" not-null="true"/>
+   </key>
+   <one-to-many class="DeviceAttribute"/>
+  </set>
+ </class>
 </hibernate-mapping>
