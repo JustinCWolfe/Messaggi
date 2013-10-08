@@ -2,23 +2,22 @@ package com.messaggi.dao;
 
 import static org.junit.Assert.fail;
 
+import org.hibernate.SessionFactory;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.messaggi.util.HibernateUtil;
+
 public class TestApplicationHome
 {
+    private static SessionFactory factory;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
+        factory = HibernateUtil.getSessionFactory();
     }
 
     @Before
