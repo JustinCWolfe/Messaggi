@@ -7,8 +7,13 @@ import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
-public class TestDomainObjects
+import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.junit.categories.LogicTests;
+
+@Category(LogicTests.class)
+public class TestDomainObjects extends MessaggiTestCase
 {
     @Test
     public void testApplication()
