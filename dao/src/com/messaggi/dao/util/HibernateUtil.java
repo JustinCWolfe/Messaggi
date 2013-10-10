@@ -1,4 +1,4 @@
-package com.messaggi.util;
+package com.messaggi.dao.util;
 
 import java.io.File;
 
@@ -16,7 +16,7 @@ public class HibernateUtil
 
     private static final File rootDirectory = new File(System.getProperty("user.dir"));
 
-    private static final File mappingFilesDirectory = new File(rootDirectory, "database/mappings");
+    private static final File mappingFilesDirectory = new File(rootDirectory, "dao/mappings");
 
     private static final File configurationFile = new File(rootDirectory, "database/hibernate.cfg.xml");
 

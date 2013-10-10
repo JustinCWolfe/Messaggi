@@ -2,17 +2,12 @@
     <wb-module deploy-name="Messaggi">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/base/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/base/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/messaging/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/messaging/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/admin/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/admin/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/web/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/web/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/dao/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/dao/test"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/domain/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/domain/test"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/dao/mappings"/>
         <property name="context-root" value="Messaggi"/>
         <property name="java-output-path" value="/Messaggi/bin"/>
     </wb-module>

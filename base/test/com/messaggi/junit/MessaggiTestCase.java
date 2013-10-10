@@ -1,13 +1,25 @@
 package com.messaggi.junit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.Before;
 
 public class MessaggiTestCase
 {
-    private final Log log = LogFactory.getLog(MessaggiTestCase.class);
+    private static final String DEFAULT_LOG4J_FILE_NAME = "./log4j.properties";
+
+    private static void configureLogging()
+    {
+        configureLogging(DEFAULT_LOG4J_FILE_NAME);
+    }
+
+    private static void configureLogging(String propertyFile)
+    {
+        LogManager.resetConfiguration();
+        PropertyConfigurator.configure(propertyFile);
+    }
 
     private MockAppender mockAppender = new MockAppender();
 
@@ -16,18 +28,28 @@ public class MessaggiTestCase
         return mockAppender;
     }
 
+    public MessaggiTestCase()
+    {
+        configureLogging();
+    }
+
+    public MessaggiTestCase(String loggingPropertyFile)
+    {
+        configureLogging(loggingPropertyFile);
+    }
+
     @Before
     public void setUp() throws Exception
     {
         // Add mock appender to root logger so we can capture all log messages.
-        //log.getRootLogger().addAppender(mockAppender);
+        Logger.getRootLogger().addAppender(mockAppender);
         mockAppender.clearLogEvents();
     }
 
     @After
     public void tearDown() throws Exception
     {
-        //log.getRootLogger().removeAppender(mockAppender);
+        Logger.getRootLogger().removeAppender(mockAppender);
     }
 }
 

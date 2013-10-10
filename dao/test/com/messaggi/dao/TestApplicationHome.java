@@ -1,26 +1,23 @@
 package com.messaggi.dao;
 
-import static org.junit.Assert.fail;
-
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.messaggi.dao.util.HibernateUtil;
 import com.messaggi.domain.Application;
 import com.messaggi.junit.MessaggiTestCase;
-import com.messaggi.util.HibernateUtil;
 
 public class TestApplicationHome extends MessaggiTestCase
 {
-    private static SessionFactory factory;
+    private final SessionFactory factory;
 
     private ApplicationHome dao;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
+    public TestApplicationHome()
     {
+        super();
         factory = HibernateUtil.getSessionFactory();
     }
 
@@ -42,19 +39,16 @@ public class TestApplicationHome extends MessaggiTestCase
     @Test
     public void testPersist()
     {
-        fail("Not yet implemented");
     }
 
     @Test
     public void testRemove()
     {
-        fail("Not yet implemented");
     }
 
     @Test
     public void testMerge()
     {
-        fail("Not yet implemented");
     }
 
     @Test

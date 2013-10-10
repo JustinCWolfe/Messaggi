@@ -1,5 +1,4 @@
 <project name="base" default="all" basedir=".">
-
   
   <import file="../build.module.xml"/>
 
@@ -14,6 +13,8 @@
 
   <path id="classpath">
       <pathelement location="classes"/>
+      <fileset refid="hibernate.lib"/>
+      <fileset refid="commons-logging.lib"/>
   </path>
 
   <path id="classpath.test">
@@ -22,6 +23,7 @@
       <path refid="classpath"/>
       <fileset refid="junit.lib"/>
       <fileset refid="hamcrest.lib"/>
+      <fileset refid="log4j.lib"/>
   </path>
 
   <target name="init">
@@ -40,13 +42,16 @@
 
   <target name="compile" depends="init" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}"/>
-    <!-- Compile the java code from ${test} into ${build-test} -->
-    <javac srcdir="${test}" destdir="${build-test}"/>
+    <javac classpathref="classpath" srcdir="${src}" destdir="${build}"/>
     <delete file="${src}/package-info.java"/>
   </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
+  <target name="compile.test" depends="init" description="compile the source" >
+    <!-- Compile the java code from ${test} into ${build-test} -->
+    <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}"/>
+  </target>
+
+  <target name="dist" depends="compile,compile.test" description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
     <!-- Put everything in ${build} into the ${project}-${DSTAMP}.jar file -->

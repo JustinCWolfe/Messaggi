@@ -15,10 +15,12 @@
       <path refid="domain.module"/>
       <pathelement location="classes"/>
       <fileset refid="commons-logging.lib"/>
+      <fileset refid="hibernate.lib"/>
       <fileset refid="tomcat-ee-plus.lib"/>
   </path>
 
   <path id="classpath.test">
+      <path refid="base.test.module"/>
       <pathelement location="classes"/>
       <pathelement location="test-classes"/>
       <path refid="classpath"/>
@@ -43,16 +45,21 @@
   <target name="compile" depends="init" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build} -->
     <javac classpathref="classpath" srcdir="${src}" destdir="${build}"/>
-    <!-- Compile the java code from ${test} into ${build-test} -->
-    <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}"/>
     <delete file="${src}/package-info.java"/>
   </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
+  <target name="compile.test" depends="init" description="compile the source" >
+    <!-- Compile the java code from ${test} into ${build-test} -->
+    <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}"/>
+  </target>
+
+  <target name="dist" depends="compile,compile.test" description="generate the distribution" >
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
     <!-- Put everything in ${build} into the ${project}-${DSTAMP}.jar file -->
-    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}"/>
+    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}">
+      <fileset dir="mappings"/> 
+    </jar>
     <!-- Put everything in ${build-test} into the ${project}-test-${DSTAMP}.jar file -->
     <jar destfile="${dist}/lib/${project}-test.jar" basedir="${build-test}"/>
   </target>

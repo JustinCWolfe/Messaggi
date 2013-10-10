@@ -29,7 +29,7 @@
 <booleanAttribute key="org.hibernate.tools.exporters.org.hibernate.tools.query" value="false"/>
 <stringAttribute key="org.hibernate.tools.exporters.org.hibernate.tools.query.extension_id" value="org.hibernate.tools.query"/>
 <booleanAttribute key="org.hibernate.tools.jdk5" value="true"/>
-<stringAttribute key="org.hibernate.tools.outputdir" value="/Messaggi/database/mappings"/>
+<stringAttribute key="org.hibernate.tools.outputdir" value="/Messaggi/dao/mappings"/>
 <stringAttribute key="org.hibernate.tools.package" value="com.messaggi.domain"/>
 <booleanAttribute key="org.hibernate.tools.prefercompositeids" value="false"/>
 <stringAttribute key="org.hibernate.tools.revEngFile" value="/Messaggi/database/hibernate.reveng.xml"/>
