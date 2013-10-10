@@ -1,11 +1,13 @@
 <project name="Messaggi" default="all" basedir=".">
 
   <!-- set global properties for this build -->
-  <property name="project" value="Messagi"/>
+  <property name="project" value="Messaggi"/>
   <property environment="ENV"/>
   <property file="deploy.properties" />
   <property file="build.properties" />
-  <property name="j2ee.webapps" value="${tomcat.home}${file.separator}webapps"/>
+  <property name="j2ee.webapps" value="${ENV.CATALINA_HOME}${file.separator}webapps"/>
+  <property name="j2ee.lib" value="${ENV.CATALINA_HOME}${file.separator}lib"/>
+  <property name="j2ee.conf" value="${ENV.CATALINA_HOME}${file.separator}conf"/>
 
   <target name="init">
   </target>
@@ -23,7 +25,20 @@
     </subant>
   </target>
 
-  <target name="dist" depends="compile" description="generate the distribution" >
+  <target name="compile.test" depends="init" description="compile the source" >
+    <subant target="compile.test">
+      <filelist dir=".">       
+        <file name="base/build.xml"/>
+        <file name="domain/build.xml"/>
+        <file name="dao/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
+    </subant>
+  </target>
+
+  <target name="dist" depends="compile,compile.test" description="generate the distribution" >
     <subant target="dist">
       <filelist dir=".">       
         <file name="domain/build.xml"/>
@@ -35,8 +50,19 @@
       </filelist>
     </subant>
   </target>
+	
+    <target name="build.war" unless="isMinimalBuild">
+      <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+            <webinf dir="WebContent/WEB-INF">
+                <include name="*"/>
+                <include name="**/*"/>
+                <exclude name="web.xml"/>
+            </webinf>
+            <classes dir="web/src"/>
+        </war>
+    </target>
 
-  <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
+  <target name="deploy" depends="dist,build.war,deploy.war,deploy.3rdParty,configure.tomcat" description="deploy the jar files to tomcat" >
     <subant target="deploy">
       <filelist dir=".">       
         <file name="domain/build.xml"/>
@@ -47,6 +73,37 @@
         <file name="admin/build.xml"/>
       </filelist>
     </subant>
+  </target>
+
+  <target name="deploy.war">
+      <unzip src="${application}.war" dest="${j2ee.webapps}/${application}"/>
+  </target>
+
+  <target name="deploy.3rdParty">
+    <copy todir="${j2ee.lib}" overwrite="true">
+          <fileset dir="lib">
+            <include name="hibernate-release-4.2.6.Final/lib/required/antlr-2.7.7.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/dom4j-1.6.1.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/hibernate-commons-annotations-4.0.2.Final.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/hibernate-core-4.2.6.Final.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/javassist-3.15.0-GA.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/jboss-logging-3.1.0.GA.jar"/>
+            <include name="hibernate-release-4.2.6.Final/lib/required/jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
+            <include name="apache-log4j-1.2.17/log4j-1.2.17.jar"/>
+            <include name="postgresql-9.2-1003/postgresql-9.2-1003.jdbc4.jar"/>
+            <include name="commons-logging-1.1.3/commons-logging-1.1.3.jar"/>
+          </fileset>
+      </copy>
+  </target>
+
+  <target name="configure.tomcat" description="copy files to the locations that tomcat requires" >
+    <copy todir="${j2ee.conf}" overwrite="true" flatten="true">
+            <fileset dir=".">
+                <include name="commons-logging.properties"/>
+                <include name="log4j.properties"/>
+            </fileset>
+        </copy>
   </target>
 
   <target name="all" depends="clean,deploy" />
