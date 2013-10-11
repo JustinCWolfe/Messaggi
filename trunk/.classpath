@@ -33,5 +33,6 @@
 	<classpathentry kind="lib" path="lib/hibernate-release-4.2.6.Final/lib/required/jboss-logging-3.1.0.GA.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-release-4.2.6.Final/lib/required/jboss-transaction-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="lib" path="lib/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-release-4.2.6.Final/lib/jpa/hibernate-entitymanager-4.2.6.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

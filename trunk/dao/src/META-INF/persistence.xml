@@ -5,6 +5,8 @@
    	<persistence-unit name="messaggi">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider> 
   		<jta-data-source>java:/DefaultDS</jta-data-source>
+  		<jar-file>domain.jar</jar-file>	
+  		<jar-file>dao.jar</jar-file>	
   		<properties>
     		<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
      		<property name="hibernate.hbm2ddl.auto" value="create-drop"/>

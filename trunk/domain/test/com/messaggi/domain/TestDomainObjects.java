@@ -52,6 +52,8 @@ public class TestDomainObjects extends MessaggiTestCase
         Assert.assertNull(ap1.getPlatform());
         Assert.assertNull(ap1.getApplication());
         Assert.assertNull(ap1.getToken());
+        Assert.assertEquals(0, ap1.getApplicationPlatformMsgLogs().size());
+        Assert.assertEquals(0, ap1.getApplicationPlatformAttributes().size());
 
         long id = 123;
         Platform p = new Platform();
@@ -86,29 +88,29 @@ public class TestDomainObjects extends MessaggiTestCase
     public void testApplicationPlatformAttributeId()
     {
         ApplicationPlatformAttributeId apaid1 = new ApplicationPlatformAttributeId();
-        Assert.assertNull(apaid1.getApplicationPlatform());
-        Assert.assertNull(apaid1.getApplicationPlatformKey());
+        Assert.assertEquals(0, apaid1.getApplicationPlatformId());
+        Assert.assertNull(apaid1.getKey());
 
-        ApplicationPlatform ap1 = new ApplicationPlatform();
-        ApplicationPlatformKey apk1 = new ApplicationPlatformKey();
-        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(ap1, apk1);
-        Assert.assertEquals(ap1, apaid2.getApplicationPlatform());
-        Assert.assertEquals(apk1, apaid2.getApplicationPlatformKey());
+        long applicationPlatformId1 = 123;
+        String key1 = "some key";
+        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(applicationPlatformId1, key1);
+        Assert.assertEquals(applicationPlatformId1, apaid2.getApplicationPlatformId());
+        Assert.assertEquals(key1, apaid2.getKey());
         Assert.assertNotSame(apaid1, apaid2);
         Assert.assertNotEquals(apaid1, apaid2);
 
-        ApplicationPlatformAttributeId apaid3 = new ApplicationPlatformAttributeId(ap1, apk1);
-        Assert.assertEquals(ap1, apaid3.getApplicationPlatform());
-        Assert.assertEquals(apk1, apaid3.getApplicationPlatformKey());
+        ApplicationPlatformAttributeId apaid3 = new ApplicationPlatformAttributeId(applicationPlatformId1, key1);
+        Assert.assertEquals(applicationPlatformId1, apaid3.getApplicationPlatformId());
+        Assert.assertEquals(key1, apaid3.getKey());
         Assert.assertNotSame(apaid2, apaid3);
         Assert.assertEquals(apaid2, apaid3);
         Assert.assertEquals(apaid2.hashCode(), apaid3.hashCode());
 
-        ApplicationPlatform ap2 = new ApplicationPlatform();
-        ApplicationPlatformKey apk2 = new ApplicationPlatformKey();
-        ApplicationPlatformAttributeId apaid4 = new ApplicationPlatformAttributeId(ap2, apk2);
-        Assert.assertEquals(ap2, apaid4.getApplicationPlatform());
-        Assert.assertEquals(apk2, apaid4.getApplicationPlatformKey());
+        long applicationPlatformId2 = 456;
+        String key2 = "some other key";
+        ApplicationPlatformAttributeId apaid4 = new ApplicationPlatformAttributeId(applicationPlatformId2, key2);
+        Assert.assertEquals(applicationPlatformId2, apaid4.getApplicationPlatformId());
+        Assert.assertEquals(key2, apaid4.getKey());
         Assert.assertNotSame(apaid3, apaid4);
         Assert.assertNotEquals(apaid3, apaid4);
         Assert.assertNotEquals(apaid3.hashCode(), apaid4.hashCode());
@@ -119,21 +121,27 @@ public class TestDomainObjects extends MessaggiTestCase
     {
         ApplicationPlatformAttribute apa1 = new ApplicationPlatformAttribute();
         Assert.assertNull(apa1.getId());
+        Assert.assertNull(apa1.getApplicationPlatform());
+        Assert.assertNull(apa1.getApplicationPlatformKey());
         Assert.assertNull(apa1.getValue());
 
-        ApplicationPlatformAttributeId apaid1 = new ApplicationPlatformAttributeId();
+        ApplicationPlatform ap1 = new ApplicationPlatform();
+        ApplicationPlatformKey apk1 = new ApplicationPlatformKey();
+        ApplicationPlatformAttributeId apaid1 = new ApplicationPlatformAttributeId(ap1.getId(), apk1.getKey());
         String value = "some attribute value";
-        ApplicationPlatformAttribute apa2 = new ApplicationPlatformAttribute(apaid1, value);
+        ApplicationPlatformAttribute apa2 = new ApplicationPlatformAttribute(apaid1, ap1, apk1, value);
         Assert.assertEquals(apaid1, apa2.getId());
+        Assert.assertEquals(ap1, apa2.getApplicationPlatform());
+        Assert.assertEquals(apk1, apa2.getApplicationPlatformKey());
         Assert.assertEquals(value, apa2.getValue());
 
-        ApplicationPlatform ap = new ApplicationPlatform();
-        ApplicationPlatformKey apk = new ApplicationPlatformKey();
-        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(ap, apk);
-        ApplicationPlatformAttribute apa3 = new ApplicationPlatformAttribute(apaid2, value);
+        ApplicationPlatform ap2 = new ApplicationPlatform();
+        ApplicationPlatformKey apk2 = new ApplicationPlatformKey();
+        ApplicationPlatformAttributeId apaid2 = new ApplicationPlatformAttributeId(ap2.getId(), apk2.getKey());
+        ApplicationPlatformAttribute apa3 = new ApplicationPlatformAttribute(apaid2, ap2, apk2, value);
         Assert.assertEquals(apaid2, apa3.getId());
-        Assert.assertEquals(ap, apa3.getId().getApplicationPlatform());
-        Assert.assertEquals(apk, apa3.getId().getApplicationPlatformKey());
+        Assert.assertEquals(ap2, apa3.getApplicationPlatform());
+        Assert.assertEquals(apk2, apa3.getApplicationPlatformKey());
         Assert.assertEquals(value, apa3.getValue());
     }
 
@@ -264,29 +272,29 @@ public class TestDomainObjects extends MessaggiTestCase
     public void testDeviceAttributeId()
     {
         DeviceAttributeId daid1 = new DeviceAttributeId();
-        Assert.assertNull(daid1.getDevice());
-        Assert.assertNull(daid1.getDeviceKey());
+        Assert.assertEquals(0, daid1.getDeviceId());
+        Assert.assertNull(daid1.getKey());
 
-        Device d1 = new Device();
-        DeviceKey dk1 = new DeviceKey();
-        DeviceAttributeId daid2 = new DeviceAttributeId(d1, dk1);
-        Assert.assertEquals(d1, daid2.getDevice());
-        Assert.assertEquals(dk1, daid2.getDeviceKey());
+        long deviceId1 = 123;
+        String key1 = "some key";
+        DeviceAttributeId daid2 = new DeviceAttributeId(deviceId1, key1);
+        Assert.assertEquals(deviceId1, daid2.getDeviceId());
+        Assert.assertEquals(key1, daid2.getKey());
         Assert.assertNotSame(daid1, daid2);
         Assert.assertNotEquals(daid1, daid2);
 
-        DeviceAttributeId daid3 = new DeviceAttributeId(d1, dk1);
-        Assert.assertEquals(d1, daid3.getDevice());
-        Assert.assertEquals(dk1, daid3.getDeviceKey());
+        DeviceAttributeId daid3 = new DeviceAttributeId(deviceId1, key1);
+        Assert.assertEquals(deviceId1, daid3.getDeviceId());
+        Assert.assertEquals(key1, daid3.getKey());
         Assert.assertNotSame(daid2, daid3);
         Assert.assertEquals(daid2, daid3);
         Assert.assertEquals(daid2.hashCode(), daid3.hashCode());
 
-        Device d2 = new Device();
-        DeviceKey dk2 = new DeviceKey();
-        DeviceAttributeId daid4 = new DeviceAttributeId(d2, dk2);
-        Assert.assertEquals(d2, daid4.getDevice());
-        Assert.assertEquals(dk2, daid4.getDeviceKey());
+        long deviceId2 = 456;
+        String key2 = "some other key";
+        DeviceAttributeId daid4 = new DeviceAttributeId(deviceId2, key2);
+        Assert.assertEquals(deviceId2, daid4.getDeviceId());
+        Assert.assertEquals(key2, daid4.getKey());
         Assert.assertNotSame(daid3, daid4);
         Assert.assertNotEquals(daid3, daid4);
         Assert.assertNotEquals(daid3.hashCode(), daid4.hashCode());
@@ -299,19 +307,25 @@ public class TestDomainObjects extends MessaggiTestCase
         Assert.assertNull(da1.getId());
         Assert.assertNull(da1.getValue());
 
-        DeviceAttributeId daid1 = new DeviceAttributeId();
+        long did1 = 123;
+        String key1 = "some key";
+        DeviceAttributeId daid1 = new DeviceAttributeId(did1, key1);
+        Device device1 = new Device();
+        DeviceKey dkey1 = new DeviceKey();
         String value = "some attribute value";
-        DeviceAttribute da2 = new DeviceAttribute(daid1, value);
+        DeviceAttribute da2 = new DeviceAttribute(daid1, device1, dkey1, value);
         Assert.assertEquals(daid1, da2.getId());
+        Assert.assertSame(device1, da2.getDevice());
+        Assert.assertSame(dkey1, da2.getDeviceKey());
         Assert.assertEquals(value, da2.getValue());
 
-        Device d = new Device();
-        DeviceKey dk = new DeviceKey();
-        DeviceAttributeId daid2 = new DeviceAttributeId(d, dk);
-        DeviceAttribute da3 = new DeviceAttribute(daid2, value);
+        Device device2 = new Device();
+        DeviceKey dkey2 = new DeviceKey();
+        DeviceAttributeId daid2 = new DeviceAttributeId(did1, key1);
+        DeviceAttribute da3 = new DeviceAttribute(daid2, device2, dkey2, value);
         Assert.assertEquals(daid2, da3.getId());
-        Assert.assertEquals(d, da3.getId().getDevice());
-        Assert.assertEquals(dk, da3.getId().getDeviceKey());
+        Assert.assertSame(device2, da3.getDevice());
+        Assert.assertSame(dkey2, da3.getDeviceKey());
         Assert.assertEquals(value, da3.getValue());
     }
 
@@ -427,12 +441,17 @@ public class TestDomainObjects extends MessaggiTestCase
     {
         UserApplication ua1 = new UserApplication();
         Assert.assertEquals(0, ua1.getApplicationId());
+        Assert.assertNull(ua1.getApplication());
         Assert.assertNull(ua1.getUser());
 
-        long applicationId = 123;
         User user = new User();
-        UserApplication ua2 = new UserApplication(applicationId, user);
-        Assert.assertEquals(applicationId, ua2.getApplicationId());
+        boolean active = true;
+        long applicationId = 123;
+        Application application = new Application(applicationId, active);
+        UserApplication ua2 = new UserApplication(user, application);
+        Assert.assertEquals(0, ua2.getApplicationId());
+        Assert.assertEquals(applicationId, ua2.getApplication().getId());
+        Assert.assertSame(application, ua2.getApplication());
         Assert.assertSame(user, ua2.getUser());
     }
 }
