@@ -2,11 +2,8 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
-   	<persistence-unit name="messaggi">
+   	<persistence-unit name="messaggi" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider> 
-  		<jta-data-source>java:/DefaultDS</jta-data-source>
-  		<jar-file>domain.jar</jar-file>	
-  		<jar-file>dao.jar</jar-file>	
   		<properties>
     		<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
      		<property name="hibernate.hbm2ddl.auto" value="create-drop"/>

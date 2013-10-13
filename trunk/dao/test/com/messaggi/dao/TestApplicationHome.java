@@ -1,5 +1,9 @@
 package com.messaggi.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +23,8 @@ public class TestApplicationHome extends MessaggiTestCase
     {
         super();
         factory = HibernateUtil.getSessionFactory();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("messaggi");
+        EntityManager em = emf.createEntityManager();
     }
 
     @Override
