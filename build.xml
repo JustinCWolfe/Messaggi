@@ -15,8 +15,7 @@
   <target name="compile" depends="init" description="compile the source" >
     <subant target="compile">
       <filelist dir=".">       
-        <file name="domain/build.xml"/>
-        <file name="dao/build.xml"/>
+        <file name="persistence/build.xml"/>
         <file name="base/build.xml"/>
         <file name="messaging/build.xml"/>
         <file name="web/build.xml"/>
@@ -29,8 +28,7 @@
     <subant target="compile.test">
       <filelist dir=".">       
         <file name="base/build.xml"/>
-        <file name="domain/build.xml"/>
-        <file name="dao/build.xml"/>
+        <file name="persistence/build.xml"/>
         <file name="messaging/build.xml"/>
         <file name="web/build.xml"/>
         <file name="admin/build.xml"/>
@@ -41,8 +39,7 @@
   <target name="dist" depends="compile,compile.test" description="generate the distribution" >
     <subant target="dist">
       <filelist dir=".">       
-        <file name="domain/build.xml"/>
-        <file name="dao/build.xml"/>
+        <file name="persistence/build.xml"/>
         <file name="base/build.xml"/>
         <file name="messaging/build.xml"/>
         <file name="web/build.xml"/>
@@ -65,8 +62,7 @@
   <target name="deploy" depends="dist,build.war,deploy.war,deploy.3rdParty,configure.tomcat" description="deploy the jar files to tomcat" >
     <subant target="deploy">
       <filelist dir=".">       
-        <file name="domain/build.xml"/>
-        <file name="dao/build.xml"/>
+        <file name="persistence/build.xml"/>
         <file name="base/build.xml"/>
         <file name="messaging/build.xml"/>
         <file name="web/build.xml"/>
@@ -111,8 +107,7 @@
   <target name="clean" description="clean up" >
     <subant target="clean">
       <filelist dir=".">       
-        <file name="domain/build.xml"/>
-        <file name="dao/build.xml"/>
+        <file name="persistence/build.xml"/>
         <file name="base/build.xml"/>
         <file name="messaging/build.xml"/>
         <file name="web/build.xml"/>

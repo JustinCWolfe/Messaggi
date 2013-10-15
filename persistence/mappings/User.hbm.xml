@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Oct 15, 2013 8:08:15 AM by Hibernate Tools 4.0.0 -->
+<hibernate-mapping>
+    <class name="com.messaggi.persistence.domain.User" table="user" schema="public">
+        <comment>Users will not be deleted from the system but instead their active field will be set to false.</comment>
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="120" not-null="true" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="256" not-null="true" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="50" not-null="true">
+                <comment>Phone number as entered by the user.</comment>
+            </column>
+        </property>
+        <property name="phoneParsed" type="string">
+            <column name="phone_parsed" length="50" not-null="true">
+                <comment>User entered phone number with all non-numeric data stripped. * used for indexing purposes</comment>
+            </column>
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="512" not-null="true">
+                <comment>SHA-512 salted password.</comment>
+            </column>
+        </property>
+        <property name="locale" type="string">
+            <column name="locale" length="10" not-null="true" />
+        </property>
+        <property name="active" type="boolean">
+            <column name="active" not-null="true" />
+        </property>
+        <set name="userApplications" table="user_application" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="user_id" not-null="true" />
+            </key>
+            <one-to-many class="com.messaggi.persistence.domain.UserApplication" />
+        </set>
+    </class>
+</hibernate-mapping>
