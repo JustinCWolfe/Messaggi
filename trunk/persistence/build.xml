@@ -1,8 +1,9 @@
-<project name="web" default="all" basedir=".">
+<project name="persistence" default="all" basedir=".">
+
   <import file="../build.module.xml"/>
 
   <!-- set global properties for this build -->
-  <property name="project" value="web"/>
+  <property name="project" value="persistence"/>
   <property name="src" location="src"/>
   <property name="test" location="test"/>
   <property name="build" location="classes"/>
@@ -10,8 +11,10 @@
   <property name="dist"  location="dist"/>
 
   <path id="classpath">
-      <path refid="base.module"/>
       <pathelement location="${build}"/>
+      <fileset refid="commons-logging.lib"/>
+      <fileset refid="hibernate.lib"/>
+      <fileset refid="tomcat-ee-plus.lib"/>
   </path>
 
   <path id="classpath.test">
@@ -52,7 +55,11 @@
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
     <!-- Put everything in ${build} into the ${project}-${DSTAMP}.jar file -->
-    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}"/>
+    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}">
+      <fileset dir="mappings"/> 
+      <fileset dir="META-INF"/> 
+    </jar>
+
     <!-- Put everything in ${build-test} into the ${project}-test-${DSTAMP}.jar file -->
     <jar destfile="${dist}/lib/${project}-test.jar" basedir="${build-test}"/>
   </target>
