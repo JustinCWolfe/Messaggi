@@ -73,7 +73,7 @@ public class TestDomainObjects extends MessaggiTestCase
         ApplicationPlatformAttribute apm = new ApplicationPlatformAttribute();
         Set<ApplicationPlatformAttribute> apms = new HashSet<> ();
         apms.add(apm);
-        ApplicationPlatform ap3 = new ApplicationPlatform(id, p, a, t, apmls, apms);
+        ApplicationPlatform ap3 = new ApplicationPlatform(id, p, a, t, apms, apmls);
         Assert.assertEquals(id, ap3.getId());
         Assert.assertSame(p, ap3.getPlatform());
         Assert.assertSame(a, ap3.getApplication());

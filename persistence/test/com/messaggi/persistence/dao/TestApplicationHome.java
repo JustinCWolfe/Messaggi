@@ -1,30 +1,26 @@
 package com.messaggi.persistence.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
-import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.messaggi.junit.MessaggiTestCase;
-import com.messaggi.persistence.dao.util.HibernateUtil;
 import com.messaggi.persistence.domain.Application;
+import com.messaggi.persistence.util.HibernateUtil;
 
 public class TestApplicationHome extends MessaggiTestCase
 {
-    private final SessionFactory factory;
-
     private ApplicationHome dao;
 
-    public TestApplicationHome()
+    public TestApplicationHome() throws NamingException
     {
         super();
-        factory = HibernateUtil.getSessionFactory();
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("messaggi");
-        EntityManager em = emf.createEntityManager();
+        Context context = new InitialContext();
+        context.bind("java:hibernate/SessionFactory", HibernateUtil.getSessionFactory());
     }
 
     @Override

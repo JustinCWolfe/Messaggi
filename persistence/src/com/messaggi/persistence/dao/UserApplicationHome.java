@@ -1,13 +1,17 @@
 package com.messaggi.persistence.dao;
 
-// Generated Oct 15, 2013 8:05:22 AM by Hibernate Tools 4.0.0
+// Generated Oct 15, 2013 1:21:19 PM by Hibernate Tools 4.0.0
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
 
 import com.messaggi.persistence.domain.UserApplication;
 
@@ -16,20 +20,28 @@ import com.messaggi.persistence.domain.UserApplication;
  * @see com.messaggi.persistence.dao.UserApplication
  * @author Hibernate Tools
  */
-@Stateless
 public class UserApplicationHome
 {
 
     private static final Log log = LogFactory.getLog(UserApplicationHome.class);
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final SessionFactory sessionFactory = getSessionFactory();
+
+    protected SessionFactory getSessionFactory()
+    {
+        try {
+            return (SessionFactory) new InitialContext().lookup("SessionFactory");
+        } catch (Exception e) {
+            log.error("Could not locate SessionFactory in JNDI", e);
+            throw new IllegalStateException("Could not locate SessionFactory in JNDI");
+        }
+    }
 
     public void persist(UserApplication transientInstance)
     {
         log.debug("persisting UserApplication instance");
         try {
-            entityManager.persist(transientInstance);
+            sessionFactory.getCurrentSession().persist(transientInstance);
             log.debug("persist successful");
         } catch (RuntimeException re) {
             log.error("persist failed", re);
@@ -37,14 +49,38 @@ public class UserApplicationHome
         }
     }
 
-    public void remove(UserApplication persistentInstance)
+    public void attachDirty(UserApplication instance)
     {
-        log.debug("removing UserApplication instance");
+        log.debug("attaching dirty UserApplication instance");
         try {
-            entityManager.remove(persistentInstance);
-            log.debug("remove successful");
+            sessionFactory.getCurrentSession().saveOrUpdate(instance);
+            log.debug("attach successful");
         } catch (RuntimeException re) {
-            log.error("remove failed", re);
+            log.error("attach failed", re);
+            throw re;
+        }
+    }
+
+    public void attachClean(UserApplication instance)
+    {
+        log.debug("attaching clean UserApplication instance");
+        try {
+            sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+            log.debug("attach successful");
+        } catch (RuntimeException re) {
+            log.error("attach failed", re);
+            throw re;
+        }
+    }
+
+    public void delete(UserApplication persistentInstance)
+    {
+        log.debug("deleting UserApplication instance");
+        try {
+            sessionFactory.getCurrentSession().delete(persistentInstance);
+            log.debug("delete successful");
+        } catch (RuntimeException re) {
+            log.error("delete failed", re);
             throw re;
         }
     }
@@ -53,7 +89,7 @@ public class UserApplicationHome
     {
         log.debug("merging UserApplication instance");
         try {
-            UserApplication result = entityManager.merge(detachedInstance);
+            UserApplication result = (UserApplication) sessionFactory.getCurrentSession().merge(detachedInstance);
             log.debug("merge successful");
             return result;
         } catch (RuntimeException re) {
@@ -66,11 +102,30 @@ public class UserApplicationHome
     {
         log.debug("getting UserApplication instance with id: " + id);
         try {
-            UserApplication instance = entityManager.find(UserApplication.class, id);
-            log.debug("get successful");
+            UserApplication instance = (UserApplication) sessionFactory.getCurrentSession().get(
+                    "com.messaggi.persistence.dao.UserApplication", id);
+            if (instance == null) {
+                log.debug("get successful, no instance found");
+            } else {
+                log.debug("get successful, instance found");
+            }
             return instance;
         } catch (RuntimeException re) {
             log.error("get failed", re);
+            throw re;
+        }
+    }
+
+    public List<UserApplication> findByExample(UserApplication instance)
+    {
+        log.debug("finding UserApplication instance by example");
+        try {
+            List<UserApplication> results = sessionFactory.getCurrentSession()
+                    .createCriteria("com.messaggi.persistence.dao.UserApplication").add(create(instance)).list();
+            log.debug("find by example successful, result size: " + results.size());
+            return results;
+        } catch (RuntimeException re) {
+            log.error("find by example failed", re);
             throw re;
         }
     }

@@ -5,9 +5,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/messaging/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/admin/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/web/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/persistence/META-INF"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/persistence/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/persistence/mappings"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/persistence/test"/>
         <property name="context-root" value="Messaggi"/>
         <property name="java-output-path" value="/Messaggi/bin"/>
