@@ -98,6 +98,8 @@
             <fileset dir=".">
                 <include name="commons-logging.properties"/>
                 <include name="log4j.properties"/>
+                <include name="context.xml"/>
+                <include name="server.xml"/>
             </fileset>
         </copy>
   </target>
