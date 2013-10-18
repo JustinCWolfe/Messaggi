@@ -3,6 +3,12 @@
 
   <!-- set global properties for this build -->
   <property name="project" value="web"/>
+  <property environment="ENV"/>
+  <property file="deploy.properties" />
+  <property file="build.properties" />
+  <property name="j2ee.webapps" value="${ENV.CATALINA_HOME}${file.separator}webapps"/>
+  <property name="j2ee.lib" value="${ENV.CATALINA_HOME}${file.separator}lib"/>
+  <property name="j2ee.conf" value="${ENV.CATALINA_HOME}${file.separator}conf"/>
   <property name="src" location="src"/>
   <property name="test" location="test"/>
   <property name="build" location="classes"/>
@@ -12,6 +18,7 @@
   <path id="classpath">
       <path refid="base.module"/>
       <pathelement location="${build}"/>
+      <fileset refid="tomcat.lib"/>
   </path>
 
   <path id="classpath.test">
@@ -58,6 +65,11 @@
   </target>
 
   <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
+    <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
+        <fileset dir="${dist}/lib/">
+            <include name="${project}.jar"/>
+        </fileset>
+    </copy>
   </target>
 
   <target name="all" depends="clean,deploy" />
