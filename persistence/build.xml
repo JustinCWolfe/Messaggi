@@ -13,8 +13,7 @@
   <path id="classpath">
       <pathelement location="${build}"/>
       <fileset refid="commons-logging.lib"/>
-      <fileset refid="hibernate.lib"/>
-      <fileset refid="tomcat-ee-plus.lib"/>
+      <fileset refid="tomcat.lib"/>
   </path>
 
   <path id="classpath.test">
@@ -55,11 +54,7 @@
     <!-- Create the distribution directory -->
     <mkdir dir="${dist}/lib"/>
     <!-- Put everything in ${build} into the ${project}-${DSTAMP}.jar file -->
-    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}">
-      <fileset dir="mappings"> 
-        <include name="*.xml"/>
-      </fileset>
-    </jar>
+    <jar destfile="${dist}/lib/${project}.jar" basedir="${build}"/>
     <!-- Put everything in ${build-test} into the ${project}-test-${DSTAMP}.jar file -->
     <jar destfile="${dist}/lib/${project}-test.jar" basedir="${build-test}"/>
   </target>

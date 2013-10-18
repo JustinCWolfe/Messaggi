@@ -32,11 +32,4 @@
     <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
     -->
 
-  <!-- url: The JDBC connection url for connecting to your PostgreSQL database.  -->
-
-  <Resource name="jdbc/MessaggiDB" auth="Container" type="javax.sql.DataSource"
-               maxActive="100" maxIdle="30" maxWait="10000"
-               username="jcw_dev" password="jwolfema2226" driverClassName="org.postgresql.Driver"
-               url="jdbc:postgresql://localhost:5432/Messaggi"/>
-    
 </Context>
