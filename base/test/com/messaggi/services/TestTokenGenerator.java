@@ -8,7 +8,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
-import com.messaggi.util.JsonMoxyConfigurationContextResolver;
 
 public class TestTokenGenerator
 {
@@ -50,14 +48,12 @@ public class TestTokenGenerator
     @Test
     public void testGenerateToken()
     {
-        // The line bellow that registers MOXy feature can be
-        // omitted if FEATURE_AUTO_DISCOVERY_DISABLE is
-        // not disabled.
-        final Client client = ClientBuilder.newBuilder().register(MoxyJsonFeature.class)
-                .register(JsonMoxyConfigurationContextResolver.class).build();
-        WebTarget webTarget = client.target("http://localhost:8080/messaggi/services/util/token");
-        GenerateTokenResponse response = webTarget.request(MediaType.APPLICATION_XML_TYPE).get(
-                GenerateTokenResponse.class);
+        WebTarget utilWebTarget = webTarget.path("util");
+        WebTarget tokenWebTarget = utilWebTarget.path("token");
+        Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_JSON_TYPE);
+        Response response = invocationBuilder.get();
+        System.out.println(response.getStatus());
+        System.out.println(response.readEntity(GenerateTokenResponse.class));
     }
 
     @Test
