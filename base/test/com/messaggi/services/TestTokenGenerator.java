@@ -1,5 +1,8 @@
 package com.messaggi.services;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -8,63 +11,54 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
 
-public class TestTokenGenerator
+public class TestTokenGenerator extends MessaggiTestCase
 {
     private WebTarget webTarget;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
+    private static final int TOKEN_LENGTH = 36;
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    }
-
+    @Override
     @Before
     public void setUp() throws Exception
     {
         ClientConfig clientConfig = new ClientConfig();
-        //clientConfig.register(MyClientResponseFilter.class);
-        //clientConfig.register(new AnotherClientFilter());
         Client client = ClientBuilder.newClient(clientConfig);
         webTarget = client.target("http://localhost:8080/messaggi/services");
     }
 
-    @After
-    public void tearDown() throws Exception
-    {
-    }
-
     @Test
-    public void testGenerateToken()
+    public void testGenerateToken2()
     {
         WebTarget utilWebTarget = webTarget.path("util");
         WebTarget tokenWebTarget = utilWebTarget.path("token");
         Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_JSON_TYPE);
         Response response = invocationBuilder.get();
         System.out.println(response.getStatus());
-        System.out.println(response.readEntity(GenerateTokenResponse.class));
+        assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
+        GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
+        assertNotNull(gtr);
+        assertEquals(TOKEN_LENGTH, gtr.getToken().length());
     }
 
     @Test
-    public void testGenerateToken2() throws Exception
+    public void testGenerateToken3()
     {
         WebTarget utilWebTarget = webTarget.path("util");
-        WebTarget token2WebTarget = utilWebTarget.path("token2");
-        Invocation.Builder invocationBuilder = token2WebTarget.request(MediaType.TEXT_PLAIN_TYPE);
+        WebTarget tokenWebTarget = utilWebTarget.path("token_xml");
+        Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_XML_TYPE);
         Response response = invocationBuilder.get();
-        System.out.println(response.getStatus());
-        System.out.println(response.readEntity(String.class));
+        assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
+        GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
+        assertNotNull(gtr);
+        assertEquals(TOKEN_LENGTH, gtr.getToken().length());
     }
 }
 

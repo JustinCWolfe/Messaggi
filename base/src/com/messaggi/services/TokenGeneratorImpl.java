@@ -10,21 +10,27 @@ import javax.ws.rs.core.MediaType;
 @Path("/util")
 public class TokenGeneratorImpl implements TokenGenerator
 {
+    private String getToken()
+    {
+        return UUID.randomUUID().toString();
+    }
+
     @GET
     @Path("/token")
     @Produces(MediaType.APPLICATION_JSON)
     @Override
     public GenerateTokenResponse generateToken()
     {
-        return new GenerateTokenResponse(UUID.randomUUID().toString());
+        return new GenerateTokenResponse(getToken());
     }
 
     @GET
-    @Path("/token2")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String generateToken2()
+    @Path("/token_xml")
+    @Produces(MediaType.APPLICATION_XML)
+    @Override
+    public GenerateTokenResponse generateTokenXML()
     {
-        return UUID.randomUUID().toString();
+        return new GenerateTokenResponse(getToken());
     }
 }
 

@@ -7,11 +7,21 @@ public interface TokenGenerator
     @XmlRootElement
     public class GenerateTokenResponse
     {
-        private final String token;
+        private String token;
 
         public String getToken()
         {
             return token;
+        }
+
+        public void setToken(String token)
+        {
+            this.token = token;
+        }
+
+        public GenerateTokenResponse()
+        {
+
         }
 
         public GenerateTokenResponse(String token)
@@ -21,5 +31,7 @@ public interface TokenGenerator
     }
 
     public GenerateTokenResponse generateToken();
+
+    public GenerateTokenResponse generateTokenXML();
 }
 
