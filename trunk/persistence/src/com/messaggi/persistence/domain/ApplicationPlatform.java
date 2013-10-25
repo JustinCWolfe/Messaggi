@@ -3,6 +3,9 @@ package com.messaggi.persistence.domain;
 import java.util.HashSet;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class ApplicationPlatform
 {
     private UUID id;
@@ -63,6 +66,11 @@ public class ApplicationPlatform
     public void setAttributes(HashSet<ApplicationPlatformAttribute> attributes)
     {
         this.attributes = attributes;
+    }
+
+    public ApplicationPlatform()
+    {
+
     }
 }
 

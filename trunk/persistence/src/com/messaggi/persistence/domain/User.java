@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class User
 {
     private UUID id;
@@ -15,6 +18,8 @@ public class User
     private String phone;
 
     private int phoneParsed;
+
+    private String password;
 
     private Locale locale;
 
@@ -72,6 +77,16 @@ public class User
         this.phoneParsed = phoneParsed;
     }
 
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
+    }
+
     public Locale getLocale()
     {
         return locale;
@@ -100,6 +115,10 @@ public class User
     public void setApplications(HashSet<Application> applications)
     {
         this.applications = applications;
+    }
+    
+    public User ()
+    {
     }
 }
 
