@@ -3,6 +3,9 @@ package com.messaggi.persistence.domain;
 import java.util.HashSet;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Application
 {
     private UUID id;
@@ -63,6 +66,11 @@ public class Application
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    public Application()
+    {
+
     }
 }
 

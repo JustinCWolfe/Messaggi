@@ -3,6 +3,9 @@ package com.messaggi.persistence.domain;
 import java.util.HashSet;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Platform
 {
     public enum PlatformServiceName {
@@ -67,6 +70,11 @@ public class Platform
     public void setApplications(HashSet<Application> applications)
     {
         this.applications = applications;
+    }
+
+    public Platform()
+    {
+
     }
 }
 

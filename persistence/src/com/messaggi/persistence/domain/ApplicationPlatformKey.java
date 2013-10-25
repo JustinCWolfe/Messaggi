@@ -2,6 +2,9 @@ package com.messaggi.persistence.domain;
 
 import java.util.HashSet;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class ApplicationPlatformKey
 {
     private String key;
@@ -38,6 +41,11 @@ public class ApplicationPlatformKey
     public void setAttributes(HashSet<ApplicationPlatformAttribute> attributes)
     {
         this.attributes = attributes;
+    }
+
+    public ApplicationPlatformKey()
+    {
+
     }
 }
 

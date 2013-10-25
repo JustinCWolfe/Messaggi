@@ -25,7 +25,6 @@
   </path>
 
   <path id="classpath.test">
-      <pathelement location="${build}"/>
       <pathelement location="${build-test}"/>
       <path refid="classpath"/>
       <fileset refid="junit.lib"/>

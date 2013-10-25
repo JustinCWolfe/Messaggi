@@ -1,5 +1,8 @@
 package com.messaggi.persistence.domain;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class ApplicationPlatformAttribute
 {
     private ApplicationPlatform applicationPlatform;
@@ -36,6 +39,11 @@ public class ApplicationPlatformAttribute
     public void setValue(String value)
     {
         this.value = value;
+    }
+
+    public ApplicationPlatformAttribute()
+    {
+
     }
 }
 

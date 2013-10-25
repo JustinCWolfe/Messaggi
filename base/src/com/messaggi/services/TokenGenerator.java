@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public interface TokenGenerator
 {
     @XmlRootElement
-    public class GenerateTokenResponse
+    class GenerateTokenResponse
     {
         private String token;
 
@@ -30,8 +30,8 @@ public interface TokenGenerator
         }
     }
 
-    public GenerateTokenResponse generateToken();
+    GenerateTokenResponse generateToken();
 
-    public GenerateTokenResponse generateTokenXML();
+    GenerateTokenResponse generateTokenXML();
 }
 

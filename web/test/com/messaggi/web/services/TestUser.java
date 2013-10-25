@@ -1,4 +1,4 @@
-package com.messaggi.services;
+package com.messaggi.web.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -17,11 +17,9 @@ import org.junit.Test;
 import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
 
-public class TestTokenGenerator extends MessaggiTestCase
+public class TestUser extends MessaggiTestCase
 {
     private WebTarget webTarget;
-
-    private static final int TOKEN_LENGTH = 36;
 
     @Override
     @Before
@@ -33,7 +31,7 @@ public class TestTokenGenerator extends MessaggiTestCase
     }
 
     @Test
-    public void testGenerateToken()
+    public void test()
     {
         WebTarget utilWebTarget = webTarget.path("util");
         WebTarget tokenWebTarget = utilWebTarget.path("token");
@@ -44,21 +42,6 @@ public class TestTokenGenerator extends MessaggiTestCase
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
         GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
         assertNotNull(gtr);
-        assertEquals(TOKEN_LENGTH, gtr.getToken().length());
-    }
-
-    @Test
-    public void testGenerateTokenXML()
-    {
-        WebTarget utilWebTarget = webTarget.path("util");
-        WebTarget tokenWebTarget = utilWebTarget.path("token_xml");
-        Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_XML_TYPE);
-        Response response = invocationBuilder.get();
-        assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
-        GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
-        assertNotNull(gtr);
-        assertEquals(TOKEN_LENGTH, gtr.getToken().length());
     }
 }
 

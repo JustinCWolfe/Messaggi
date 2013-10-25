@@ -16,18 +16,21 @@
   <property name="dist"  location="dist"/>
 
   <path id="classpath">
+      <path refid="persistence.module"/>
       <path refid="base.module"/>
       <pathelement location="${build}"/>
+      <fileset refid="jre7.lib"/>
       <fileset refid="tomcat.lib"/>
+      <fileset refid="jersey.lib"/>
   </path>
 
   <path id="classpath.test">
       <path refid="base.test.module"/>
-      <pathelement location="${build}"/>
       <pathelement location="${build-test}"/>
       <path refid="classpath"/>
       <fileset refid="junit.lib"/>
       <fileset refid="hamcrest.lib"/>
+      <fileset refid="log4j.lib"/>
   </path>
 
   <target name="init">
