@@ -7,11 +7,24 @@
   <property environment="ENV"/>
   <property file="deploy.properties" />
   <property file="build.properties" />
+  <property name="j2ee.bin" value="${ENV.CATALINA_HOME}${file.separator}bin"/>
   <property name="j2ee.webapps" value="${ENV.CATALINA_HOME}${file.separator}webapps"/>
   <property name="j2ee.lib" value="${ENV.CATALINA_HOME}${file.separator}lib"/>
   <property name="j2ee.conf" value="${ENV.CATALINA_HOME}${file.separator}conf"/>
 
   <target name="init">
+  </target>
+
+  <target name="clean" description="clean up" >
+    <subant target="clean">
+      <filelist dir=".">       
+        <file name="persistence/build.xml"/>
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
+    </subant>
   </target>
 
   <target name="compile" depends="init" description="compile the source" >
@@ -26,8 +39,8 @@
     </subant>
   </target>
 
-  <target name="compile.test" depends="init" description="compile the source" >
-    <subant target="compile.test">
+  <target name="compile-test" depends="init" description="compile the source" >
+    <subant target="compile-test">
       <filelist dir=".">       
         <file name="base/build.xml"/>
         <file name="persistence/build.xml"/>
@@ -38,7 +51,7 @@
     </subant>
   </target>
 
-  <target name="dist" depends="compile,compile.test" description="generate the distribution" >
+  <target name="dist" depends="compile,compile-test" description="generate the distribution" >
     <subant target="dist">
       <filelist dir=".">       
         <file name="persistence/build.xml"/>
@@ -50,17 +63,17 @@
     </subant>
   </target>
 	
-    <target name="build.war" unless="isMinimalBuild">
-      <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
-            <webinf dir="WebContent/WEB-INF">
-                <include name="*"/>
-                <include name="**/*"/>
-                <exclude name="web.xml"/>
-            </webinf>
-            <classes dir="admin/src"/>
-            <classes dir="web/src"/>
-        </war>
-    </target>
+  <target name="build.war" unless="isMinimalBuild">
+    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+      <webinf dir="WebContent/WEB-INF">
+          <include name="*"/>
+          <include name="**/*"/>
+          <exclude name="web.xml"/>
+      </webinf>
+      <classes dir="admin/src"/>
+      <classes dir="web/src"/>
+    </war>
+  </target>
 
   <target name="deploy" depends="dist,build.war,deploy.war,deploy.3rdParty,configure.tomcat" description="deploy the jar files to tomcat" >
     <subant target="deploy">
@@ -85,33 +98,28 @@
       <fileset refid="postgresql.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="hamcrest.lib"/>
+      <fileset refid="beanutils.lib"/>
     </copy>
   </target>
 
   <target name="configure.tomcat" description="copy files to the locations that tomcat requires" >
     <copy todir="${j2ee.conf}" overwrite="true" flatten="true">
-            <fileset dir=".">
-                <include name="commons-logging.properties"/>
-                <include name="log4j.properties"/>
-                <include name="context.xml"/>
-                <include name="server.xml"/>
-            </fileset>
-        </copy>
+      <fileset dir="tomcat/conf">
+          <include name="commons-logging.properties"/>
+          <include name="log4j.properties"/>
+          <include name="context.xml"/>
+          <include name="server.xml"/>
+      </fileset>
+    </copy>
+    <copy todir="${j2ee.bin}" overwrite="true" flatten="true">
+      <fileset dir="tomcat/bin">
+          <include name="mshutdown.bat"/>
+          <include name="mstartup.bat"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="all" depends="clean,deploy" />
-
-  <target name="clean" description="clean up" >
-    <subant target="clean">
-      <filelist dir=".">       
-        <file name="persistence/build.xml"/>
-        <file name="base/build.xml"/>
-        <file name="messaging/build.xml"/>
-        <file name="web/build.xml"/>
-        <file name="admin/build.xml"/>
-      </filelist>
-    </subant>
-  </target>
 
 </project>
 

@@ -17,7 +17,7 @@ public class User
 
     private String phone;
 
-    private int phoneParsed;
+    private long phoneParsed;
 
     private String password;
 
@@ -67,12 +67,12 @@ public class User
         this.phone = phone;
     }
 
-    public int getPhoneParsed()
+    public long getPhoneParsed()
     {
         return phoneParsed;
     }
 
-    public void setPhoneParsed(int phoneParsed)
+    public void setPhoneParsed(long phoneParsed)
     {
         this.phoneParsed = phoneParsed;
     }
