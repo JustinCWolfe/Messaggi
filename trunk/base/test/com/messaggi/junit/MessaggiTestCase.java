@@ -8,7 +8,7 @@ import org.junit.Before;
 
 public class MessaggiTestCase
 {
-    private static final String DEFAULT_LOG4J_FILE_NAME = "./log4j.properties";
+    private static final String DEFAULT_LOG4J_FILE_NAME = "./tomcat/conf/log4j.properties";
 
     private static void configureLogging()
     {

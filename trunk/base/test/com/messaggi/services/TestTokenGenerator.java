@@ -27,6 +27,7 @@ public class TestTokenGenerator extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         ClientConfig clientConfig = new ClientConfig();
         Client client = ClientBuilder.newClient(clientConfig);
         webTarget = client.target("http://localhost:8080/messaggi/services");
