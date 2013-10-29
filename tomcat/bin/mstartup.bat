@@ -54,6 +54,7 @@ shift
 goto setArgs
 :doneSetArgs
 
-call "%EXECUTABLE%" start %CMD_LINE_ARGS%
+rem call "%EXECUTABLE%" start %CMD_LINE_ARGS%
+call "%EXECUTABLE%" jpda start %CMD_LINE_ARGS%
 
 :end
