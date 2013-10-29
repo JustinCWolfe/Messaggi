@@ -37,6 +37,10 @@
       <include name="media/*.jar"/>
     </fileset>
 
+    <fileset id="beanutils.lib" dir="${lib}/commons-beanutils-1.8.3">
+        <include name="commons-beanutils-1.8.3.jar"/>
+    </fileset>
+
     <fileset id="postgresql.lib" dir="${lib}/postgresql-9.2-1003">
         <include name="postgresql-9.2-1003.jdbc4.jar"/>
     </fileset>
