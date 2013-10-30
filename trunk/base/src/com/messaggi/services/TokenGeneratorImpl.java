@@ -17,18 +17,9 @@ public class TokenGeneratorImpl implements TokenGenerator
 
     @GET
     @Path("/token")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
     public GenerateTokenResponse generateToken()
-    {
-        return new GenerateTokenResponse(getToken());
-    }
-
-    @GET
-    @Path("/token_xml")
-    @Produces(MediaType.APPLICATION_XML)
-    @Override
-    public GenerateTokenResponse generateTokenXML()
     {
         return new GenerateTokenResponse(getToken());
     }

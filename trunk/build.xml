@@ -105,18 +105,34 @@
   <target name="configure.tomcat" description="copy files to the locations that tomcat requires" >
     <copy todir="${j2ee.conf}" overwrite="true" flatten="true">
       <fileset dir="tomcat/conf">
-          <include name="commons-logging.properties"/>
-          <include name="log4j.properties"/>
-          <include name="context.xml"/>
-          <include name="server.xml"/>
+        <include name="commons-logging.properties"/>
+        <include name="log4j.properties"/>
+        <include name="context.xml"/>
+        <include name="server.xml"/>
       </fileset>
     </copy>
     <copy todir="${j2ee.bin}" overwrite="true" flatten="true">
       <fileset dir="tomcat/bin">
-          <include name="mshutdown.bat"/>
-          <include name="mstartup.bat"/>
+        <include name="mshutdown.bat"/>
+        <include name="mstartup.bat"/>
       </fileset>
     </copy>
+    <!-- this only works on unix systems so commenting out for now.
+    <chmod perm="755">
+      <fileset dir="${j2ee.bin}">
+        <include name="mshutdown.bat"/>
+        <include name="mstartup.bat"/>
+      </fileset>
+    </chmod>
+    -->
+    <exec executable="chmod" dir="${j2ee.bin}" failonerror="true">
+      <arg value="755"/>
+      <arg value="mshutdown.bat"/>
+    </exec>
+    <exec executable="chmod" dir="${j2ee.bin}" failonerror="true">
+      <arg value="755"/>
+      <arg value="mstartup.bat"/>
+    </exec>
   </target>
 
   <target name="all" depends="clean,deploy" />

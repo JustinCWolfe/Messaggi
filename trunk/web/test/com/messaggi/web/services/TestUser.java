@@ -10,7 +10,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -19,7 +18,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.persistence.domain.User;
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
+import com.messaggi.web.services.User.UserRequest;
 
 public class TestUser extends MessaggiTestCase
 {
@@ -50,15 +51,16 @@ public class TestUser extends MessaggiTestCase
     @Test
     public void testRegisterNewUser()
     {
-        Form form = new Form ();
-        form.param ("name", NAME1);
-        form.param ("email", EMAIL1);
-        form.param ("phone", PHONE1);
-        form.param ("password", PASSWD1);
-        form.param ("locale", LOCALE1.toLanguageTag());
+        User user = new User();
+        user.setName(NAME1);
+        user.setEmail(EMAIL1);
+        user.setPhone(PHONE1);
+        user.setPassword(PASSWD1);
+        user.setLocale(LOCALE1);
+        UserRequest request = new UserRequest(user);
 
-        Invocation.Builder invocationBuilder = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
-        Response response = invocationBuilder.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+        Invocation.Builder invocationBuilder = webTarget.request();
+        Response response = invocationBuilder.post(Entity.entity(request, MediaType.APPLICATION_JSON_TYPE));
         System.out.println(response.getStatus());
         assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());

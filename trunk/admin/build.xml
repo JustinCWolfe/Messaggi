@@ -59,13 +59,13 @@
 
   <target name="compile" depends="init" description="compile the source" >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac classpathref="classpath" srcdir="${src}" destdir="${build}"/>
+    <javac classpathref="classpath" srcdir="${src}" destdir="${build}" debug="true" debuglevel="lines,vars,source" />
     <delete file="${src}/package-info.java"/>
   </target>
 
   <target name="compile-test" depends="init-test" description="compile the source" >
     <!-- Compile the java code from ${test} into ${build-test} -->
-    <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}"/>
+    <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}" debug="true" debuglevel="lines,vars,source" />
   </target>
 
   <target name="dist" description="generate the distribution" >

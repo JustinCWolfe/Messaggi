@@ -6,6 +6,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 public interface User
 {
     @XmlRootElement
+    class UserRequest
+    {
+        @XmlElement(name = "user")
+        private com.messaggi.persistence.domain.User user;
+
+        public com.messaggi.persistence.domain.User getUser()
+        {
+            return user;
+        }
+
+        public void setUser(com.messaggi.persistence.domain.User user)
+        {
+            this.user = user;
+        }
+
+        public UserRequest()
+        {
+
+        }
+
+        public UserRequest(com.messaggi.persistence.domain.User user)
+        {
+            this.user = user;
+        }
+    }
+    
+    @XmlRootElement
     class UserResponse
     {
         @XmlElement(name = "user")
@@ -32,7 +59,7 @@ public interface User
         }
     }
 
-    UserResponse RegisterNewUser(String name, String email, String phone, String password, String locale);
+    UserResponse RegisterNewUser(UserRequest request);
 
     UserResponse UpdateUserName(String newName);
 
