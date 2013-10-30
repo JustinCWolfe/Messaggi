@@ -2,9 +2,8 @@ package com.messaggi.web.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.ws.rs.FormParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -21,31 +20,32 @@ import com.messaggi.persistence.dao.UserDAO;
 public class UserImpl implements User
 {
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Override
-    public UserResponse RegisterNewUser(@FormParam("name") String name, @FormParam("email") String email,
-            @FormParam("phone") String phone, @FormParam("password") String password, @FormParam("locale") String locale)
+    public UserResponse RegisterNewUser(UserRequest request)
     {
         UserResponse response = new UserResponse();
+        if (request.getUser() != null) {
+            com.messaggi.persistence.domain.User newUser = new com.messaggi.persistence.domain.User();
+            newUser.setName(request.getUser().getName());
+            newUser.setEmail(request.getUser().getEmail());
+            newUser.setPhone(request.getUser().getPhone());
+            newUser.setPassword(request.getUser().getPassword());
+            newUser.setLocale(request.getUser().getLocale());
+            List<com.messaggi.persistence.domain.User> newUsers = new ArrayList<>();
+            newUsers.add(newUser);
 
-        com.messaggi.persistence.domain.User newUser = new com.messaggi.persistence.domain.User();
-        newUser.setName(name);
-        newUser.setEmail(email);
-        newUser.setPhone(phone);
-        newUser.setPassword(password);
-        newUser.setLocale(Locale.forLanguageTag(locale));
-        List<com.messaggi.persistence.domain.User> newUsers = new ArrayList<>();
-        newUsers.add(newUser);
+            DAOFactory daoFactory = DAOFactory.getDAOFactory(Factory.PostgreSQL);
+            UserDAO userDAO = daoFactory.getUserDAO();
+            try {
+                List<com.messaggi.persistence.domain.User> users = userDAO.insertUser(newUsers);
+                if (users.size() > 0) {
+                    response.setUser(users.get(0));
+                }
+            } catch (DAOException e) {
 
-        DAOFactory daoFactory = DAOFactory.getDAOFactory(Factory.PostgreSQL);
-        UserDAO userDAO = daoFactory.getUserDAO();
-        try {
-            List<com.messaggi.persistence.domain.User> users = userDAO.insertUser(newUsers);
-            if (users.size() > 0) {
-                response.setUser(users.get(0));
             }
-        } catch (DAOException e) {
-
         }
         return response;
     }

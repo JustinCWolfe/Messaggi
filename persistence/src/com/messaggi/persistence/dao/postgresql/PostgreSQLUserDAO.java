@@ -36,7 +36,8 @@ public class PostgreSQLUserDAO implements UserDAO
                 stmt.setString(2, newVersion.getEmail());
                 stmt.setString(3, newVersion.getPhone());
                 stmt.setString(4, newVersion.getPassword());
-                stmt.setString(5, newVersion.getLocale().toLanguageTag());
+                String locale = (newVersion.getLocale() != null) ? newVersion.getLocale().toLanguageTag() : null;
+                stmt.setString(5, locale);
 
                 User user = null;
                 try {

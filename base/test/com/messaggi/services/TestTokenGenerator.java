@@ -34,7 +34,7 @@ public class TestTokenGenerator extends MessaggiTestCase
     }
 
     @Test
-    public void testGenerateToken()
+    public void testGenerateTokenJSON()
     {
         WebTarget utilWebTarget = webTarget.path("util");
         WebTarget tokenWebTarget = utilWebTarget.path("token");
@@ -52,7 +52,7 @@ public class TestTokenGenerator extends MessaggiTestCase
     public void testGenerateTokenXML()
     {
         WebTarget utilWebTarget = webTarget.path("util");
-        WebTarget tokenWebTarget = utilWebTarget.path("token_xml");
+        WebTarget tokenWebTarget = utilWebTarget.path("token");
         Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_XML_TYPE);
         Response response = invocationBuilder.get();
         assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());

@@ -31,7 +31,5 @@ public interface TokenGenerator
     }
 
     GenerateTokenResponse generateToken();
-
-    GenerateTokenResponse generateTokenXML();
 }
 
