@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import com.messaggi.persistence.dao.DAOException;
 import com.messaggi.persistence.dao.DAOException.ErrorCode;
@@ -19,7 +18,7 @@ import com.messaggi.persistence.domain.User;
 
 public class PostgreSQLUserDAO implements UserDAO
 {
-    private static Log log = LogFactory.getLog(PostgreSQLUserDAO.class);
+    private static Logger log = Logger.getLogger(PostgreSQLUserDAO.class);
 
     @Override
     public List<User> insertUser(List<User> newVersions) throws DAOException

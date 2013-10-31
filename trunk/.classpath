@@ -7,7 +7,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jersey"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.3/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/postgresql-9.2-1003/postgresql-9.2-1003.jdbc4.jar"/>
 	<classpathentry kind="lib" path="lib/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/org.hamcrest_1.3.0/hamcrest-core-1.3.jar"/>
