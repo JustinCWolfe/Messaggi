@@ -4,12 +4,9 @@
 
   <!-- set global properties for this build -->
   <property name="project" value="persistence"/>
-   <property environment="ENV"/>
-  <property file="deploy.properties" />
-  <property file="build.properties" />
-  <property name="j2ee.webapps" value="${ENV.CATALINA_HOME}${file.separator}webapps"/>
-  <property name="j2ee.lib" value="${ENV.CATALINA_HOME}${file.separator}lib"/>
-  <property name="j2ee.conf" value="${ENV.CATALINA_HOME}${file.separator}conf"/>
+  <property environment="ENV"/>
+  <property file="../deploy.properties" />
+  <property file="../build.properties" />
   <property name="src" location="src"/>
   <property name="test" location="test"/>
   <property name="build" location="classes"/>
@@ -18,7 +15,7 @@
 
   <path id="classpath">
       <pathelement location="${build}"/>
-      <fileset refid="commons-logging.lib"/>
+      <fileset refid="log4j.lib"/>
       <fileset refid="tomcat.lib"/>
       <fileset refid="beanutils.lib"/>
   </path>
@@ -50,6 +47,7 @@
     <delete dir="${build-test}"/>
     <delete dir="${dist}"/>
     <delete file="${src}/package-info.java"/>
+    <delete file="../${messaggi.web.lib}/${project}.jar"/>
   </target>
 
   <target name="init-test">
@@ -80,7 +78,7 @@
   </target>
 
   <target name="deploy" description="deploy the jar files to tomcat" >
-    <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
+    <copy todir="../${messaggi.web.lib}" overwrite="true" flatten="true">
         <fileset dir="${dist}/lib/">
             <include name="${project}.jar"/>
         </fileset>

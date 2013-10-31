@@ -8,12 +8,6 @@
         <include name="log4j-1.2.17.jar"/>
     </fileset>
 
-    <fileset id="commons-logging.lib" dir="${lib}/commons-logging-1.1.3">
-        <include name="commons-logging-1.1.3.jar"/>
-        <include name="commons-logging-adapters-1.1.3.jar"/>
-        <include name="commons-logging-api-1.1.3.jar"/>
-    </fileset>
-
     <fileset id="junit.lib" dir="${lib}/org.junit_4.11.0">
         <include name="junit-4.11.jar"/>
     </fileset>

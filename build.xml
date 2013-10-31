@@ -62,20 +62,8 @@
       </filelist>
     </subant>
   </target>
-	
-  <target name="build.war" unless="isMinimalBuild">
-    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
-      <webinf dir="WebContent/WEB-INF">
-          <include name="*"/>
-          <include name="**/*"/>
-          <exclude name="web.xml"/>
-      </webinf>
-      <classes dir="admin/src"/>
-      <classes dir="web/src"/>
-    </war>
-  </target>
 
-  <target name="deploy" depends="dist,build.war,deploy.war,deploy.3rdParty,configure.tomcat" description="deploy the jar files to tomcat" >
+  <target name="deploy" depends="dist" description="deploy the jar files to tomcat" >
     <subant target="deploy">
       <filelist dir=".">       
         <file name="persistence/build.xml"/>
@@ -87,26 +75,37 @@
     </subant>
   </target>
 
-  <target name="deploy.war">
-      <unzip src="${application}.war" dest="${j2ee.webapps}/${application}"/>
-  </target>
-
-  <target name="deploy.3rdParty">
-    <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
-      <fileset refid="commons-logging.lib"/>
+  <target name="deploy-3rdParty">
+    <copy todir="${messaggi.web.lib}" overwrite="true" flatten="true">
       <fileset refid="log4j.lib"/>
       <fileset refid="postgresql.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="hamcrest.lib"/>
       <fileset refid="beanutils.lib"/>
     </copy>
+    <copy todir="${messaggi.web}" overwrite="true" flatten="true">
+      <fileset dir=".">
+        <include name="log4j.properties"/>
+      </fileset>
+    </copy>
   </target>
 
-  <target name="configure.tomcat" description="copy files to the locations that tomcat requires" >
+  <target name="build-war" depends="deploy,deploy-3rdParty" unless="isMinimalBuild">
+    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+      <webinf dir="WebContent/WEB-INF">
+          <include name="*"/>
+          <include name="**/*"/>
+          <exclude name="web.xml"/>
+      </webinf>
+      <classes dir="admin/src"/>
+      <classes dir="web/src"/>
+    </war>
+  </target>
+
+  <target name="deploy-tomcat" depends="build-war">
+    <unzip src="${application}.war" dest="${j2ee.webapps}/${application}"/>
     <copy todir="${j2ee.conf}" overwrite="true" flatten="true">
       <fileset dir="tomcat/conf">
-        <include name="commons-logging.properties"/>
-        <include name="log4j.properties"/>
         <include name="context.xml"/>
         <include name="server.xml"/>
       </fileset>
@@ -135,7 +134,7 @@
     </exec>
   </target>
 
-  <target name="all" depends="clean,deploy" />
+  <target name="all" depends="clean,deploy-tomcat" />
 
 </project>
 
