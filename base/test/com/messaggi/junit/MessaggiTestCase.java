@@ -6,7 +6,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.junit.After;
 import org.junit.Before;
 
-public class MessaggiTestCase
+public abstract class MessaggiTestCase
 {
     private static final String DEFAULT_LOG4J_FILE_NAME = "log4j.properties";
 
