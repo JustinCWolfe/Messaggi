@@ -17,12 +17,12 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.junit.WebServiceTestCase;
 import com.messaggi.persistence.domain.User;
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
 import com.messaggi.web.services.User.UserRequest;
 
-public class TestUser extends MessaggiTestCase
+public class TestUser extends WebServiceTestCase
 {
     private WebTarget webTarget;
 

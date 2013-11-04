@@ -14,10 +14,10 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.junit.WebServiceTestCase;
 import com.messaggi.services.TokenGenerator.GenerateTokenResponse;
 
-public class TestTokenGenerator extends MessaggiTestCase
+public class TestTokenGenerator extends WebServiceTestCase
 {
     private WebTarget webTarget;
 
@@ -40,7 +40,6 @@ public class TestTokenGenerator extends MessaggiTestCase
         WebTarget tokenWebTarget = utilWebTarget.path("token");
         Invocation.Builder invocationBuilder = tokenWebTarget.request(MediaType.APPLICATION_JSON_TYPE);
         Response response = invocationBuilder.get();
-        System.out.println(response.getStatus());
         assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
         GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
