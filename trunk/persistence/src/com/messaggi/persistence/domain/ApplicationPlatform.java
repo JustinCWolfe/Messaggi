@@ -1,16 +1,15 @@
 package com.messaggi.persistence.domain;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class ApplicationPlatform
 {
-    private UUID id;
+    private Long id;
 
-    private UUID token;
+    private Long token;
 
     private Application application;
 
@@ -18,22 +17,22 @@ public class ApplicationPlatform
 
     private HashSet<ApplicationPlatformAttribute> attributes;
 
-    public UUID getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId(UUID id)
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public UUID getToken()
+    public Long getToken()
     {
         return token;
     }
 
-    public void setToken(UUID token)
+    public void setToken(Long token)
     {
         this.token = token;
     }

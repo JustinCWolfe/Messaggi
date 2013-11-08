@@ -3,7 +3,7 @@ package com.messaggi.persistence.dao;
 public class DAOException extends Exception
 {
     public enum ErrorCode { 
-        FAIL_TO_INSERT, UPDATE_FAILED, SQL_ERROR, CLONE_ERROR;
+        FAIL_TO_INSERT, UPDATE_FAILED, INVALID_CRITERIA, SQL_ERROR, CLONE_ERROR;
     }
     
     private static final long serialVersionUID = 362769899858073402L;

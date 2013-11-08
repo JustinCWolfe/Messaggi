@@ -26,17 +26,29 @@ public class TestUser extends WebServiceTestCase
 {
     private WebTarget webTarget;
 
-    private static final String NAME1 = "Justin C. Wolfe";
+    private static final String NAME1 = "Test User 1";
 
-    private static final String EMAIL1 = "jcw_222@yahoo.com";
+    private static final String NAME2 = "Test User 2";
+
+    private static final String EMAIL1 = "test_user1@yahoo.com";
+
+    private static final String EMAIL2 = "test_user2@yahoo.com";
 
     private static final String PHONE1 = "617-549-2403";
 
-    private static final String PASSWD1 = "mypassword";
+    private static final String PHONE2 = "617-549-8277";
+
+    private static final String PASSWD1 = "test_user_1_pwd";
+
+    private static final String PASSWD2 = "test_user_2_pwd";
 
     private static final Locale LOCALE1 = Locale.US;
 
-    private static final long PHONE_PARSED1 = 6175492403L;
+    private static final Locale LOCALE2 = Locale.ITALY;
+
+    private static final long PHONE1_PARSED = 6175492403L;
+
+    private static final long PHONE2_PARSED = 6175498277L;
 
     @Override
     @Before
@@ -66,6 +78,29 @@ public class TestUser extends WebServiceTestCase
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
         GenerateTokenResponse gtr = response.readEntity(GenerateTokenResponse.class);
         assertNotNull(gtr);
+    }
+
+    @Test
+    public void testGetUserByEmail()
+    {
+
+    }
+
+    @Test
+    public void testGetUserById()
+    {
+
+    }
+
+    @Test
+    public void testUpdateUser()
+    {
+
+    }
+
+    @Test
+    public void testInactivateUserById()
+    {
     }
 }
 

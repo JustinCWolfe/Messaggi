@@ -18,6 +18,7 @@
       <fileset refid="log4j.lib"/>
       <fileset refid="tomcat.lib"/>
       <fileset refid="beanutils.lib"/>
+      <fileset refid="commons-logging.lib"/>
   </path>
 
   <path id="classpath.test">
