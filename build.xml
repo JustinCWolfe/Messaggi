@@ -82,6 +82,7 @@
       <fileset refid="jersey.lib"/>
       <fileset refid="hamcrest.lib"/>
       <fileset refid="beanutils.lib"/>
+      <fileset refid="commons-logging.lib"/>
     </copy>
     <copy todir="${messaggi.web}" overwrite="true" flatten="true">
       <fileset dir=".">

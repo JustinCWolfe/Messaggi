@@ -1,7 +1,6 @@
 package com.messaggi.persistence.domain;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,22 +11,22 @@ public class Platform
         iOS, Android
     }
 
-    private UUID id;
+    private Long id;
 
     private String name;
 
     private PlatformServiceName serviceName;
 
-    private boolean active;
+    private Boolean active;
 
     private HashSet<Application> applications;
 
-    public UUID getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId(UUID id)
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -52,12 +51,12 @@ public class Platform
         this.serviceName = serviceName;
     }
 
-    public boolean isActive()
+    public Boolean getActive()
     {
         return active;
     }
 
-    public void setActive(boolean active)
+    public void setActive(Boolean active)
     {
         this.active = active;
     }

@@ -1,113 +1,156 @@
 package com.messaggi.web.services;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.messaggi.persistence.dao.DAOException;
 import com.messaggi.persistence.dao.DAOFactory;
-import com.messaggi.persistence.dao.DAOFactory.Factory;
 import com.messaggi.persistence.dao.UserDAO;
 
 @Path("/user")
 public class UserImpl implements User
 {
+    private static UserDAO getDAO()
+    {
+        return DAOFactory.getDAOFactory(DAOFactory.Factory.PostgreSQL).getUserDAO();
+    }
+
+    private static List<com.messaggi.persistence.domain.User> getDAOParameters(com.messaggi.persistence.domain.User user)
+    {
+        List<com.messaggi.persistence.domain.User> parameters = new ArrayList<>();
+        parameters.add(user);
+        return parameters;
+    }
+
+    private <T> void validateRequest(T requestParameter) throws WebServiceException
+    {
+        if (requestParameter == null) {
+            throw new WebServiceException(WebServiceException.ErrorCode.INVALID_REQUEST,
+                    Messages.MISSING_PATH_PARAMETER);
+        }
+    }
+
+    private void validateRequest(UserRequest request) throws WebServiceException
+    {
+        if (request.getUser() == null) {
+            throw new WebServiceException(WebServiceException.ErrorCode.INVALID_REQUEST,
+                    Messages.USER_NOT_SET_IN_REQUEST);
+        }
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public UserResponse RegisterNewUser(UserRequest request)
+    public Response registerNewUser(@Context UriInfo uriInfo, UserRequest request) throws WebServiceException
     {
+        validateRequest(request);
         UserResponse response = new UserResponse();
-        if (request.getUser() != null) {
-            com.messaggi.persistence.domain.User newUser = new com.messaggi.persistence.domain.User();
-            newUser.setName(request.getUser().getName());
-            newUser.setEmail(request.getUser().getEmail());
-            newUser.setPhone(request.getUser().getPhone());
-            newUser.setPassword(request.getUser().getPassword());
-            newUser.setLocale(request.getUser().getLocale());
-            List<com.messaggi.persistence.domain.User> newUsers = new ArrayList<>();
-            newUsers.add(newUser);
-
-            DAOFactory daoFactory = DAOFactory.getDAOFactory(Factory.PostgreSQL);
-            UserDAO userDAO = daoFactory.getUserDAO();
-            try {
-                List<com.messaggi.persistence.domain.User> users = userDAO.insertUser(newUsers);
-                if (users.size() > 0) {
-                    response.setUser(users.get(0));
-                }
-            } catch (DAOException e) {
-
+        String uriFragment = null;
+        try {
+            List<com.messaggi.persistence.domain.User> users = getDAO().insertUser(getDAOParameters(request.getUser()));
+            if (users.size() > 0) {
+                com.messaggi.persistence.domain.User user = users.get(0);
+                response.setUser(user);
+                uriFragment = String.format(NEW_USER_URI_FRAGMENT_FORMAT, user.getId().toString());
             }
+        } catch (DAOException e) {
+            throw new WebServiceException(WebServiceException.ErrorCode.FAILED_TO_CREATE, e.getMessage());
         }
-        return response;
-    }
-
-    @Override
-    public UserResponse UpdateUserName(String newName)
-    {
-
-        return new UserResponse();
-    }
-
-    @Override
-    public UserResponse UpdateUserEmail(String newEmail)
-    {
-
-        return new UserResponse();
-    }
-
-    @Override
-    public UserResponse UpdateUserPhone(String newPhone)
-    {
-
-        return new UserResponse();
-    }
-
-    @Override
-    public UserResponse UpdateUserPassword(String newPassword)
-    {
-
-        return new UserResponse();
-    }
-
-    @Override
-    public UserResponse UpdateUserLocale(String newLocale)
-    {
-
-        return new UserResponse();
-    }
-
-    @Override
-    public UserResponse InactivateUser()
-    {
-
-        return new UserResponse();
-    }
-
-    @GET
-    @Path("/id/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Override
-    public UserResponse GetUserById(@PathParam("id") String id)
-    {
-        return new UserResponse(new com.messaggi.persistence.domain.User());
+        URI newResourceURI = uriInfo.getAbsolutePath().resolve(uriFragment);
+        return Response.status(Response.Status.CREATED).contentLocation(newResourceURI).entity(response).build();
     }
 
     @GET
     @Path("/email/{email}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public UserResponse GetUserByEmail(@PathParam("email") String email)
+    public Response getUserByEmail(@PathParam("email") String email) throws WebServiceException
     {
-        return new UserResponse(new com.messaggi.persistence.domain.User());
+        validateRequest(email);
+        UserResponse response = new UserResponse();
+        com.messaggi.persistence.domain.User prototype = new com.messaggi.persistence.domain.User();
+        prototype.setEmail(email);
+        try {
+            List<com.messaggi.persistence.domain.User> users = getDAO().selectUser(getDAOParameters(prototype));
+            if (users.size() > 0) {
+                response.setUser(users.get(0));
+            }
+        } catch (DAOException e) {
+            throw new WebServiceException(WebServiceException.ErrorCode.FAILED_TO_READ, e.getMessage());
+        }
+        return Response.status(Response.Status.OK).entity(response).build();
+    }
+
+    @GET
+    @Path("/id/{id}")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Override
+    public Response getUserById(@PathParam("id") Long id) throws WebServiceException
+    {
+        validateRequest(id);
+        UserResponse response = new UserResponse();
+        com.messaggi.persistence.domain.User prototype = new com.messaggi.persistence.domain.User();
+        prototype.setId(id);
+        try {
+            List<com.messaggi.persistence.domain.User> users = getDAO().selectUser(getDAOParameters(prototype));
+            if (users.size() > 0) {
+                response.setUser(users.get(0));
+            }
+        } catch (DAOException e) {
+            throw new WebServiceException(WebServiceException.ErrorCode.FAILED_TO_READ, e.getMessage());
+        }
+        return Response.status(Response.Status.OK).entity(response).build();
+    }
+
+    @PUT
+    @Path("/id/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Override
+    public Response updateUser(@PathParam("id") Long id, UserRequest request) throws WebServiceException
+    {
+        validateRequest(request);
+        // Verify that the user id in the uri and the request body are the same.
+        if (!id.equals(request.getUser().getId().toString())) {
+            throw new WebServiceException(WebServiceException.ErrorCode.INVALID_REQUEST,
+                    Messages.PATH_PARAMETER_REQUEST_BODY_MISMATCH);
+        }
+        try {
+            getDAO().updateUser(getDAOParameters(request.getUser()));
+        } catch (DAOException e) {
+            throw new WebServiceException(WebServiceException.ErrorCode.FAILED_TO_UPDATE, e.getMessage());
+        }
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/id/{id}")
+    @Override
+    public Response inactivateUserById(Long id) throws WebServiceException
+    {
+        validateRequest(id);
+        com.messaggi.persistence.domain.User prototype = new com.messaggi.persistence.domain.User();
+        prototype.setId(id);
+        try {
+            getDAO().deleteUser(getDAOParameters(prototype));
+        } catch (DAOException e) {
+            throw new WebServiceException(WebServiceException.ErrorCode.FAILED_TO_UPDATE, e.getMessage());
+        }
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
-

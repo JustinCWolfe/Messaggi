@@ -2,14 +2,13 @@ package com.messaggi.persistence.domain;
 
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class User
 {
-    private UUID id;
+    private Long id;
 
     private String name;
 
@@ -17,22 +16,22 @@ public class User
 
     private String phone;
 
-    private long phoneParsed;
+    private String phoneParsed;
 
     private String password;
 
     private Locale locale;
 
-    private boolean active;
+    private Boolean active;
 
     private HashSet<Application> applications;
 
-    public UUID getId()
+    public Long getId()
     {
         return id;
     }
 
-    public void setId(UUID id)
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -67,12 +66,12 @@ public class User
         this.phone = phone;
     }
 
-    public long getPhoneParsed()
+    public String getPhoneParsed()
     {
         return phoneParsed;
     }
 
-    public void setPhoneParsed(long phoneParsed)
+    public void setPhoneParsed(String phoneParsed)
     {
         this.phoneParsed = phoneParsed;
     }
@@ -97,12 +96,12 @@ public class User
         this.locale = locale;
     }
 
-    public boolean isActive()
+    public Boolean getActive()
     {
         return active;
     }
 
-    public void setActive(boolean active)
+    public void setActive(Boolean active)
     {
         this.active = active;
     }

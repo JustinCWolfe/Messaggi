@@ -1,10 +1,23 @@
 package com.messaggi.web.services;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 public interface User
 {
+    class Messages
+    {
+        protected static final String USER_NOT_SET_IN_REQUEST = "Request did not contain an instance of User.";
+
+        protected static final String MISSING_PATH_PARAMETER = "Request did not contain required path parameter.";
+
+        protected static final String PATH_PARAMETER_REQUEST_BODY_MISMATCH = "Path parameter does not match request body.";
+    }
+
+    static final String NEW_USER_URI_FRAGMENT_FORMAT = "/id/{0}";
+
     @XmlRootElement
     class UserRequest
     {
@@ -59,22 +72,14 @@ public interface User
         }
     }
 
-    UserResponse RegisterNewUser(UserRequest request);
+    Response registerNewUser(UriInfo uriInfo, UserRequest request) throws WebServiceException;
 
-    UserResponse UpdateUserName(String newName);
+    Response getUserByEmail(String email) throws WebServiceException;
 
-    UserResponse UpdateUserEmail(String newEmail);
+    Response getUserById(Long id) throws WebServiceException;
 
-    UserResponse UpdateUserPhone(String newPhone);
+    Response updateUser(Long id, UserRequest request) throws WebServiceException;
 
-    UserResponse UpdateUserPassword(String newPassword);
-
-    UserResponse UpdateUserLocale(String newLocale);
-
-    UserResponse InactivateUser();
-
-    UserResponse GetUserById(String id);
-
-    UserResponse GetUserByEmail(String email);
+    Response inactivateUserById(Long id) throws WebServiceException;
 }
 
