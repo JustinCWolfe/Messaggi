@@ -7,9 +7,13 @@ import java.sql.SQLException;
 import com.messaggi.persistence.dao.ApplicationDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformAttributeDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformDAO;
-import com.messaggi.persistence.dao.ApplicationPlatformKeyDAO;
+import com.messaggi.persistence.dao.ApplicationPlatformDeviceDAO;
+import com.messaggi.persistence.dao.ApplicationPlatformMsgLogDAO;
 import com.messaggi.persistence.dao.DAOFactory;
+import com.messaggi.persistence.dao.DeviceAttributeDAO;
+import com.messaggi.persistence.dao.DeviceDAO;
 import com.messaggi.persistence.dao.PlatformDAO;
+import com.messaggi.persistence.dao.UserApplicationDAO;
 import com.messaggi.persistence.dao.UserDAO;
 
 public class PostgreSQLDAOFactory extends DAOFactory
@@ -55,9 +59,27 @@ public class PostgreSQLDAOFactory extends DAOFactory
     }
 
     @Override
-    public ApplicationPlatformKeyDAO getApplicationPlatformKeyDAO()
+    public ApplicationPlatformDeviceDAO getApplicationPlatformDeviceDAO()
     {
-        return new PostgreSQLApplicationPlatformKeyDAO();
+        return new PostgreSQLApplicationPlatformDeviceDAO();
+    }
+
+    @Override
+    public ApplicationPlatformMsgLogDAO getApplicationPlatformMsgLogDAO()
+    {
+        return new PostgreSQLApplicationPlatformMsgLogDAO();
+    }
+
+    @Override
+    public DeviceDAO getDeviceDAO()
+    {
+        return new PostgreSQLDeviceDAO();
+    }
+
+    @Override
+    public DeviceAttributeDAO getDeviceAttributeDAO()
+    {
+        return new PostgreSQLDeviceAttributeDAO();
     }
 
     @Override
@@ -70,5 +92,11 @@ public class PostgreSQLDAOFactory extends DAOFactory
     public UserDAO getUserDAO()
     {
         return new PostgreSQLUserDAO();
+    }
+
+    @Override
+    public UserApplicationDAO getUserApplicationDAO()
+    {
+        return new PostgreSQLUserApplicationDAO();
     }
 }
