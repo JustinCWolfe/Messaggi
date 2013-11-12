@@ -16,11 +16,15 @@ public abstract class DAOFactory
 
     public abstract ApplicationPlatformDeviceDAO getApplicationPlatformDeviceDAO();
 
+    public abstract ApplicationPlatformKeyDAO getApplicationPlatformKeyDAO();
+
     public abstract ApplicationPlatformMsgLogDAO getApplicationPlatformMsgLogDAO();
 
     public abstract DeviceDAO getDeviceDAO();
 
     public abstract DeviceAttributeDAO getDeviceAttributeDAO();
+
+    public abstract DeviceKeyDAO getDeviceKeyDAO();
 
     public abstract PlatformDAO getPlatformDAO();
 

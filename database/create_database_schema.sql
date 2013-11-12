@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.3.1
 -- Dumped by pg_dump version 9.3.1
--- Started on 2013-11-11 21:13:58
+-- Started on 2013-11-12 14:43:57
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,7 +22,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2089 (class 0 OID 0)
+-- TOC entry 2099 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
@@ -37,7 +37,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 171 (class 1259 OID 24589)
+-- TOC entry 170 (class 1259 OID 16395)
 -- Name: application; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -51,8 +51,8 @@ CREATE TABLE application (
 ALTER TABLE public.application OWNER TO jcw_dev;
 
 --
--- TOC entry 2090 (class 0 OID 0)
--- Dependencies: 171
+-- TOC entry 2100 (class 0 OID 0)
+-- Dependencies: 170
 -- Name: TABLE application; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -60,7 +60,7 @@ COMMENT ON TABLE application IS 'Applications will not be deleted from the syste
 
 
 --
--- TOC entry 207 (class 1255 OID 24740)
+-- TOC entry 201 (class 1255 OID 16399)
 -- Name: m_create_application(character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -84,7 +84,7 @@ END; $$;
 ALTER FUNCTION public.m_create_application(i_name character varying) OWNER TO jcw_dev;
 
 --
--- TOC entry 173 (class 1259 OID 24595)
+-- TOC entry 171 (class 1259 OID 16400)
 -- Name: application_platform; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -99,8 +99,8 @@ CREATE TABLE application_platform (
 ALTER TABLE public.application_platform OWNER TO jcw_dev;
 
 --
--- TOC entry 2091 (class 0 OID 0)
--- Dependencies: 173
+-- TOC entry 2101 (class 0 OID 0)
+-- Dependencies: 171
 -- Name: TABLE application_platform; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -111,8 +111,8 @@ A platform can be used across multiple applications.';
 
 
 --
--- TOC entry 2092 (class 0 OID 0)
--- Dependencies: 173
+-- TOC entry 2102 (class 0 OID 0)
+-- Dependencies: 171
 -- Name: COLUMN application_platform.token; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -122,7 +122,7 @@ This token will be passed for subsequent service calls.';
 
 
 --
--- TOC entry 217 (class 1255 OID 24751)
+-- TOC entry 202 (class 1255 OID 16403)
 -- Name: m_create_application_platform(bigint, bigint, uuid); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -143,7 +143,42 @@ END; $$;
 ALTER FUNCTION public.m_create_application_platform(i_application_id bigint, i_platform_id bigint, i_token uuid) OWNER TO jcw_dev;
 
 --
--- TOC entry 180 (class 1259 OID 24620)
+-- TOC entry 177 (class 1259 OID 16446)
+-- Name: application_platform_attribute; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
+--
+
+CREATE TABLE application_platform_attribute (
+    application_platform_id bigint NOT NULL,
+    application_platform_key_key character varying(20) NOT NULL,
+    value character varying(1024) NOT NULL
+);
+
+
+ALTER TABLE public.application_platform_attribute OWNER TO jcw_dev;
+
+--
+-- TOC entry 225 (class 1255 OID 16578)
+-- Name: m_create_application_platform_attribute(bigint, character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_create_application_platform_attribute(i_id bigint, i_key character varying, i_value character varying) RETURNS application_platform_attribute
+    LANGUAGE plpgsql SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.application_platform_attribute%ROWTYPE;
+BEGIN
+	insert into public.application_platform_attribute (application_platform_id, application_platform_key_key, value)
+	values (i_id, i_key, i_value);
+	
+	select i_id, i_key, i_value into return_value; 
+	return return_value;
+END; $$;
+
+
+ALTER FUNCTION public.m_create_application_platform_attribute(i_id bigint, i_key character varying, i_value character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 172 (class 1259 OID 16404)
 -- Name: device; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -156,7 +191,7 @@ CREATE TABLE device (
 ALTER TABLE public.device OWNER TO jcw_dev;
 
 --
--- TOC entry 208 (class 1255 OID 24741)
+-- TOC entry 203 (class 1255 OID 16408)
 -- Name: m_create_device(); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -180,7 +215,56 @@ END; $$;
 ALTER FUNCTION public.m_create_device() OWNER TO jcw_dev;
 
 --
--- TOC entry 184 (class 1259 OID 24638)
+-- TOC entry 183 (class 1259 OID 16468)
+-- Name: device_attribute; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
+--
+
+CREATE TABLE device_attribute (
+    device_id bigint NOT NULL,
+    device_key_key character varying(20) NOT NULL,
+    value character varying(1024) NOT NULL
+);
+
+
+ALTER TABLE public.device_attribute OWNER TO jcw_dev;
+
+--
+-- TOC entry 2103 (class 0 OID 0)
+-- Dependencies: 183
+-- Name: COLUMN device_attribute.value; Type: COMMENT; Schema: public; Owner: jcw_dev
+--
+
+COMMENT ON COLUMN device_attribute.value IS 'Stores the value for the associated platform specific device identifier key.
+
+For example:
+
+An iOS phone will have a device token so the key will be token, the value will be XYZ.
+An Android phone will have an device id so the key will be device_id, the value will be 123.';
+
+
+--
+-- TOC entry 223 (class 1255 OID 16581)
+-- Name: m_create_device_attribute(bigint, character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_create_device_attribute(i_id bigint, i_key character varying, i_value character varying) RETURNS device_attribute
+    LANGUAGE plpgsql SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.device_attribute%ROWTYPE;
+BEGIN
+	insert into public.device_attribute (device_id, device_key_key, value)
+	values (i_id, i_key, i_value);
+	
+	select i_id, i_key, i_value into return_value; 
+	return return_value;
+END; $$;
+
+
+ALTER FUNCTION public.m_create_device_attribute(i_id bigint, i_key character varying, i_value character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 173 (class 1259 OID 16409)
 -- Name: platform; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -195,8 +279,8 @@ CREATE TABLE platform (
 ALTER TABLE public.platform OWNER TO jcw_dev;
 
 --
--- TOC entry 2093 (class 0 OID 0)
--- Dependencies: 184
+-- TOC entry 2104 (class 0 OID 0)
+-- Dependencies: 173
 -- Name: TABLE platform; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -204,7 +288,7 @@ COMMENT ON TABLE platform IS 'Platforms will not be deleted from the system but 
 
 
 --
--- TOC entry 206 (class 1255 OID 24739)
+-- TOC entry 204 (class 1255 OID 16413)
 -- Name: m_create_platform(character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -228,7 +312,7 @@ END; $$;
 ALTER FUNCTION public.m_create_platform(i_name character varying, i_service_name character varying) OWNER TO jcw_dev;
 
 --
--- TOC entry 170 (class 1259 OID 24577)
+-- TOC entry 174 (class 1259 OID 16414)
 -- Name: user; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -247,8 +331,8 @@ CREATE TABLE "user" (
 ALTER TABLE public."user" OWNER TO jcw_dev;
 
 --
--- TOC entry 2094 (class 0 OID 0)
--- Dependencies: 170
+-- TOC entry 2105 (class 0 OID 0)
+-- Dependencies: 174
 -- Name: TABLE "user"; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -256,8 +340,8 @@ COMMENT ON TABLE "user" IS 'Users will not be deleted from the system but instea
 
 
 --
--- TOC entry 2095 (class 0 OID 0)
--- Dependencies: 170
+-- TOC entry 2106 (class 0 OID 0)
+-- Dependencies: 174
 -- Name: COLUMN "user".phone; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -265,8 +349,8 @@ COMMENT ON COLUMN "user".phone IS 'Phone number as entered by the user.';
 
 
 --
--- TOC entry 2096 (class 0 OID 0)
--- Dependencies: 170
+-- TOC entry 2107 (class 0 OID 0)
+-- Dependencies: 174
 -- Name: COLUMN "user".phone_parsed; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -276,8 +360,8 @@ COMMENT ON COLUMN "user".phone_parsed IS 'User entered phone number with all non
 
 
 --
--- TOC entry 2097 (class 0 OID 0)
--- Dependencies: 170
+-- TOC entry 2108 (class 0 OID 0)
+-- Dependencies: 174
 -- Name: COLUMN "user".password; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -285,7 +369,7 @@ COMMENT ON COLUMN "user".password IS 'SHA-512 salted password.';
 
 
 --
--- TOC entry 201 (class 1255 OID 24584)
+-- TOC entry 205 (class 1255 OID 16421)
 -- Name: m_create_user(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -311,7 +395,7 @@ END; $$;
 ALTER FUNCTION public.m_create_user(i_name character varying, i_email character varying, i_phone character varying, i_password character varying, i_locale character varying) OWNER TO jcw_dev;
 
 --
--- TOC entry 186 (class 1259 OID 24650)
+-- TOC entry 175 (class 1259 OID 16422)
 -- Name: user_application; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -324,8 +408,8 @@ CREATE TABLE user_application (
 ALTER TABLE public.user_application OWNER TO jcw_dev;
 
 --
--- TOC entry 2098 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2109 (class 0 OID 0)
+-- Dependencies: 175
 -- Name: TABLE user_application; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -335,7 +419,7 @@ A user can manage multiple applications but an application can only be managed b
 
 
 --
--- TOC entry 218 (class 1255 OID 24752)
+-- TOC entry 206 (class 1255 OID 16425)
 -- Name: m_create_user_application(bigint, bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -356,7 +440,7 @@ END; $$;
 ALTER FUNCTION public.m_create_user_application(i_user_id bigint, i_application_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 216 (class 1255 OID 24748)
+-- TOC entry 208 (class 1255 OID 16426)
 -- Name: m_get_application_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -381,11 +465,66 @@ END; $$;
 ALTER FUNCTION public.m_get_application_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 222 (class 1255 OID 24758)
+-- TOC entry 227 (class 1255 OID 16580)
+-- Name: m_get_application_platform_attribute_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_application_platform_attribute_by_id(i_id bigint) RETURNS SETOF application_platform_attribute
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.application_platform_attribute%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.application_platform_attribute.application_platform_id, 
+		public.application_platform_attribute.application_platform_key_key, 
+		public.application_platform_attribute.value
+	from public.device_attribute
+	where public.device_attribute.application_platform_id = i_id
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_application_platform_attribute_by_id(i_id bigint) OWNER TO jcw_dev;
+
+--
+-- TOC entry 224 (class 1255 OID 16577)
+-- Name: m_get_application_platform_attribute_by_id_and_key(bigint, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_application_platform_attribute_by_id_and_key(i_id bigint, i_key character varying) RETURNS SETOF application_platform_attribute
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.application_platform_attribute%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.application_platform_attribute.application_platform_id, 
+		public.application_platform_attribute.application_platform_key_key, 
+		public.application_platform_attribute.value
+	from public.application_platform_attribute
+	where public.application_platform_attribute.application_platform_id = i_id and 
+		public.application_platform_attribute.application_platform_key_key = i_key
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_application_platform_attribute_by_id_and_key(i_id bigint, i_key character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 228 (class 1255 OID 16582)
 -- Name: m_get_application_platform_by_application_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
-CREATE FUNCTION m_get_application_platform_by_application_id(i_application_id bigint) RETURNS SETOF application_platform
+CREATE FUNCTION m_get_application_platform_by_application_id(i_id bigint) RETURNS SETOF application_platform
     LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
     AS $$
 DECLARE
@@ -395,7 +534,7 @@ BEGIN
 	select public.application_platform.id, public.application_platform.application_id, public.application_platform.platform_id, 
 		public.application_platform.token
 	from public.application_platform
-	where public.application_platform.application_id = i_application_id
+	where public.application_platform.application_id = i_id
 	LOOP
 		-- return the current row of select
 		RETURN NEXT return_value;
@@ -404,10 +543,10 @@ BEGIN
 END; $$;
 
 
-ALTER FUNCTION public.m_get_application_platform_by_application_id(i_application_id bigint) OWNER TO jcw_dev;
+ALTER FUNCTION public.m_get_application_platform_by_application_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 224 (class 1255 OID 24760)
+-- TOC entry 209 (class 1255 OID 16428)
 -- Name: m_get_application_platform_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -433,11 +572,11 @@ END; $$;
 ALTER FUNCTION public.m_get_application_platform_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 223 (class 1255 OID 24759)
+-- TOC entry 229 (class 1255 OID 16583)
 -- Name: m_get_application_platform_by_platform_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
-CREATE FUNCTION m_get_application_platform_by_platform_id(i_platform_id bigint) RETURNS SETOF application_platform
+CREATE FUNCTION m_get_application_platform_by_platform_id(i_id bigint) RETURNS SETOF application_platform
     LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
     AS $$
 DECLARE
@@ -447,7 +586,7 @@ BEGIN
 	select public.application_platform.id, public.application_platform.application_id, public.application_platform.platform_id, 
 		public.application_platform.token
 	from public.application_platform
-	where public.application_platform.application_id = i_platform_id
+	where public.application_platform.application_id = i_id
 	LOOP
 		-- return the current row of select
 		RETURN NEXT return_value;
@@ -456,10 +595,97 @@ BEGIN
 END; $$;
 
 
-ALTER FUNCTION public.m_get_application_platform_by_platform_id(i_platform_id bigint) OWNER TO jcw_dev;
+ALTER FUNCTION public.m_get_application_platform_by_platform_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 215 (class 1255 OID 24749)
+-- TOC entry 180 (class 1259 OID 16457)
+-- Name: application_platform_key; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
+--
+
+CREATE TABLE application_platform_key (
+    key character varying(20) NOT NULL,
+    description character varying(1024) NOT NULL
+);
+
+
+ALTER TABLE public.application_platform_key OWNER TO jcw_dev;
+
+--
+-- TOC entry 222 (class 1255 OID 16571)
+-- Name: m_get_application_platform_key(); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_application_platform_key() RETURNS SETOF application_platform_key
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.application_platform_key%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.application_platform_key.key, public.application_platform_key.description
+	from public.device_key
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_application_platform_key() OWNER TO jcw_dev;
+
+--
+-- TOC entry 230 (class 1255 OID 16584)
+-- Name: m_get_device_attribute_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_device_attribute_by_id(i_id bigint) RETURNS SETOF device_attribute
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.device_attribute%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.device_attribute.device_id, public.device_attribute.device_key_key, public.device_attribute.value
+	from public.device_attribute
+	where public.device_attribute.device_id = i_id
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_device_attribute_by_id(i_id bigint) OWNER TO jcw_dev;
+
+--
+-- TOC entry 231 (class 1255 OID 16585)
+-- Name: m_get_device_attribute_by_id_and_key(bigint, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_device_attribute_by_id_and_key(i_id bigint, i_key character varying) RETURNS SETOF device_attribute
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.device_attribute%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.device_attribute.device_id, public.device_attribute.device_key_key, public.device_attribute.value
+	from public.device_attribute
+	where public.device_attribute.device_id = i_id and public.device_attribute.device_key_key = i_key
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_device_attribute_by_id_and_key(i_id bigint, i_key character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 210 (class 1255 OID 16430)
 -- Name: m_get_device_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -484,7 +710,59 @@ END; $$;
 ALTER FUNCTION public.m_get_device_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 219 (class 1255 OID 24750)
+-- TOC entry 185 (class 1259 OID 16476)
+-- Name: device_key; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
+--
+
+CREATE TABLE device_key (
+    key character varying(20) NOT NULL,
+    description character varying(1024) NOT NULL
+);
+
+
+ALTER TABLE public.device_key OWNER TO jcw_dev;
+
+--
+-- TOC entry 2110 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: COLUMN device_key.key; Type: COMMENT; Schema: public; Owner: jcw_dev
+--
+
+COMMENT ON COLUMN device_key.key IS 'Stores the key for the platform specific device identifier.
+
+For example:
+
+An iOS phone will have a device token so the key will be token.
+An Android phone will have an device id so the key will be device_id.
+';
+
+
+--
+-- TOC entry 221 (class 1255 OID 16570)
+-- Name: m_get_device_key(); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_get_device_key() RETURNS SETOF device_key
+    LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
+    AS $$
+DECLARE
+	return_value public.device_key%ROWTYPE;
+BEGIN
+	FOR return_value IN
+	select public.device_key.key, public.device_key.description
+	from public.device_key
+	LOOP
+		-- return the current row of select
+		RETURN NEXT return_value;
+	END LOOP;
+	RETURN;
+END; $$;
+
+
+ALTER FUNCTION public.m_get_device_key() OWNER TO jcw_dev;
+
+--
+-- TOC entry 211 (class 1255 OID 16431)
 -- Name: m_get_platform_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -509,11 +787,11 @@ END; $$;
 ALTER FUNCTION public.m_get_platform_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 220 (class 1255 OID 24756)
+-- TOC entry 232 (class 1255 OID 16586)
 -- Name: m_get_user_application_by_application_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
-CREATE FUNCTION m_get_user_application_by_application_id(i_application_id bigint) RETURNS SETOF user_application
+CREATE FUNCTION m_get_user_application_by_application_id(i_id bigint) RETURNS SETOF user_application
     LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
     AS $$
 DECLARE
@@ -522,7 +800,7 @@ BEGIN
 	FOR return_value IN
 	select public.user_application.user_id, public.user_application.application_id	
 	from public.user_application
-	where public.user_application.application_id = i_application_id
+	where public.user_application.application_id = i_id
 	LOOP
 		-- return the current row of select
 		RETURN NEXT return_value;
@@ -531,14 +809,14 @@ BEGIN
 END; $$;
 
 
-ALTER FUNCTION public.m_get_user_application_by_application_id(i_application_id bigint) OWNER TO jcw_dev;
+ALTER FUNCTION public.m_get_user_application_by_application_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 221 (class 1255 OID 24757)
+-- TOC entry 233 (class 1255 OID 16587)
 -- Name: m_get_user_application_by_user_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
-CREATE FUNCTION m_get_user_application_by_user_id(i_user_id bigint) RETURNS SETOF user_application
+CREATE FUNCTION m_get_user_application_by_user_id(i_id bigint) RETURNS SETOF user_application
     LANGUAGE plpgsql IMMUTABLE SECURITY DEFINER COST 10
     AS $$
 DECLARE
@@ -547,7 +825,7 @@ BEGIN
 	FOR return_value IN
 	select public.user_application.user_id, public.user_application.application_id	
 	from public.user_application
-	where public.user_application.user_id = i_user_id
+	where public.user_application.user_id = i_id
 	LOOP
 		-- return the current row of select
 		RETURN NEXT return_value;
@@ -556,10 +834,10 @@ BEGIN
 END; $$;
 
 
-ALTER FUNCTION public.m_get_user_application_by_user_id(i_user_id bigint) OWNER TO jcw_dev;
+ALTER FUNCTION public.m_get_user_application_by_user_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 202 (class 1255 OID 24585)
+-- TOC entry 212 (class 1255 OID 16434)
 -- Name: m_get_user_by_email(character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -586,7 +864,7 @@ END; $$;
 ALTER FUNCTION public.m_get_user_by_email(i_email character varying) OWNER TO jcw_dev;
 
 --
--- TOC entry 203 (class 1255 OID 24586)
+-- TOC entry 213 (class 1255 OID 16435)
 -- Name: m_get_user_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -613,7 +891,7 @@ END; $$;
 ALTER FUNCTION public.m_get_user_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 209 (class 1255 OID 24742)
+-- TOC entry 214 (class 1255 OID 16436)
 -- Name: m_inactivate_application_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -630,7 +908,7 @@ END; $$;
 ALTER FUNCTION public.m_inactivate_application_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 210 (class 1255 OID 24743)
+-- TOC entry 215 (class 1255 OID 16437)
 -- Name: m_inactivate_device_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -647,7 +925,7 @@ END; $$;
 ALTER FUNCTION public.m_inactivate_device_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 211 (class 1255 OID 24744)
+-- TOC entry 216 (class 1255 OID 16438)
 -- Name: m_inactivate_platform_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -664,7 +942,7 @@ END; $$;
 ALTER FUNCTION public.m_inactivate_platform_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 204 (class 1255 OID 24587)
+-- TOC entry 217 (class 1255 OID 16439)
 -- Name: m_inactivate_user_by_id(bigint); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -681,7 +959,7 @@ END; $$;
 ALTER FUNCTION public.m_inactivate_user_by_id(i_id bigint) OWNER TO jcw_dev;
 
 --
--- TOC entry 212 (class 1255 OID 24745)
+-- TOC entry 218 (class 1255 OID 16440)
 -- Name: m_update_application(bigint, character varying, boolean); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -698,7 +976,24 @@ END; $$;
 ALTER FUNCTION public.m_update_application(i_id bigint, i_name character varying, i_active boolean) OWNER TO jcw_dev;
 
 --
--- TOC entry 213 (class 1255 OID 24746)
+-- TOC entry 226 (class 1255 OID 16579)
+-- Name: m_update_application_platform_attribute(bigint, character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_update_application_platform_attribute(i_id bigint, i_key character varying, i_value character varying) RETURNS void
+    LANGUAGE plpgsql SECURITY DEFINER COST 10
+    AS $$
+DECLARE	
+BEGIN	
+	update public.application_platform_attribute set value = i_value
+	where application_platform_id = i_id and application_platform_key_key = i_key;
+END; $$;
+
+
+ALTER FUNCTION public.m_update_application_platform_attribute(i_id bigint, i_key character varying, i_value character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 207 (class 1255 OID 16441)
 -- Name: m_update_device(bigint, boolean); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -715,7 +1010,24 @@ END; $$;
 ALTER FUNCTION public.m_update_device(i_id bigint, i_active boolean) OWNER TO jcw_dev;
 
 --
--- TOC entry 214 (class 1255 OID 24747)
+-- TOC entry 234 (class 1255 OID 16588)
+-- Name: m_update_device_attribute(bigint, character varying, character varying); Type: FUNCTION; Schema: public; Owner: jcw_dev
+--
+
+CREATE FUNCTION m_update_device_attribute(i_id bigint, i_key character varying, i_value character varying) RETURNS void
+    LANGUAGE plpgsql SECURITY DEFINER COST 10
+    AS $$
+DECLARE	
+BEGIN	
+	update public.device_attribute set value = i_value
+	where device_id = i_id and device_key_key = i_key;
+END; $$;
+
+
+ALTER FUNCTION public.m_update_device_attribute(i_id bigint, i_key character varying, i_value character varying) OWNER TO jcw_dev;
+
+--
+-- TOC entry 219 (class 1255 OID 16442)
 -- Name: m_update_platform(bigint, character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -732,7 +1044,7 @@ END; $$;
 ALTER FUNCTION public.m_update_platform(i_id bigint, i_name character varying, i_service_name character varying, i_active boolean) OWNER TO jcw_dev;
 
 --
--- TOC entry 205 (class 1255 OID 24588)
+-- TOC entry 220 (class 1255 OID 16443)
 -- Name: m_update_user(bigint, character varying, character varying, character varying, character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: jcw_dev
 --
 
@@ -753,7 +1065,7 @@ END; $$;
 ALTER FUNCTION public.m_update_user(i_id bigint, i_name character varying, i_email character varying, i_phone character varying, i_password character varying, i_locale character varying, i_active boolean) OWNER TO jcw_dev;
 
 --
--- TOC entry 172 (class 1259 OID 24593)
+-- TOC entry 176 (class 1259 OID 16444)
 -- Name: application_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -768,8 +1080,8 @@ CREATE SEQUENCE application_id_seq
 ALTER TABLE public.application_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2099 (class 0 OID 0)
--- Dependencies: 172
+-- TOC entry 2111 (class 0 OID 0)
+-- Dependencies: 176
 -- Name: application_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
 
@@ -777,21 +1089,7 @@ ALTER SEQUENCE application_id_seq OWNED BY application.id;
 
 
 --
--- TOC entry 174 (class 1259 OID 24598)
--- Name: application_platform_attribute; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
---
-
-CREATE TABLE application_platform_attribute (
-    application_platform_id bigint NOT NULL,
-    application_platform_key_key character varying(20) NOT NULL,
-    value character varying(1024) NOT NULL
-);
-
-
-ALTER TABLE public.application_platform_attribute OWNER TO jcw_dev;
-
---
--- TOC entry 175 (class 1259 OID 24604)
+-- TOC entry 178 (class 1259 OID 16452)
 -- Name: application_platform_device; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -804,7 +1102,7 @@ CREATE TABLE application_platform_device (
 ALTER TABLE public.application_platform_device OWNER TO jcw_dev;
 
 --
--- TOC entry 176 (class 1259 OID 24607)
+-- TOC entry 179 (class 1259 OID 16455)
 -- Name: application_platform_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -819,8 +1117,8 @@ CREATE SEQUENCE application_platform_id_seq
 ALTER TABLE public.application_platform_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2100 (class 0 OID 0)
--- Dependencies: 176
+-- TOC entry 2112 (class 0 OID 0)
+-- Dependencies: 179
 -- Name: application_platform_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
 
@@ -828,20 +1126,7 @@ ALTER SEQUENCE application_platform_id_seq OWNED BY application_platform.id;
 
 
 --
--- TOC entry 177 (class 1259 OID 24609)
--- Name: application_platform_key; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
---
-
-CREATE TABLE application_platform_key (
-    key character varying(20) NOT NULL,
-    description character varying(1024) NOT NULL
-);
-
-
-ALTER TABLE public.application_platform_key OWNER TO jcw_dev;
-
---
--- TOC entry 178 (class 1259 OID 24615)
+-- TOC entry 181 (class 1259 OID 16463)
 -- Name: application_platform_msg_log; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -856,8 +1141,8 @@ CREATE TABLE application_platform_msg_log (
 ALTER TABLE public.application_platform_msg_log OWNER TO jcw_dev;
 
 --
--- TOC entry 2101 (class 0 OID 0)
--- Dependencies: 178
+-- TOC entry 2113 (class 0 OID 0)
+-- Dependencies: 181
 -- Name: COLUMN application_platform_msg_log.date; Type: COMMENT; Schema: public; Owner: jcw_dev
 --
 
@@ -865,7 +1150,7 @@ COMMENT ON COLUMN application_platform_msg_log.date IS 'Note that all timezones 
 
 
 --
--- TOC entry 179 (class 1259 OID 24618)
+-- TOC entry 182 (class 1259 OID 16466)
 -- Name: application_platform_msg_log_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -880,8 +1165,8 @@ CREATE SEQUENCE application_platform_msg_log_id_seq
 ALTER TABLE public.application_platform_msg_log_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2102 (class 0 OID 0)
--- Dependencies: 179
+-- TOC entry 2114 (class 0 OID 0)
+-- Dependencies: 182
 -- Name: application_platform_msg_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
 
@@ -889,35 +1174,7 @@ ALTER SEQUENCE application_platform_msg_log_id_seq OWNED BY application_platform
 
 
 --
--- TOC entry 181 (class 1259 OID 24624)
--- Name: device_attribute; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
---
-
-CREATE TABLE device_attribute (
-    device_id bigint NOT NULL,
-    device_key_key character varying(20) NOT NULL,
-    value character varying(1024) NOT NULL
-);
-
-
-ALTER TABLE public.device_attribute OWNER TO jcw_dev;
-
---
--- TOC entry 2103 (class 0 OID 0)
--- Dependencies: 181
--- Name: COLUMN device_attribute.value; Type: COMMENT; Schema: public; Owner: jcw_dev
---
-
-COMMENT ON COLUMN device_attribute.value IS 'Stores the value for the associated platform specific device identifier key.
-
-For example:
-
-An iOS phone will have a device token so the key will be token, the value will be XYZ.
-An Android phone will have an device id so the key will be device_id, the value will be 123.';
-
-
---
--- TOC entry 182 (class 1259 OID 24630)
+-- TOC entry 184 (class 1259 OID 16474)
 -- Name: device_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -932,8 +1189,8 @@ CREATE SEQUENCE device_id_seq
 ALTER TABLE public.device_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2104 (class 0 OID 0)
--- Dependencies: 182
+-- TOC entry 2115 (class 0 OID 0)
+-- Dependencies: 184
 -- Name: device_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
 
@@ -941,35 +1198,7 @@ ALTER SEQUENCE device_id_seq OWNED BY device.id;
 
 
 --
--- TOC entry 183 (class 1259 OID 24632)
--- Name: device_key; Type: TABLE; Schema: public; Owner: jcw_dev; Tablespace: 
---
-
-CREATE TABLE device_key (
-    key character varying(20) NOT NULL,
-    description character varying(1024) NOT NULL
-);
-
-
-ALTER TABLE public.device_key OWNER TO jcw_dev;
-
---
--- TOC entry 2105 (class 0 OID 0)
--- Dependencies: 183
--- Name: COLUMN device_key.key; Type: COMMENT; Schema: public; Owner: jcw_dev
---
-
-COMMENT ON COLUMN device_key.key IS 'Stores the key for the platform specific device identifier.
-
-For example:
-
-An iOS phone will have a device token so the key will be token.
-An Android phone will have an device id so the key will be device_id.
-';
-
-
---
--- TOC entry 185 (class 1259 OID 24642)
+-- TOC entry 186 (class 1259 OID 16482)
 -- Name: platform_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -984,8 +1213,8 @@ CREATE SEQUENCE platform_id_seq
 ALTER TABLE public.platform_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2106 (class 0 OID 0)
--- Dependencies: 185
+-- TOC entry 2116 (class 0 OID 0)
+-- Dependencies: 186
 -- Name: platform_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
 
@@ -993,7 +1222,7 @@ ALTER SEQUENCE platform_id_seq OWNED BY platform.id;
 
 
 --
--- TOC entry 187 (class 1259 OID 24653)
+-- TOC entry 187 (class 1259 OID 16484)
 -- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: jcw_dev
 --
 
@@ -1008,7 +1237,7 @@ CREATE SEQUENCE user_id_seq
 ALTER TABLE public.user_id_seq OWNER TO jcw_dev;
 
 --
--- TOC entry 2107 (class 0 OID 0)
+-- TOC entry 2117 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcw_dev
 --
@@ -1017,7 +1246,7 @@ ALTER SEQUENCE user_id_seq OWNED BY "user".id;
 
 
 --
--- TOC entry 1909 (class 2604 OID 24655)
+-- TOC entry 1917 (class 2604 OID 16486)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1025,7 +1254,7 @@ ALTER TABLE ONLY application ALTER COLUMN id SET DEFAULT nextval('application_id
 
 
 --
--- TOC entry 1910 (class 2604 OID 24656)
+-- TOC entry 1918 (class 2604 OID 16487)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1033,7 +1262,7 @@ ALTER TABLE ONLY application_platform ALTER COLUMN id SET DEFAULT nextval('appli
 
 
 --
--- TOC entry 1911 (class 2604 OID 24657)
+-- TOC entry 1925 (class 2604 OID 16488)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1041,7 +1270,7 @@ ALTER TABLE ONLY application_platform_msg_log ALTER COLUMN id SET DEFAULT nextva
 
 
 --
--- TOC entry 1913 (class 2604 OID 24658)
+-- TOC entry 1920 (class 2604 OID 16489)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1049,7 +1278,7 @@ ALTER TABLE ONLY device ALTER COLUMN id SET DEFAULT nextval('device_id_seq'::reg
 
 
 --
--- TOC entry 1915 (class 2604 OID 24659)
+-- TOC entry 1922 (class 2604 OID 16490)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1057,7 +1286,7 @@ ALTER TABLE ONLY platform ALTER COLUMN id SET DEFAULT nextval('platform_id_seq':
 
 
 --
--- TOC entry 1907 (class 2604 OID 24660)
+-- TOC entry 1924 (class 2604 OID 16491)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: jcw_dev
 --
 
@@ -1065,8 +1294,8 @@ ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regcl
 
 
 --
--- TOC entry 2065 (class 0 OID 24589)
--- Dependencies: 171
+-- TOC entry 2074 (class 0 OID 16395)
+-- Dependencies: 170
 -- Data for Name: application; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1075,8 +1304,8 @@ COPY application (id, name, active) FROM stdin;
 
 
 --
--- TOC entry 2108 (class 0 OID 0)
--- Dependencies: 172
+-- TOC entry 2118 (class 0 OID 0)
+-- Dependencies: 176
 -- Name: application_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
 
@@ -1084,8 +1313,8 @@ SELECT pg_catalog.setval('application_id_seq', 1, false);
 
 
 --
--- TOC entry 2067 (class 0 OID 24595)
--- Dependencies: 173
+-- TOC entry 2075 (class 0 OID 16400)
+-- Dependencies: 171
 -- Data for Name: application_platform; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1094,8 +1323,8 @@ COPY application_platform (id, application_id, platform_id, token) FROM stdin;
 
 
 --
--- TOC entry 2068 (class 0 OID 24598)
--- Dependencies: 174
+-- TOC entry 2081 (class 0 OID 16446)
+-- Dependencies: 177
 -- Data for Name: application_platform_attribute; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1104,8 +1333,8 @@ COPY application_platform_attribute (application_platform_id, application_platfo
 
 
 --
--- TOC entry 2069 (class 0 OID 24604)
--- Dependencies: 175
+-- TOC entry 2082 (class 0 OID 16452)
+-- Dependencies: 178
 -- Data for Name: application_platform_device; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1114,8 +1343,8 @@ COPY application_platform_device (application_platform_id, device_id) FROM stdin
 
 
 --
--- TOC entry 2109 (class 0 OID 0)
--- Dependencies: 176
+-- TOC entry 2119 (class 0 OID 0)
+-- Dependencies: 179
 -- Name: application_platform_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
 
@@ -1123,8 +1352,8 @@ SELECT pg_catalog.setval('application_platform_id_seq', 1, false);
 
 
 --
--- TOC entry 2071 (class 0 OID 24609)
--- Dependencies: 177
+-- TOC entry 2084 (class 0 OID 16457)
+-- Dependencies: 180
 -- Data for Name: application_platform_key; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1133,8 +1362,8 @@ COPY application_platform_key (key, description) FROM stdin;
 
 
 --
--- TOC entry 2072 (class 0 OID 24615)
--- Dependencies: 178
+-- TOC entry 2085 (class 0 OID 16463)
+-- Dependencies: 181
 -- Data for Name: application_platform_msg_log; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1143,8 +1372,8 @@ COPY application_platform_msg_log (id, application_platform_id, date, msg_count)
 
 
 --
--- TOC entry 2110 (class 0 OID 0)
--- Dependencies: 179
+-- TOC entry 2120 (class 0 OID 0)
+-- Dependencies: 182
 -- Name: application_platform_msg_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
 
@@ -1152,8 +1381,8 @@ SELECT pg_catalog.setval('application_platform_msg_log_id_seq', 1, false);
 
 
 --
--- TOC entry 2074 (class 0 OID 24620)
--- Dependencies: 180
+-- TOC entry 2076 (class 0 OID 16404)
+-- Dependencies: 172
 -- Data for Name: device; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1162,8 +1391,8 @@ COPY device (id, active) FROM stdin;
 
 
 --
--- TOC entry 2075 (class 0 OID 24624)
--- Dependencies: 181
+-- TOC entry 2087 (class 0 OID 16468)
+-- Dependencies: 183
 -- Data for Name: device_attribute; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1172,8 +1401,8 @@ COPY device_attribute (device_id, device_key_key, value) FROM stdin;
 
 
 --
--- TOC entry 2111 (class 0 OID 0)
--- Dependencies: 182
+-- TOC entry 2121 (class 0 OID 0)
+-- Dependencies: 184
 -- Name: device_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
 
@@ -1181,8 +1410,8 @@ SELECT pg_catalog.setval('device_id_seq', 1, false);
 
 
 --
--- TOC entry 2077 (class 0 OID 24632)
--- Dependencies: 183
+-- TOC entry 2089 (class 0 OID 16476)
+-- Dependencies: 185
 -- Data for Name: device_key; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1191,8 +1420,8 @@ COPY device_key (key, description) FROM stdin;
 
 
 --
--- TOC entry 2078 (class 0 OID 24638)
--- Dependencies: 184
+-- TOC entry 2077 (class 0 OID 16409)
+-- Dependencies: 173
 -- Data for Name: platform; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1201,8 +1430,8 @@ COPY platform (id, name, service_name, active) FROM stdin;
 
 
 --
--- TOC entry 2112 (class 0 OID 0)
--- Dependencies: 185
+-- TOC entry 2122 (class 0 OID 0)
+-- Dependencies: 186
 -- Name: platform_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
 
@@ -1210,8 +1439,8 @@ SELECT pg_catalog.setval('platform_id_seq', 1, false);
 
 
 --
--- TOC entry 2064 (class 0 OID 24577)
--- Dependencies: 170
+-- TOC entry 2078 (class 0 OID 16414)
+-- Dependencies: 174
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1255,8 +1484,8 @@ COPY "user" (id, name, email, phone, phone_parsed, password, locale, active) FRO
 
 
 --
--- TOC entry 2080 (class 0 OID 24650)
--- Dependencies: 186
+-- TOC entry 2079 (class 0 OID 16422)
+-- Dependencies: 175
 -- Data for Name: user_application; Type: TABLE DATA; Schema: public; Owner: jcw_dev
 --
 
@@ -1265,7 +1494,7 @@ COPY user_application (user_id, application_id) FROM stdin;
 
 
 --
--- TOC entry 2113 (class 0 OID 0)
+-- TOC entry 2123 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcw_dev
 --
@@ -1274,7 +1503,7 @@ SELECT pg_catalog.setval('user_id_seq', 760, true);
 
 
 --
--- TOC entry 1922 (class 2606 OID 24662)
+-- TOC entry 1927 (class 2606 OID 16493)
 -- Name: application-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1283,7 +1512,7 @@ ALTER TABLE ONLY application
 
 
 --
--- TOC entry 1924 (class 2606 OID 24664)
+-- TOC entry 1929 (class 2606 OID 16495)
 -- Name: application_platform-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1292,7 +1521,7 @@ ALTER TABLE ONLY application_platform
 
 
 --
--- TOC entry 1928 (class 2606 OID 24666)
+-- TOC entry 1945 (class 2606 OID 16497)
 -- Name: application_platform_attribute-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1301,7 +1530,7 @@ ALTER TABLE ONLY application_platform_attribute
 
 
 --
--- TOC entry 1930 (class 2606 OID 24668)
+-- TOC entry 1947 (class 2606 OID 16499)
 -- Name: application_platform_device-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1310,7 +1539,7 @@ ALTER TABLE ONLY application_platform_device
 
 
 --
--- TOC entry 1932 (class 2606 OID 24670)
+-- TOC entry 1949 (class 2606 OID 16501)
 -- Name: application_platform_key-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1319,7 +1548,7 @@ ALTER TABLE ONLY application_platform_key
 
 
 --
--- TOC entry 1937 (class 2606 OID 24672)
+-- TOC entry 1932 (class 2606 OID 16503)
 -- Name: device-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1328,7 +1557,7 @@ ALTER TABLE ONLY device
 
 
 --
--- TOC entry 1940 (class 2606 OID 24674)
+-- TOC entry 1955 (class 2606 OID 16505)
 -- Name: device_attribute-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1337,7 +1566,7 @@ ALTER TABLE ONLY device_attribute
 
 
 --
--- TOC entry 1942 (class 2606 OID 24676)
+-- TOC entry 1957 (class 2606 OID 16507)
 -- Name: device_key-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1346,7 +1575,7 @@ ALTER TABLE ONLY device_key
 
 
 --
--- TOC entry 1944 (class 2606 OID 24678)
+-- TOC entry 1934 (class 2606 OID 16509)
 -- Name: platform-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1355,7 +1584,7 @@ ALTER TABLE ONLY platform
 
 
 --
--- TOC entry 1917 (class 2606 OID 24680)
+-- TOC entry 1936 (class 2606 OID 16511)
 -- Name: user-email-key; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1364,7 +1593,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1920 (class 2606 OID 24682)
+-- TOC entry 1939 (class 2606 OID 16513)
 -- Name: user-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1373,7 +1602,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- TOC entry 1946 (class 2606 OID 24684)
+-- TOC entry 1941 (class 2606 OID 16515)
 -- Name: user_application-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1382,7 +1611,7 @@ ALTER TABLE ONLY user_application
 
 
 --
--- TOC entry 1935 (class 2606 OID 24686)
+-- TOC entry 1952 (class 2606 OID 16517)
 -- Name: user_msg_log-pkey; Type: CONSTRAINT; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1391,7 +1620,7 @@ ALTER TABLE ONLY application_platform_msg_log
 
 
 --
--- TOC entry 1925 (class 1259 OID 24687)
+-- TOC entry 1930 (class 1259 OID 16518)
 -- Name: application_platform-platform_id-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1399,7 +1628,7 @@ CREATE INDEX "application_platform-platform_id-idx" ON application_platform USIN
 
 
 --
--- TOC entry 1926 (class 1259 OID 24688)
+-- TOC entry 1943 (class 1259 OID 16519)
 -- Name: application_platform_attribute-application_platform_key_key-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1407,7 +1636,7 @@ CREATE INDEX "application_platform_attribute-application_platform_key_key-idx" O
 
 
 --
--- TOC entry 1933 (class 1259 OID 24689)
+-- TOC entry 1950 (class 1259 OID 16520)
 -- Name: application_platform_msg_log-application_platform_id-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1415,7 +1644,7 @@ CREATE INDEX "application_platform_msg_log-application_platform_id-idx" ON appli
 
 
 --
--- TOC entry 1938 (class 1259 OID 24690)
+-- TOC entry 1953 (class 1259 OID 16521)
 -- Name: device_attribute-device_key_key-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1423,7 +1652,7 @@ CREATE INDEX "device_attribute-device_key_key-idx" ON device_attribute USING btr
 
 
 --
--- TOC entry 1918 (class 1259 OID 24691)
+-- TOC entry 1937 (class 1259 OID 16522)
 -- Name: user-phone_parsed-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1431,7 +1660,7 @@ CREATE INDEX "user-phone_parsed-idx" ON "user" USING btree (phone_parsed);
 
 
 --
--- TOC entry 1947 (class 1259 OID 24692)
+-- TOC entry 1942 (class 1259 OID 16523)
 -- Name: user_application-user_id-idx; Type: INDEX; Schema: public; Owner: jcw_dev; Tablespace: 
 --
 
@@ -1439,7 +1668,7 @@ CREATE INDEX "user_application-user_id-idx" ON user_application USING btree (use
 
 
 --
--- TOC entry 1948 (class 2606 OID 24693)
+-- TOC entry 1958 (class 2606 OID 16524)
 -- Name: application_platform-application_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1448,7 +1677,7 @@ ALTER TABLE ONLY application_platform
 
 
 --
--- TOC entry 1949 (class 2606 OID 24698)
+-- TOC entry 1959 (class 2606 OID 16529)
 -- Name: application_platform-platform_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1457,7 +1686,7 @@ ALTER TABLE ONLY application_platform
 
 
 --
--- TOC entry 1950 (class 2606 OID 24703)
+-- TOC entry 1962 (class 2606 OID 16534)
 -- Name: application_platform_attribute-ap_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1466,7 +1695,7 @@ ALTER TABLE ONLY application_platform_attribute
 
 
 --
--- TOC entry 1951 (class 2606 OID 24708)
+-- TOC entry 1963 (class 2606 OID 16539)
 -- Name: application_platform_attribute-apk_key-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1475,7 +1704,7 @@ ALTER TABLE ONLY application_platform_attribute
 
 
 --
--- TOC entry 1952 (class 2606 OID 24713)
+-- TOC entry 1964 (class 2606 OID 16544)
 -- Name: application_platform_msg_log-application_platform_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1484,7 +1713,7 @@ ALTER TABLE ONLY application_platform_msg_log
 
 
 --
--- TOC entry 1953 (class 2606 OID 24718)
+-- TOC entry 1965 (class 2606 OID 16549)
 -- Name: device_attribute-device_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1493,7 +1722,7 @@ ALTER TABLE ONLY device_attribute
 
 
 --
--- TOC entry 1954 (class 2606 OID 24723)
+-- TOC entry 1966 (class 2606 OID 16554)
 -- Name: device_attribute-device_key_key-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1502,7 +1731,7 @@ ALTER TABLE ONLY device_attribute
 
 
 --
--- TOC entry 1955 (class 2606 OID 24728)
+-- TOC entry 1960 (class 2606 OID 16559)
 -- Name: user_application-application_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1511,7 +1740,7 @@ ALTER TABLE ONLY user_application
 
 
 --
--- TOC entry 1956 (class 2606 OID 24733)
+-- TOC entry 1961 (class 2606 OID 16564)
 -- Name: user_application-user_id-fkey; Type: FK CONSTRAINT; Schema: public; Owner: jcw_dev
 --
 
@@ -1520,7 +1749,7 @@ ALTER TABLE ONLY user_application
 
 
 --
--- TOC entry 2088 (class 0 OID 0)
+-- TOC entry 2098 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -1531,7 +1760,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2013-11-11 21:14:00
+-- Completed on 2013-11-12 14:43:58
 
 --
 -- PostgreSQL database dump complete

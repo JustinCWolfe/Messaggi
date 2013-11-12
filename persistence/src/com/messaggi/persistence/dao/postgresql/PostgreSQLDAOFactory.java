@@ -8,10 +8,12 @@ import com.messaggi.persistence.dao.ApplicationDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformAttributeDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformDeviceDAO;
+import com.messaggi.persistence.dao.ApplicationPlatformKeyDAO;
 import com.messaggi.persistence.dao.ApplicationPlatformMsgLogDAO;
 import com.messaggi.persistence.dao.DAOFactory;
 import com.messaggi.persistence.dao.DeviceAttributeDAO;
 import com.messaggi.persistence.dao.DeviceDAO;
+import com.messaggi.persistence.dao.DeviceKeyDAO;
 import com.messaggi.persistence.dao.PlatformDAO;
 import com.messaggi.persistence.dao.UserApplicationDAO;
 import com.messaggi.persistence.dao.UserDAO;
@@ -65,6 +67,12 @@ public class PostgreSQLDAOFactory extends DAOFactory
     }
 
     @Override
+    public ApplicationPlatformKeyDAO getApplicationPlatformKeyDAO()
+    {
+        return new PostgreSQLApplicationPlatformKeyDAO();
+    }
+
+    @Override
     public ApplicationPlatformMsgLogDAO getApplicationPlatformMsgLogDAO()
     {
         return new PostgreSQLApplicationPlatformMsgLogDAO();
@@ -80,6 +88,12 @@ public class PostgreSQLDAOFactory extends DAOFactory
     public DeviceAttributeDAO getDeviceAttributeDAO()
     {
         return new PostgreSQLDeviceAttributeDAO();
+    }
+
+    @Override
+    public DeviceKeyDAO getDeviceKeyDAO()
+    {
+        return new PostgreSQLDeviceKeyDAO();
     }
 
     @Override
