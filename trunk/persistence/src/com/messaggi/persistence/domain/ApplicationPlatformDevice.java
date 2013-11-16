@@ -3,13 +3,11 @@ package com.messaggi.persistence.domain;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ApplicationPlatformAttribute
+public class ApplicationPlatformDevice
 {
     private ApplicationPlatform applicationPlatform;
 
-    private ApplicationPlatformAttributeKey key;
-
-    private String value;
+    private Device device;
 
     public ApplicationPlatform getApplicationPlatform()
     {
@@ -21,29 +19,18 @@ public class ApplicationPlatformAttribute
         this.applicationPlatform = applicationPlatform;
     }
 
-    public ApplicationPlatformAttributeKey getKey()
+    public Device getDevice()
     {
-        return key;
+        return device;
     }
 
-    public void setKey(ApplicationPlatformAttributeKey key)
+    public void setDevice(Device device)
     {
-        this.key = key;
+        this.device = device;
     }
 
-    public String getValue()
-    {
-        return value;
-    }
-
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
-
-    public ApplicationPlatformAttribute()
+    public ApplicationPlatformDevice()
     {
 
     }
 }
-

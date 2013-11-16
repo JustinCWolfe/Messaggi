@@ -1,6 +1,6 @@
 package com.messaggi.persistence.dao;
 
-public interface ApplicationPlatformKeyDAO
+public interface DeviceAttributeKeyDAO
 {
 
 }
