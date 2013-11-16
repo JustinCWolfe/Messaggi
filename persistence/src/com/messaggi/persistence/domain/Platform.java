@@ -8,7 +8,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Platform
 {
     public enum PlatformServiceName {
-        iOS, Android
+        IOS("iOS"), ANDROID("Android");
+        
+        private final String serviceName;
+        
+        public String serviceName()
+        {
+            return serviceName;
+        }
+
+        PlatformServiceName(String serviceName)
+        {
+            this.serviceName = serviceName;
+        }
     }
 
     private Long id;

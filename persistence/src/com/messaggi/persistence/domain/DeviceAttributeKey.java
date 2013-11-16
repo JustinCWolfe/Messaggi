@@ -5,13 +5,13 @@ import java.util.HashSet;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ApplicationPlatformKey
+public class DeviceAttributeKey
 {
     private String key;
 
     private String description;
 
-    private HashSet<ApplicationPlatformAttribute> attributes;
+    private HashSet<DeviceAttribute> deviceAttributes;
 
     public String getKey()
     {
@@ -33,19 +33,18 @@ public class ApplicationPlatformKey
         this.description = description;
     }
 
-    public HashSet<ApplicationPlatformAttribute> getAttributes()
+    public HashSet<DeviceAttribute> getDeviceAttributes()
     {
-        return attributes;
+        return deviceAttributes;
     }
 
-    public void setAttributes(HashSet<ApplicationPlatformAttribute> attributes)
+    public void setDeviceAttributes(HashSet<DeviceAttribute> deviceAttributes)
     {
-        this.attributes = attributes;
+        this.deviceAttributes = deviceAttributes;
     }
 
-    public ApplicationPlatformKey()
+    public DeviceAttributeKey()
     {
 
     }
 }
-

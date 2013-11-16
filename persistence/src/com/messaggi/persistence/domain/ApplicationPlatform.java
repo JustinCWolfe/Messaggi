@@ -1,6 +1,7 @@
 package com.messaggi.persistence.domain;
 
 import java.util.HashSet;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,13 +10,17 @@ public class ApplicationPlatform
 {
     private Long id;
 
-    private Long token;
+    private UUID token;
 
     private Application application;
 
     private Platform platform;
 
     private HashSet<ApplicationPlatformAttribute> attributes;
+
+    private HashSet<Device> devices;
+
+    private HashSet<ApplicationPlatformMsgLog> msgLogs;
 
     public Long getId()
     {
@@ -27,12 +32,12 @@ public class ApplicationPlatform
         this.id = id;
     }
 
-    public Long getToken()
+    public UUID getToken()
     {
         return token;
     }
 
-    public void setToken(Long token)
+    public void setToken(UUID token)
     {
         this.token = token;
     }
@@ -67,9 +72,28 @@ public class ApplicationPlatform
         this.attributes = attributes;
     }
 
+    public HashSet<Device> getDevices()
+    {
+        return devices;
+    }
+
+    public void setDevices(HashSet<Device> devices)
+    {
+        this.devices = devices;
+    }
+
+    public HashSet<ApplicationPlatformMsgLog> getMsgLogs()
+    {
+        return msgLogs;
+    }
+
+    public void setMsgLogs(HashSet<ApplicationPlatformMsgLog> msgLogs)
+    {
+        this.msgLogs = msgLogs;
+    }
+
     public ApplicationPlatform()
     {
 
     }
 }
-
