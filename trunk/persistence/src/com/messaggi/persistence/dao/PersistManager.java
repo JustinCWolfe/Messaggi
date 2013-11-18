@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -30,6 +31,12 @@ public class PersistManager
 
     public interface Select<T> extends Persist<T>
     {
+        public enum Option {
+            LOAD_COMPLETE_OBJECT_GRAPH
+        };
+
+        public static final EnumSet<Option> NO_OPTIONS = EnumSet.noneOf(Select.Option.class);
+
         String getSelectStoredProcedure(List<T> prototypes) throws DAOException;
 
         void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
@@ -105,14 +112,18 @@ public class PersistManager
     public static <T> List<T> select(Select<T> persist, List<T> prototypes) throws DAOException
     {
         try (Connection conn = persist.createConnection();) {
-            return select(persist, prototypes, conn);
+            conn.setAutoCommit(false);
+            List<T> selectedVersions = select(persist, prototypes, conn, Select.NO_OPTIONS);
+            conn.commit();
+            return selectedVersions;
         } catch (SQLException e) {
             log.error(e);
             throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
         }
     }
 
-    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn) throws DAOException
+    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn,
+            EnumSet<Select.Option> options) throws DAOException
     {
         try {
             try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
@@ -210,6 +221,7 @@ public class PersistManager
             throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
         }
     }
+
     /**
      * Delete is simply an update marking the user's active flag to false.
      * 

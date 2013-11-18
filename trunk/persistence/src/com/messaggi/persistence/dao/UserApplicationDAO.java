@@ -1,8 +1,10 @@
 package com.messaggi.persistence.dao;
 
 import java.sql.Connection;
+import java.util.EnumSet;
 import java.util.List;
 
+import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.domain.UserApplication;
 
 public interface UserApplicationDAO
@@ -15,7 +17,11 @@ public interface UserApplicationDAO
     {
         public static final String BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select prototypes can include application id or user id, not both.";
 
-        public static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select proptypes must include either application id or user id.";
+        public static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select protoypes must include either application id or user id.";
+
+        public static final String COULD_NOT_SELECT_USER_MESSAGE = "Could not select dependent user object.";
+
+        public static final String COULD_NOT_SELECT_APPLICATION_MESSAGE = "Could not select dependent application object.";
     }
 
     List<UserApplication> insertUserApplication(List<UserApplication> newVersions) throws DAOException;
@@ -24,5 +30,6 @@ public interface UserApplicationDAO
 
     List<UserApplication> selectUserApplication(List<UserApplication> prototypes) throws DAOException;
 
-    List<UserApplication> selectUserApplication(List<UserApplication> prototypes, Connection conn) throws DAOException;
+    List<UserApplication> selectUserApplication(List<UserApplication> prototypes, Connection conn,
+            EnumSet<Select.Option> options) throws DAOException;
 }

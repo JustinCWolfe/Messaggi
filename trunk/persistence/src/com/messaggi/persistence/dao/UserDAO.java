@@ -15,7 +15,7 @@ public interface UserDAO
     {
         public static final String BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select prototypes can include email or id, not both.";
 
-        public static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select proptypes must include either email or id.";
+        public static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select protoypes must include either email or id.";
     }
 
     List<User> insertUser(List<User> newVersions) throws DAOException;
