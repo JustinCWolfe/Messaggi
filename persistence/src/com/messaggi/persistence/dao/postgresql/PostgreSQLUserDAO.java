@@ -170,7 +170,7 @@ public class PostgreSQLUserDAO extends PostgreSQLBaseDAO<User> implements UserDA
     @Override
     public List<User> selectUser(List<User> prototypes, Connection conn) throws DAOException
     {
-        return PersistManager.select(this, prototypes, conn);
+        return PersistManager.select(this, prototypes, conn, NO_OPTIONS);
     }
 
     @Override

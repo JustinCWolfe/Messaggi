@@ -5,7 +5,7 @@ import com.messaggi.persistence.dao.postgresql.PostgreSQLDAOFactory;
 public abstract class DAOFactory
 {
     public enum Factory {
-        PostgreSQL
+        POSTGRESQL
     }
 
     public abstract ApplicationDAO getApplicationDAO();
@@ -35,7 +35,7 @@ public abstract class DAOFactory
     public static DAOFactory getDAOFactory(Factory factoryType)
     {
         switch (factoryType) {
-            case PostgreSQL:
+            case POSTGRESQL:
                 return new PostgreSQLDAOFactory();
             default:
                 return null;
