@@ -15,21 +15,9 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.domain.Device;
 
-public class PostgreSQLDeviceDAO implements DeviceDAO, Insert<Device>, Select<Device>, Update<Device>, Delete<Device>
+public class PostgreSQLDeviceDAO extends PostgreSQLBaseDAO<Device> implements DeviceDAO, Insert<Device>,
+        Select<Device>, Update<Device>, Delete<Device>
 {
-    // Persist implementation
-    @Override
-    public Connection createConnection() throws SQLException
-    {
-        return PostgreSQLDAOFactory.createConnection();
-    }
-
-    @Override
-    public String getDomainObjectIdentifier(Device domainObject)
-    {
-        return domainObject.getId().toString();
-    }
-
     // Insert implementation
     @Override
     public String getInsertStoredProcedure()
@@ -83,7 +71,7 @@ public class PostgreSQLDeviceDAO implements DeviceDAO, Insert<Device>, Select<De
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
-        stmt.setBoolean(4, domainObject.getActive());
+        stmt.setBoolean(2, domainObject.getActive());
     }
 
     // Delete implementation

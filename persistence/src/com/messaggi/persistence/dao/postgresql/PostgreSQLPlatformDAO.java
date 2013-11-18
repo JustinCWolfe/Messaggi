@@ -14,23 +14,11 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.dao.PlatformDAO;
 import com.messaggi.persistence.domain.Platform;
+import com.messaggi.persistence.domain.Platform.PlatformServiceName;
 
-public class PostgreSQLPlatformDAO implements PlatformDAO, Insert<Platform>, Select<Platform>, Update<Platform>,
-        Delete<Platform>
+public class PostgreSQLPlatformDAO extends PostgreSQLBaseDAO<Platform> implements PlatformDAO, Insert<Platform>,
+        Select<Platform>, Update<Platform>, Delete<Platform>
 {
-    // Persist implementation
-    @Override
-    public Connection createConnection() throws SQLException
-    {
-        return PostgreSQLDAOFactory.createConnection();
-    }
-
-    @Override
-    public String getDomainObjectIdentifier(Platform domainObject)
-    {
-        return domainObject.getId().toString();
-    }
-
     // Insert implementation
     @Override
     public String getInsertStoredProcedure()
@@ -43,13 +31,15 @@ public class PostgreSQLPlatformDAO implements PlatformDAO, Insert<Platform>, Sel
         throws SQLException
     {
         stmt.setString(1, domainObject.getName());
-        stmt.setString(2, domainObject.getServiceName());
+        stmt.setString(2, domainObject.getServiceName().toString());
     }
 
     @Override
     public void afterInsertInitializeDomainObjectFromResultSet(ResultSet rs, Platform domainObject) throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
+        domainObject.setName(rs.getString("name"));
+        domainObject.setServiceName(PlatformServiceName.valueOf(rs.getString("service_name")));
         domainObject.setActive(rs.getBoolean("active"));
     }
 
@@ -72,7 +62,7 @@ public class PostgreSQLPlatformDAO implements PlatformDAO, Insert<Platform>, Sel
     {
         domainObject.setId(rs.getLong("id"));
         domainObject.setName(rs.getString("name"));
-        domainObject.setServiceName(rs.getString("service_name"));
+        domainObject.setServiceName(PlatformServiceName.valueOf(rs.getString("service_name")));
         domainObject.setActive(rs.getBoolean("active"));
     }
 
@@ -89,7 +79,7 @@ public class PostgreSQLPlatformDAO implements PlatformDAO, Insert<Platform>, Sel
     {
         stmt.setLong(1, domainObject.getId());
         stmt.setString(2, domainObject.getName());
-        stmt.setString(3, domainObject.getServiceName());
+        stmt.setString(3, domainObject.getServiceName().toString());
         stmt.setBoolean(4, domainObject.getActive());
     }
 

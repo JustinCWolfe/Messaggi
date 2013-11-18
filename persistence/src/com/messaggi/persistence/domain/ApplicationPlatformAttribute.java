@@ -45,5 +45,12 @@ public class ApplicationPlatformAttribute
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "ApplicationPlatformAttribute [applicationPlatform=" + applicationPlatform + ", key=" + key +
+                ", value=" + value + "]";
+    }
 }
 

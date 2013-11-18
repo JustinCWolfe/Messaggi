@@ -71,5 +71,11 @@ public class Application
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "Application [id=" + id + "]";
+    }
 }
 

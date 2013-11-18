@@ -15,22 +15,9 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.domain.Application;
 
-public class PostgreSQLApplicationDAO implements ApplicationDAO, Insert<Application>, Select<Application>,
-        Update<Application>, Delete<Application>
+public class PostgreSQLApplicationDAO extends PostgreSQLBaseDAO<Application> implements ApplicationDAO,
+        Insert<Application>, Select<Application>, Update<Application>, Delete<Application>
 {
-    // Persist implementation
-    @Override
-    public Connection createConnection() throws SQLException
-    {
-        return PostgreSQLDAOFactory.createConnection();
-    }
-
-    @Override
-    public String getDomainObjectIdentifier(Application domainObject)
-    {
-        return domainObject.getId().toString();
-    }
-
     // Insert implementation
     @Override
     public String getInsertStoredProcedure()
@@ -50,6 +37,7 @@ public class PostgreSQLApplicationDAO implements ApplicationDAO, Insert<Applicat
         throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
+        domainObject.setName(rs.getString("name"));
         domainObject.setActive(rs.getBoolean("active"));
     }
 

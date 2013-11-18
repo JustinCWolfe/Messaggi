@@ -33,4 +33,10 @@ public class UserApplication
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "UserApplication [user=" + user + ", application=" + application + "]";
+    }
 }

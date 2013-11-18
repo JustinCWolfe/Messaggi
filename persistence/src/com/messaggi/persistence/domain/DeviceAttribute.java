@@ -45,4 +45,10 @@ public class DeviceAttribute
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "DeviceAttribute [device=" + device + ", key=" + key + ", value=" + value + "]";
+    }
 }

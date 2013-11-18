@@ -59,4 +59,10 @@ public class Device
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "Device [id=" + id + "]";
+    }
 }
