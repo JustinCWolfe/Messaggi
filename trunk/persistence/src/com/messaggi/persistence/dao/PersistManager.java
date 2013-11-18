@@ -13,11 +13,9 @@ import org.apache.log4j.Logger;
 
 public class PersistManager
 {
-    private interface Persist<T>
+    public interface Persist<T>
     {
         Connection createConnection() throws SQLException;
-
-        String getDomainObjectIdentifier(T domainObject);
     }
 
     public interface Insert<T> extends Persist<T>
@@ -147,8 +145,8 @@ public class PersistManager
         int updateFailedCount = 0;
         for (int updateCountIndex = 0; updateCountIndex < updateCounts.length; updateCountIndex++) {
             if (updateCounts[updateCountIndex] == Statement.EXECUTE_FAILED) {
-                String identifier = persist.getDomainObjectIdentifier(prototypes.get(updateCountIndex));
-                log.error(String.format(Messages.UPDATE_FAILED_FOR_ID_MESSAGE, identifier));
+                String objectIndentifier = prototypes.get(updateCountIndex).toString();
+                log.error(String.format(Messages.UPDATE_FAILED_FOR_ID_MESSAGE, objectIndentifier));
                 updateFailedCount++;
             }
         }

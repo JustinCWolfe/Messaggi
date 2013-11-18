@@ -33,4 +33,10 @@ public class ApplicationPlatformDevice
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "ApplicationPlatformDevice [applicationPlatform=" + applicationPlatform + ", device=" + device + "]";
+    }
 }

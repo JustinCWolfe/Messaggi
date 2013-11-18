@@ -59,4 +59,10 @@ public class ApplicationPlatformMsgLog
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "ApplicationPlatformMsgLog [id=" + id + "]";
+    }
 }

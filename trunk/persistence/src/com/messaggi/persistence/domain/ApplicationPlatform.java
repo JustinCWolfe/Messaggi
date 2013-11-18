@@ -96,4 +96,10 @@ public class ApplicationPlatform
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "ApplicationPlatform [id=" + id + "]";
+    }
 }

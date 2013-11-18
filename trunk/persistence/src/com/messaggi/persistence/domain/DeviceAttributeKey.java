@@ -47,4 +47,10 @@ public class DeviceAttributeKey
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return "DeviceAttributeKey [key=" + key + ", description=" + description + "]";
+    }
 }
