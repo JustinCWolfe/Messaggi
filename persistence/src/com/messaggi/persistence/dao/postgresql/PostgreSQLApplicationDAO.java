@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.ApplicationDAO;
@@ -113,7 +114,8 @@ public class PostgreSQLApplicationDAO extends PostgreSQLBaseDAO<Application> imp
     }
 
     @Override
-    public List<Application> selectApplication(List<Application> prototypes, Connection conn) throws DAOException
+    public List<Application> selectApplication(List<Application> prototypes, Connection conn,
+            EnumSet<Select.Option> options) throws DAOException
     {
         return PersistManager.select(this, prototypes, conn);
     }

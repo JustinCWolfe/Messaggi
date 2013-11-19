@@ -18,10 +18,6 @@ public interface UserApplicationDAO
         public static final String BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select prototypes can include application id or user id, not both.";
 
         public static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Select protoypes must include either application id or user id.";
-
-        public static final String COULD_NOT_SELECT_USER_MESSAGE = "Could not select dependent user object.";
-
-        public static final String COULD_NOT_SELECT_APPLICATION_MESSAGE = "Could not select dependent application object.";
     }
 
     List<UserApplication> insertUserApplication(List<UserApplication> newVersions) throws DAOException;

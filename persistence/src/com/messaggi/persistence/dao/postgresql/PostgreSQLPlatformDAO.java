@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.DAOException;
@@ -116,7 +117,8 @@ public class PostgreSQLPlatformDAO extends PostgreSQLBaseDAO<Platform> implement
     }
 
     @Override
-    public List<Platform> selectPlatform(List<Platform> prototypes, Connection conn) throws DAOException
+    public List<Platform> selectPlatform(List<Platform> prototypes, Connection conn, EnumSet<Select.Option> options)
+        throws DAOException
     {
         return PersistManager.select(this, prototypes, conn);
     }

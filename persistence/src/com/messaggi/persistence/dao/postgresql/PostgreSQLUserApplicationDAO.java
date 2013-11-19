@@ -6,9 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.messaggi.persistence.dao.DAOException;
 import com.messaggi.persistence.dao.PersistManager;
@@ -22,6 +21,12 @@ import com.messaggi.persistence.domain.UserApplication;
 public class PostgreSQLUserApplicationDAO extends PostgreSQLBaseDAO<UserApplication> implements UserApplicationDAO,
         Insert<UserApplication>, Select<UserApplication>
 {
+    private final String APPLICATION_ACCESSOR = "getApplication";
+    private final String USER_ACCESSOR = "getUser";
+
+    private final String APPLICATION_MUTATOR = "setApplication";
+    private final String USER_MUTATOR = "setUser";
+
     private SelectBy selectBy;
 
     // Insert implementation
@@ -125,50 +130,36 @@ public class PostgreSQLUserApplicationDAO extends PostgreSQLBaseDAO<UserApplicat
     public List<UserApplication> selectUserApplication(List<UserApplication> prototypes, Connection conn,
             EnumSet<Select.Option> options) throws DAOException
     {
-        List<UserApplication> selectedUserApplications = PersistManager.select(this, prototypes, conn, options);
-        if (options.contains(Select.Option.LOAD_COMPLETE_OBJECT_GRAPH)) {
-            int selectedUserApplicationCount = selectedUserApplications.size();
-            if (selectedUserApplicationCount > 0) {
-                Map<Long, User> usersToSelect = new HashMap<>(selectedUserApplicationCount);
-                Map<Long, Application> applicationsToSelect = new HashMap<>(selectedUserApplicationCount);
-                for (UserApplication selectedUserApplication : selectedUserApplications) {
-                    usersToSelect.put(selectedUserApplication.getUser().getId(), selectedUserApplication.getUser());
-                    applicationsToSelect.put(selectedUserApplication.getApplication().getId(),
-                            selectedUserApplication.getApplication());
-                }
-                
-                PostgreSQLUserDAO userDAO = (PostgreSQLUserDAO) daoFactory.getUserDAO();
-                List<User> userPrototypes = new ArrayList<User>(usersToSelect.values());
-                List<User> selectedUsers = PersistManager.select(userDAO, userPrototypes, conn, options);
-                if (selectedUsers.size() != usersToSelect.size()) {
-                    throw new DAOException(DAOException.ErrorCode.SQL_ERROR,
-                            UserApplicationDAO.Messages.COULD_NOT_SELECT_USER_MESSAGE);
-                }
-                Map<Long, User> selectedUsersMap = new HashMap<>(selectedUsers.size());
-                for (User selectedUser : selectedUsers) {
-                    selectedUsersMap.put(selectedUser.getId(), selectedUser);
-                }
-                
-                PostgreSQLApplicationDAO applicationDAO = (PostgreSQLApplicationDAO) daoFactory.getApplicationDAO();
-                List<Application> applicationPrototypes = new ArrayList<Application>(applicationsToSelect.values());
-                List<Application> selectedApplications = PersistManager.select(applicationDAO, applicationPrototypes,
-                        conn, options);
-                if (selectedApplications.size() != applicationsToSelect.size()) {
-                    throw new DAOException(DAOException.ErrorCode.SQL_ERROR,
-                            UserApplicationDAO.Messages.COULD_NOT_SELECT_APPLICATION_MESSAGE);
-                }
-                Map<Long, Application> selectedApplicationsMap = new HashMap<>(selectedApplications.size());
-                for (Application selectedApplication : selectedApplications) {
-                    selectedApplicationsMap.put(selectedApplication.getId(), selectedApplication);
-                }
-
-                for (UserApplication selectedUserApplication : selectedUserApplications) {
-                    selectedUserApplication.setUser(selectedUsersMap.get(selectedUserApplication.getUser().getId()));
-                    selectedUserApplication.setApplication(selectedApplicationsMap.get(selectedUserApplication
-                            .getApplication().getId()));
-                }
-            }
+        List<UserApplication> selectedUserApplications = PersistManager.select(this, prototypes, conn);
+        if (options.contains(Select.Option.RETRIEVE_DEPENDENT_OBJECTS)) {
+            loadUsers(selectedUserApplications, conn, options);
+            loadApplications(selectedUserApplications, conn, options);
         }
         return selectedUserApplications;
+	}
+
+    private void loadUsers(List<UserApplication> prototypes, Connection conn, EnumSet<Select.Option> options)
+        throws DAOException
+    {
+        if (prototypes.size() > 0) {
+            Set<User> toSelectSet = PersistManager.createDependentObjectToSelectSet(prototypes, USER_ACCESSOR);
+            List<User> selectedDomainObjectList = daoFactory.getUserDAO().selectUser(new ArrayList<>(toSelectSet),
+                    conn, options);
+            PersistManager.setSelectedDependentObjectsInPrototypes(prototypes, selectedDomainObjectList, USER_ACCESSOR,
+                    USER_MUTATOR);
+        }
+    }
+
+    private void loadApplications(List<UserApplication> prototypes, Connection conn, EnumSet<Select.Option> options)
+        throws DAOException
+    {
+        if (prototypes.size() > 0) {
+            Set<Application> toSelectSet = PersistManager.createDependentObjectToSelectSet(prototypes,
+                    APPLICATION_ACCESSOR);
+            List<Application> selectedDomainObjectList = daoFactory.getApplicationDAO().selectApplication(
+                    new ArrayList<>(toSelectSet), conn, options);
+            PersistManager.setSelectedDependentObjectsInPrototypes(prototypes, selectedDomainObjectList,
+                    APPLICATION_ACCESSOR, APPLICATION_MUTATOR);
+        }
     }
 }
