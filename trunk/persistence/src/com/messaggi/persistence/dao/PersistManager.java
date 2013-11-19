@@ -1,5 +1,7 @@
 package com.messaggi.persistence.dao;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +9,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -32,10 +37,8 @@ public class PersistManager
     public interface Select<T> extends Persist<T>
     {
         public enum Option {
-            LOAD_COMPLETE_OBJECT_GRAPH
-        };
-
-        public static final EnumSet<Option> NO_OPTIONS = EnumSet.noneOf(Select.Option.class);
+            RETRIEVE_DEPENDENT_OBJECTS
+        }
 
         String getSelectStoredProcedure(List<T> prototypes) throws DAOException;
 
@@ -43,6 +46,11 @@ public class PersistManager
             throws SQLException;
 
         void afterSelectInitializeDomainObjectFromResultSet(ResultSet rs, T domainObject) throws SQLException;
+    }
+
+    public interface SelectWithDependencyLoad<T> extends Select<T>
+    {
+        String getDependentObjectLoadErrorMessage();
     }
 
     public interface Update<T> extends Persist<T>
@@ -63,9 +71,11 @@ public class PersistManager
 
     private class Messages
     {
-        public static final String UPDATE_FAILED_FOR_ID_MESSAGE = "Update failed for id {0}.";
+        public static final String UPDATE_FAILED_FOR_ID_MESSAGE = "Update failed for id %s.";
 
-        public static final String UPDATE_FAILED_MESSAGE = "{0} updates failed.";
+        public static final String UPDATE_FAILED_MESSAGE = "%s updates failed.";
+
+        public static final String SELECT_DEPENDENT_OBJECT_FAILED_MESSAGE = "Dependent object select failed for: %s.";
     }
 
     private static Logger log = Logger.getLogger(PersistManager.class);
@@ -109,11 +119,70 @@ public class PersistManager
         }
     }
 
+    private static <T> Map<T, T> createMapFromList(List<T> domainObjects)
+    {
+        Map<T, T> domainObjectMap = new HashMap<>(domainObjects.size());
+        for (T domainObject : domainObjects) {
+            domainObjectMap.put(domainObject, domainObject);
+        }
+        return domainObjectMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, U> Set<U> createDependentObjectToSelectSet(List<T> prototypes, String accessorName)
+        throws DAOException
+    {
+        Set<U> toSelectSet = new HashSet<>(prototypes.size());
+        try {
+            if (prototypes.size() > 0) {
+                Class<?> prototypesClass = prototypes.get(0).getClass();
+                Method dependentObjectAccessorMethod = prototypesClass.getDeclaredMethod(accessorName);
+                for (T prototype : prototypes) {
+                    U dependentObject = (U) dependentObjectAccessorMethod.invoke(prototype);
+                    toSelectSet.add(dependentObject);
+                }
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            log.error(e);
+            throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
+        }
+        return toSelectSet;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T, U> void setSelectedDependentObjectsInPrototypes(List<T> prototypes,
+            List<U> selectedDomainObjects, String accessorName, String mutatorName) throws DAOException
+    {
+        if (prototypes.size() > 0) {
+            Map<U, U> selectedDomainObjectMap = PersistManager.createMapFromList(selectedDomainObjects);
+            try {
+                Class<?> prototypesClass = prototypes.get(0).getClass();
+                Method dependentObjectAccessorMethod = prototypesClass.getDeclaredMethod(accessorName);
+                Method dependentObjectMutatorMethod = prototypesClass.getDeclaredMethod(mutatorName);
+                // Set selected domain objects into respective prototype objects.
+                for (T prototype : prototypes) {
+                    U prototypeDependentObject = (U) dependentObjectAccessorMethod.invoke(prototype);
+                    if (!selectedDomainObjectMap.containsKey(prototypeDependentObject)) {
+                        String errorMessage = String.format(Messages.SELECT_DEPENDENT_OBJECT_FAILED_MESSAGE,
+                                prototypeDependentObject.toString());
+                        log.error(errorMessage);
+                        throw new DAOException(DAOException.ErrorCode.SQL_ERROR, errorMessage);
+                    }
+                    U selectedDomainObject = selectedDomainObjectMap.get(prototypeDependentObject);
+                    dependentObjectMutatorMethod.invoke(prototype, selectedDomainObject);
+                }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                log.error(e);
+                throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
+	        }
+        }
+    }
+
     public static <T> List<T> select(Select<T> persist, List<T> prototypes) throws DAOException
     {
         try (Connection conn = persist.createConnection();) {
             conn.setAutoCommit(false);
-            List<T> selectedVersions = select(persist, prototypes, conn, Select.NO_OPTIONS);
+            List<T> selectedVersions = select(persist, prototypes, conn);
             conn.commit();
             return selectedVersions;
         } catch (SQLException e) {
@@ -122,8 +191,7 @@ public class PersistManager
         }
     }
 
-    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn,
-            EnumSet<Select.Option> options) throws DAOException
+    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn) throws DAOException
     {
         try {
             try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
