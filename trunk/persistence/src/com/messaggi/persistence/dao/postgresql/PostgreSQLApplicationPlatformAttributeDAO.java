@@ -29,7 +29,7 @@ public class PostgreSQLApplicationPlatformAttributeDAO implements ApplicationPla
             ApplicationPlatformAttribute domainObject) throws SQLException
     {
         stmt.setLong(1, domainObject.getApplicationPlatform().getId());
-        stmt.setString(2, domainObject.getKey().getKey());
+        stmt.setString(2, domainObject.getKey());
         stmt.setString(3, domainObject.getValue());
     }
 
