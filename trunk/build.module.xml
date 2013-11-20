@@ -13,7 +13,6 @@
     <path id="production.modules">
         <path id="admin.module" path="${root}/admin/classes"/>
         <path id="base.module" path="${root}/base/classes"/>
-        <path id="persistence.module" path="${root}/persistence/classes"/>
         <path id="messaging.module" path="${root}/messaging/classes"/>
         <path id="web.module" path="${root}/web/classes"/>
     </path>
@@ -21,7 +20,6 @@
     <path id="test.modules">
         <path id="admin.test.module" path="${root}/admin/test-classes"/>
         <path id="base.test.module" path="${root}/base/test-classes"/>
-        <path id="persistence.test.module" path="${root}/persistence/test-classes"/>
         <path id="messaging.test.module" path="${root}/messaging/test-classes"/>
         <path id="web.test.module" path="${root}/web/test-classes"/>
     </path>

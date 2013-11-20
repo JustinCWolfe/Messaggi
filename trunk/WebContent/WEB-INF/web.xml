@@ -8,14 +8,19 @@
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 	  	<init-param>
 		    <param-name>jersey.config.server.provider.packages</param-name>
-		    <param-value>com.messaggi.services;com.messaggi.web.services</param-value>
+                    <param-value>
+                        com.messaggi.service;
+                        com.messaggi.admin.service;
+                        com.messaggi.messaging.service;
+                        com.messaggi.web.service
+                    </param-value>
 	  	</init-param>
 	  	<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
 	  	<servlet-name>Jersey REST Service</servlet-name>
-		<url-pattern>/services/*</url-pattern>
+		<url-pattern>/service/*</url-pattern>
 	</servlet-mapping>  
 	
 	<resource-ref>

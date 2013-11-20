@@ -13,7 +13,6 @@
   <property name="dist"  location="dist"/>
 
   <path id="classpath">
-      <path refid="persistence.module"/>
       <path refid="base.module"/>
       <pathelement location="${build}"/>
       <fileset refid="log4j.lib"/>
