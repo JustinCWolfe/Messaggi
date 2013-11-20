@@ -16,6 +16,7 @@
   <path id="classpath">
       <pathelement location="${build}"/>
       <fileset refid="jre7.lib"/>
+      <fileset refid="beanutils.lib"/>
       <fileset refid="tomcat.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="log4j.lib"/>
