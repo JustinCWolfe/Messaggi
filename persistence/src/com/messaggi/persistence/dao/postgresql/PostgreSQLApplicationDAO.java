@@ -1,10 +1,8 @@
 package com.messaggi.persistence.dao.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.ApplicationDAO;
@@ -16,8 +14,8 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.domain.Application;
 
-public class PostgreSQLApplicationDAO extends PostgreSQLBaseDAO<Application> implements ApplicationDAO,
-        Insert<Application>, Select<Application>, Update<Application>, Delete<Application>
+public class PostgreSQLApplicationDAO implements ApplicationDAO, Insert<Application>, Select<Application>,
+        Update<Application>, Delete<Application>
 {
     // Insert implementation
     @Override
@@ -102,22 +100,9 @@ public class PostgreSQLApplicationDAO extends PostgreSQLBaseDAO<Application> imp
     }
 
     @Override
-    public List<Application> insertApplication(List<Application> newVersions, Connection conn) throws DAOException
-    {
-        return PersistManager.insert(this, newVersions, conn);
-    }
-
-    @Override
     public List<Application> selectApplication(List<Application> prototypes) throws DAOException
     {
         return PersistManager.select(this, prototypes);
-    }
-
-    @Override
-    public List<Application> selectApplication(List<Application> prototypes, Connection conn,
-            EnumSet<Select.Option> options) throws DAOException
-    {
-        return PersistManager.select(this, prototypes, conn);
     }
 
     @Override
@@ -127,20 +112,8 @@ public class PostgreSQLApplicationDAO extends PostgreSQLBaseDAO<Application> imp
     }
 
     @Override
-    public void updateApplication(List<Application> newVersions, Connection conn) throws DAOException
-    {
-        PersistManager.update(this, newVersions, conn);
-    }
-
-    @Override
     public void deleteApplication(List<Application> prototypes) throws DAOException
     {
         PersistManager.delete(this, prototypes);
-    }
-
-    @Override
-    public void deleteApplication(List<Application> prototypes, Connection conn) throws DAOException
-    {
-        PersistManager.delete(this, prototypes, conn);
     }
 }

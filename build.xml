@@ -78,7 +78,6 @@
   <target name="deploy-3rdParty">
     <copy todir="${messaggi.web.lib}" overwrite="true" flatten="true">
       <fileset refid="log4j.lib"/>
-      <fileset refid="postgresql.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="hamcrest.lib"/>
       <fileset refid="beanutils.lib"/>
@@ -89,6 +88,11 @@
         <include name="log4j.properties"/>
       </fileset>
     </copy>
+    <!--  This must be deployed to CATALINA_HOME/lib in order for DBCP's classloader to find it.
+          http://tomcat.apache.org/tomcat-6.0-doc/jndi-datasource-examples-howto.html -->
+    <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
+      <fileset refid="postgresql.lib"/>
+    </copy>
   </target>
 
   <target name="build-war" depends="deploy,deploy-3rdParty" unless="isMinimalBuild">
@@ -98,6 +102,10 @@
           <include name="**/*"/>
           <exclude name="web.xml"/>
       </webinf>
+      <metainf dir="WebContent/META-INF">
+          <include name="*"/>
+          <include name="**/*"/>
+      </metainf>
       <classes dir="admin/src"/>
       <classes dir="web/src"/>
     </war>
@@ -105,12 +113,6 @@
 
   <target name="deploy-tomcat" depends="build-war">
     <unzip src="${application}.war" dest="${j2ee.webapps}/${application}"/>
-    <copy todir="${j2ee.conf}" overwrite="true" flatten="true">
-      <fileset dir="tomcat/conf">
-        <include name="context.xml"/>
-        <include name="server.xml"/>
-      </fileset>
-    </copy>
     <copy todir="${j2ee.bin}" overwrite="true" flatten="true">
       <fileset dir="tomcat/bin">
         <include name="mshutdown.bat"/>

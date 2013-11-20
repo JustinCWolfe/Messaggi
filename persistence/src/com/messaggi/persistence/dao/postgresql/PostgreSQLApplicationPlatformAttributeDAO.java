@@ -1,10 +1,8 @@
 package com.messaggi.persistence.dao.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.ApplicationPlatformAttributeDAO;
@@ -15,9 +13,9 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.domain.ApplicationPlatformAttribute;
 
-public class PostgreSQLApplicationPlatformAttributeDAO extends PostgreSQLBaseDAO<ApplicationPlatformAttribute>
-        implements ApplicationPlatformAttributeDAO, Insert<ApplicationPlatformAttribute>,
-        Select<ApplicationPlatformAttribute>, Update<ApplicationPlatformAttribute>
+public class PostgreSQLApplicationPlatformAttributeDAO implements ApplicationPlatformAttributeDAO,
+        Insert<ApplicationPlatformAttribute>, Select<ApplicationPlatformAttribute>,
+        Update<ApplicationPlatformAttribute>
 {
     // Insert implementation
     @Override
@@ -88,13 +86,6 @@ public class PostgreSQLApplicationPlatformAttributeDAO extends PostgreSQLBaseDAO
     }
 
     @Override
-    public List<ApplicationPlatformAttribute> insertApplicationPlatformAttribute(
-            List<ApplicationPlatformAttribute> newVersions, Connection conn) throws DAOException
-    {
-        return PersistManager.insert(this, newVersions, conn);
-    }
-
-    @Override
     public List<ApplicationPlatformAttribute> selectApplicationPlatformAttribute(
             List<ApplicationPlatformAttribute> prototypes) throws DAOException
     {
@@ -102,24 +93,9 @@ public class PostgreSQLApplicationPlatformAttributeDAO extends PostgreSQLBaseDAO
     }
 
     @Override
-    public List<ApplicationPlatformAttribute> selectApplicationPlatformAttribute(
-            List<ApplicationPlatformAttribute> prototypes, Connection conn, EnumSet<Select.Option> options)
-        throws DAOException
-    {
-        return PersistManager.select(this, prototypes, conn);
-    }
-
-    @Override
     public void updateApplicationPlatformAttribute(List<ApplicationPlatformAttribute> newVersions) throws DAOException
     {
         PersistManager.update(this, newVersions);
-    }
-
-    @Override
-    public void updateApplicationPlatformAttribute(List<ApplicationPlatformAttribute> newVersions, Connection conn)
-        throws DAOException
-    {
-        PersistManager.update(this, newVersions, conn);
     }
 }
 

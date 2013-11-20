@@ -1,6 +1,5 @@
 package com.messaggi.persistence.dao.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,8 +16,7 @@ import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.dao.UserDAO;
 import com.messaggi.persistence.domain.User;
 
-public class PostgreSQLUserDAO extends PostgreSQLBaseDAO<User> implements UserDAO, Insert<User>, Select<User>,
-        Update<User>, Delete<User>
+public class PostgreSQLUserDAO implements UserDAO, Insert<User>, Select<User>, Update<User>, Delete<User>
 {
     private SelectBy selectBy;
 
@@ -156,22 +154,9 @@ public class PostgreSQLUserDAO extends PostgreSQLBaseDAO<User> implements UserDA
     }
 
     @Override
-    public List<User> insertUser(List<User> newVersions, Connection conn) throws DAOException
-    {
-        return PersistManager.insert(this, newVersions, conn);
-    }
-
-    @Override
     public List<User> selectUser(List<User> prototypes) throws DAOException
     {
         return PersistManager.select(this, prototypes);
-    }
-
-    @Override
-    public List<User> selectUser(List<User> prototypes, Connection conn, EnumSet<Select.Option> options)
-        throws DAOException
-    {
-        return PersistManager.select(this, prototypes, conn);
     }
 
     @Override
@@ -181,20 +166,8 @@ public class PostgreSQLUserDAO extends PostgreSQLBaseDAO<User> implements UserDA
     }
 
     @Override
-    public void updateUser(List<User> newVersions, Connection conn) throws DAOException
-    {
-        PersistManager.update(this, newVersions, conn);
-    }
-
-    @Override
     public void deleteUser(List<User> prototypes) throws DAOException
     {
         PersistManager.delete(this, prototypes);
-    }
-
-    @Override
-    public void deleteUser(List<User> prototypes, Connection conn) throws DAOException
-    {
-        PersistManager.delete(this, prototypes, conn);
     }
 }

@@ -1,10 +1,7 @@
 package com.messaggi.persistence.dao;
 
-import java.sql.Connection;
-import java.util.EnumSet;
 import java.util.List;
 
-import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.domain.User;
 
 public interface UserDAO
@@ -22,17 +19,9 @@ public interface UserDAO
 
     List<User> insertUser(List<User> newVersions) throws DAOException;
 
-    List<User> insertUser(List<User> newVersions, Connection conn) throws DAOException;
-
     List<User> selectUser(List<User> prototypes) throws DAOException;
-
-    List<User> selectUser(List<User> prototypes, Connection conn, EnumSet<Select.Option> options) throws DAOException;
 
     void updateUser(List<User> newVersions) throws DAOException;
 
-    void updateUser(List<User> newVersions, Connection conn) throws DAOException;
-
     void deleteUser(List<User> prototypes) throws DAOException;
-
-    void deleteUser(List<User> prototypes, Connection conn) throws DAOException;
 }

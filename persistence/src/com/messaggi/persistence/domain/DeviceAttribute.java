@@ -7,7 +7,7 @@ public class DeviceAttribute
 {
     private Device device;
 
-    private DeviceAttributeKey key;
+    private String key;
 
     private String value;
 
@@ -21,12 +21,12 @@ public class DeviceAttribute
         this.device = device;
     }
 
-    public DeviceAttributeKey getKey()
+    public String getKey()
     {
         return key;
     }
 
-    public void setKey(DeviceAttributeKey key)
+    public void setKey(String key)
     {
         this.key = key;
     }
