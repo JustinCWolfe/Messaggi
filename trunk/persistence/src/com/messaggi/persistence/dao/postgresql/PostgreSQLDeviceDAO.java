@@ -1,10 +1,8 @@
 package com.messaggi.persistence.dao.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.DAOException;
@@ -16,8 +14,7 @@ import com.messaggi.persistence.dao.PersistManager.Select;
 import com.messaggi.persistence.dao.PersistManager.Update;
 import com.messaggi.persistence.domain.Device;
 
-public class PostgreSQLDeviceDAO extends PostgreSQLBaseDAO<Device> implements DeviceDAO, Insert<Device>,
-        Select<Device>, Update<Device>, Delete<Device>
+public class PostgreSQLDeviceDAO implements DeviceDAO, Insert<Device>, Select<Device>, Update<Device>, Delete<Device>
 {
     // Insert implementation
     @Override
@@ -96,22 +93,9 @@ public class PostgreSQLDeviceDAO extends PostgreSQLBaseDAO<Device> implements De
     }
 
     @Override
-    public List<Device> insertDevice(List<Device> newVersions, Connection conn) throws DAOException
-    {
-        return PersistManager.insert(this, newVersions, conn);
-    }
-
-    @Override
     public List<Device> selectDevice(List<Device> prototypes) throws DAOException
     {
         return PersistManager.select(this, prototypes);
-    }
-
-    @Override
-    public List<Device> selectDevice(List<Device> prototypes, Connection conn, EnumSet<Select.Option> options)
-        throws DAOException
-    {
-        return PersistManager.select(this, prototypes, conn);
     }
 
     @Override
@@ -121,20 +105,8 @@ public class PostgreSQLDeviceDAO extends PostgreSQLBaseDAO<Device> implements De
     }
 
     @Override
-    public void updateDevice(List<Device> newVersions, Connection conn) throws DAOException
-    {
-        PersistManager.update(this, newVersions, conn);
-    }
-
-    @Override
     public void deleteDevice(List<Device> prototypes) throws DAOException
     {
         PersistManager.delete(this, prototypes);
-    }
-
-    @Override
-    public void deleteDevice(List<Device> prototypes, Connection conn) throws DAOException
-    {
-        PersistManager.delete(this, prototypes, conn);
     }
 }

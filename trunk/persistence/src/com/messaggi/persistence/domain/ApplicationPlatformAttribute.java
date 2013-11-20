@@ -7,7 +7,7 @@ public class ApplicationPlatformAttribute
 {
     private ApplicationPlatform applicationPlatform;
 
-    private ApplicationPlatformAttributeKey key;
+    private String key;
 
     private String value;
 
@@ -21,12 +21,12 @@ public class ApplicationPlatformAttribute
         this.applicationPlatform = applicationPlatform;
     }
 
-    public ApplicationPlatformAttributeKey getKey()
+    public String getKey()
     {
         return key;
     }
 
-    public void setKey(ApplicationPlatformAttributeKey key)
+    public void setKey(String key)
     {
         this.key = key;
     }

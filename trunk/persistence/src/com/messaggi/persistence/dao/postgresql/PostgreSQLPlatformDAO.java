@@ -1,10 +1,8 @@
 package com.messaggi.persistence.dao.postgresql;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 
 import com.messaggi.persistence.dao.DAOException;
@@ -17,8 +15,8 @@ import com.messaggi.persistence.dao.PlatformDAO;
 import com.messaggi.persistence.domain.Platform;
 import com.messaggi.persistence.domain.Platform.PlatformServiceName;
 
-public class PostgreSQLPlatformDAO extends PostgreSQLBaseDAO<Platform> implements PlatformDAO, Insert<Platform>,
-        Select<Platform>, Update<Platform>, Delete<Platform>
+public class PostgreSQLPlatformDAO implements PlatformDAO, Insert<Platform>, Select<Platform>, Update<Platform>,
+        Delete<Platform>
 {
     // Insert implementation
     @Override
@@ -105,22 +103,9 @@ public class PostgreSQLPlatformDAO extends PostgreSQLBaseDAO<Platform> implement
     }
 
     @Override
-    public List<Platform> insertPlatform(List<Platform> newVersions, Connection conn) throws DAOException
-    {
-        return PersistManager.insert(this, newVersions, conn);
-    }
-
-    @Override
     public List<Platform> selectPlatform(List<Platform> prototypes) throws DAOException
     {
         return PersistManager.select(this, prototypes);
-    }
-
-    @Override
-    public List<Platform> selectPlatform(List<Platform> prototypes, Connection conn, EnumSet<Select.Option> options)
-        throws DAOException
-    {
-        return PersistManager.select(this, prototypes, conn);
     }
 
     @Override
@@ -130,20 +115,8 @@ public class PostgreSQLPlatformDAO extends PostgreSQLBaseDAO<Platform> implement
     }
 
     @Override
-    public void updatePlatform(List<Platform> newVersions, Connection conn) throws DAOException
-    {
-        PersistManager.update(this, newVersions, conn);
-    }
-
-    @Override
     public void deletePlatform(List<Platform> prototypes) throws DAOException
     {
         PersistManager.delete(this, prototypes);
-    }
-
-    @Override
-    public void deletePlatform(List<Platform> prototypes, Connection conn) throws DAOException
-    {
-        PersistManager.delete(this, prototypes, conn);
     }
 }

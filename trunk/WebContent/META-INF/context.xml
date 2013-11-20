@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context>
+	<Resource 
+		name="jdbc/Messaggi" 
+		auth="Container" 
+		type="javax.sql.DataSource or javax.sql.XADataSource" 
+		factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+		username="jcw_dev" 
+		password="jwolfema2226" 
+		driverClassName="org.postgresql.Driver" 
+		url="jdbc:postgresql://localhost:5432/Messaggi" 
+		maxActive="100" 
+		maxIdle="3" 
+		defaultAutoCommit="false" /> 
+</Context>

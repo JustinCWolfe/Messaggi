@@ -1,7 +1,5 @@
 package com.messaggi.persistence.dao;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,22 +7,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 
 public class PersistManager
 {
-    public interface Persist<T>
-    {
-        Connection createConnection() throws SQLException;
-    }
-
-    public interface Insert<T> extends Persist<T>
+    public interface Insert<T>
     {
         String getInsertStoredProcedure();
 
@@ -34,12 +27,8 @@ public class PersistManager
         void afterInsertInitializeDomainObjectFromResultSet(ResultSet rs, T domainObject) throws SQLException;
     }
 
-    public interface Select<T> extends Persist<T>
+    public interface Select<T>
     {
-        public enum Option {
-            RETRIEVE_DEPENDENT_OBJECTS
-        }
-
         String getSelectStoredProcedure(List<T> prototypes) throws DAOException;
 
         void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
@@ -48,12 +37,7 @@ public class PersistManager
         void afterSelectInitializeDomainObjectFromResultSet(ResultSet rs, T domainObject) throws SQLException;
     }
 
-    public interface SelectWithDependencyLoad<T> extends Select<T>
-    {
-        String getDependentObjectLoadErrorMessage();
-    }
-
-    public interface Update<T> extends Persist<T>
+    public interface Update<T>
     {
         String getUpdateStoredProcedure();
 
@@ -61,7 +45,7 @@ public class PersistManager
             throws SQLException;
     }
 
-    public interface Delete<T> extends Persist<T>
+    public interface Delete<T>
     {
         String getDeleteStoredProcedure();
 
@@ -71,18 +55,35 @@ public class PersistManager
 
     private class Messages
     {
+        public static final String DATASOURCE_NOT_FOUND_MESSAGE = "Datasource '%s' not found.";
+
         public static final String UPDATE_FAILED_FOR_ID_MESSAGE = "Update failed for id %s.";
 
         public static final String UPDATE_FAILED_MESSAGE = "%s updates failed.";
-
-        public static final String SELECT_DEPENDENT_OBJECT_FAILED_MESSAGE = "Dependent object select failed for: %s.";
     }
-
+    
     private static Logger log = Logger.getLogger(PersistManager.class);
+    
+    private static final String MESSAGGI_DATABASE_JNDI_NAME = "java:/comp/env/jdbc/Messaggi";
+
+    private static Connection getConnection() throws DAOException
+    {
+        try {
+	        InitialContext cxt = new InitialContext();
+            DataSource ds = (DataSource) cxt.lookup(MESSAGGI_DATABASE_JNDI_NAME);
+	        if (ds == null) {
+                String errMsg = String.format(Messages.DATASOURCE_NOT_FOUND_MESSAGE, "");
+                throw new DAOException(DAOException.ErrorCode.CONFIGURATION_ERROR, errMsg);
+	        }
+            return ds.getConnection();
+        } catch (NamingException | SQLException e) {
+            throw new DAOException(DAOException.ErrorCode.CONFIGURATION_ERROR, e.getMessage());
+        }
+    }
 
     public static <T> List<T> insert(Insert<T> persist, List<T> newVersions) throws DAOException
     {
-        try (Connection conn = persist.createConnection()) {
+        try (Connection conn = getConnection()) {
             try {
                 conn.setAutoCommit(false);
                 List<T> insertedVersions = insert(persist, newVersions, conn);
@@ -119,68 +120,9 @@ public class PersistManager
         }
     }
 
-    private static <T> Map<T, T> createMapFromList(List<T> domainObjects)
-    {
-        Map<T, T> domainObjectMap = new HashMap<>(domainObjects.size());
-        for (T domainObject : domainObjects) {
-            domainObjectMap.put(domainObject, domainObject);
-        }
-        return domainObjectMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T, U> Set<U> createDependentObjectToSelectSet(List<T> prototypes, String accessorName)
-        throws DAOException
-    {
-        Set<U> toSelectSet = new HashSet<>(prototypes.size());
-        try {
-            if (prototypes.size() > 0) {
-                Class<?> prototypesClass = prototypes.get(0).getClass();
-                Method dependentObjectAccessorMethod = prototypesClass.getDeclaredMethod(accessorName);
-                for (T prototype : prototypes) {
-                    U dependentObject = (U) dependentObjectAccessorMethod.invoke(prototype);
-                    toSelectSet.add(dependentObject);
-                }
-            }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
-        }
-        return toSelectSet;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T, U> void setSelectedDependentObjectsInPrototypes(List<T> prototypes,
-            List<U> selectedDomainObjects, String accessorName, String mutatorName) throws DAOException
-    {
-        if (prototypes.size() > 0) {
-            Map<U, U> selectedDomainObjectMap = PersistManager.createMapFromList(selectedDomainObjects);
-            try {
-                Class<?> prototypesClass = prototypes.get(0).getClass();
-                Method dependentObjectAccessorMethod = prototypesClass.getDeclaredMethod(accessorName);
-                Method dependentObjectMutatorMethod = prototypesClass.getDeclaredMethod(mutatorName);
-                // Set selected domain objects into respective prototype objects.
-                for (T prototype : prototypes) {
-                    U prototypeDependentObject = (U) dependentObjectAccessorMethod.invoke(prototype);
-                    if (!selectedDomainObjectMap.containsKey(prototypeDependentObject)) {
-                        String errorMessage = String.format(Messages.SELECT_DEPENDENT_OBJECT_FAILED_MESSAGE,
-                                prototypeDependentObject.toString());
-                        log.error(errorMessage);
-                        throw new DAOException(DAOException.ErrorCode.SQL_ERROR, errorMessage);
-                    }
-                    U selectedDomainObject = selectedDomainObjectMap.get(prototypeDependentObject);
-                    dependentObjectMutatorMethod.invoke(prototype, selectedDomainObject);
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                log.error(e);
-                throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
-	        }
-        }
-    }
-
     public static <T> List<T> select(Select<T> persist, List<T> prototypes) throws DAOException
     {
-        try (Connection conn = persist.createConnection();) {
+        try (Connection conn = getConnection();) {
             conn.setAutoCommit(false);
             List<T> selectedVersions = select(persist, prototypes, conn);
             conn.commit();
@@ -217,8 +159,7 @@ public class PersistManager
         }
     }
 
-    private static <T> void updateInternal(Statement stmt, Persist<T> persist, List<T> prototypes) throws DAOException,
-        SQLException
+    private static <T> void updateInternal(Statement stmt, List<T> prototypes) throws DAOException, SQLException
     {
         int[] updateCounts = stmt.executeBatch();
         int updateFailedCount = 0;
@@ -237,7 +178,7 @@ public class PersistManager
 
     public static <T> void update(Update<T> persist, List<T> newVersions) throws DAOException
     {
-        try (Connection conn = persist.createConnection();) {
+        try (Connection conn = getConnection();) {
             try {
                 conn.setAutoCommit(false);
                 update(persist, newVersions, conn);
@@ -259,7 +200,7 @@ public class PersistManager
                 persist.beforeUpdateInitializeStatementFromDomainObject(stmt, newVersion);
                 stmt.addBatch();
             }
-            updateInternal(stmt, persist, newVersions);
+            updateInternal(stmt, newVersions);
         } catch (SQLException e) {
             log.error(e);
             throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
@@ -275,7 +216,7 @@ public class PersistManager
      */
     public static <T> void delete(Delete<T> persist, List<T> prototypes) throws DAOException
     {
-        try (Connection conn = persist.createConnection();) {
+        try (Connection conn = getConnection();) {
             try {
                 conn.setAutoCommit(false);
                 delete(persist, prototypes, conn);
@@ -304,7 +245,7 @@ public class PersistManager
                 persist.beforeDeleteInitializeStatementFromDomainObject(stmt, prototype);
                 stmt.addBatch();
             }
-            updateInternal(stmt, persist, prototypes);
+            updateInternal(stmt, prototypes);
         } catch (SQLException e) {
             log.error(e);
             throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
