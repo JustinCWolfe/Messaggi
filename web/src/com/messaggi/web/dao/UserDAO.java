@@ -1,5 +1,6 @@
 package com.messaggi.web.dao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,7 +8,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
-import com.messaggi.dao.DAOException;
+import javax.naming.NamingException;
+
 import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
@@ -78,13 +80,12 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
 
     // Select implementation
     @Override
-    public String getSelectStoredProcedure(List<User> prototypes) throws DAOException
+    public String getSelectStoredProcedure(List<User> prototypes) throws SQLException
     {
         EnumSet<SelectBy> selectBySet = computeSelectBySetForPrototypes(prototypes);
         String storedProcedure = null;
         if (selectBySet.size() > 1) {
-            throw new DAOException(DAOException.ErrorCode.INVALID_CRITERIA,
-                    Messages.BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
+            throw new SQLException(Messages.BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
         } else if (selectBySet.contains(SelectBy.EMAIL)) {
             selectBy = SelectBy.EMAIL;
             storedProcedure = "{call m_get_user_by_email(?)}";
@@ -92,8 +93,7 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
             selectBy = SelectBy.ID;
             storedProcedure = "{call m_get_user_by_id(?)}";
         } else {
-            throw new DAOException(DAOException.ErrorCode.INVALID_CRITERIA,
-                    Messages.NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
+            throw new SQLException(Messages.NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
         }
         return storedProcedure;
     }
@@ -157,22 +157,24 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
         stmt.setLong(1, domainObject.getId());
     }
 
-    public List<User> insertUser(List<User> newVersions) throws DAOException
+    public List<User> insertUser(List<User> newVersions) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.insert(this, newVersions);
     }
 
-    public List<User> selectUser(List<User> prototypes) throws DAOException
+    public List<User> selectUser(List<User> prototypes) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.select(this, prototypes);
     }
 
-    public void updateUser(List<User> newVersions) throws DAOException
+    public void updateUser(List<User> newVersions) throws NamingException, SQLException
     {
         PersistManager.update(this, newVersions);
     }
 
-    public void deleteUser(List<User> prototypes) throws DAOException
+    public void deleteUser(List<User> prototypes) throws NamingException, SQLException
     {
         PersistManager.delete(this, prototypes);
     }
