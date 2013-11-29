@@ -1,11 +1,13 @@
 package com.messaggi.web.dao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.messaggi.dao.DAOException;
+import javax.naming.NamingException;
+
 import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
@@ -40,7 +42,7 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
 
     // Select implementation
     @Override
-    public String getSelectStoredProcedure(List<Application> prototypes) throws DAOException
+    public String getSelectStoredProcedure(List<Application> prototypes) throws SQLException
     {
         return "{call m_get_application_by_id(?)}";
     }
@@ -91,22 +93,24 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
         stmt.setLong(1, domainObject.getId());
     }
 
-    public List<Application> insertApplication(List<Application> newVersions) throws DAOException
+    public List<Application> insertApplication(List<Application> newVersions) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.insert(this, newVersions);
     }
 
-    public List<Application> selectApplication(List<Application> prototypes) throws DAOException
+    public List<Application> selectApplication(List<Application> prototypes) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.select(this, prototypes);
     }
 
-    public void updateApplication(List<Application> newVersions) throws DAOException
+    public void updateApplication(List<Application> newVersions) throws NamingException, SQLException
     {
         PersistManager.update(this, newVersions);
     }
 
-    public void deleteApplication(List<Application> prototypes) throws DAOException
+    public void deleteApplication(List<Application> prototypes) throws NamingException, SQLException
     {
         PersistManager.delete(this, prototypes);
     }

@@ -1,13 +1,11 @@
 package com.messaggi.dao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
-
-import com.messaggi.dao.DAOException.ErrorCode;
 
 public class DAOHelper
 {
@@ -19,8 +17,6 @@ public class DAOHelper
 
     private static final String DB_PASSWORD = "jwolfema2226";
 
-    private static Logger log = Logger.getLogger(DAOHelper.class);
-
     static {
         try {
             Class.forName(DB_DRIVER);
@@ -31,16 +27,10 @@ public class DAOHelper
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Object> T clonePrototype(T prototype) throws DAOException
+    public static <T extends Object> T clonePrototype(T prototype) throws IllegalAccessException,
+        InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        T clone = null;
-        try {
-            clone = (T) BeanUtils.cloneBean(prototype);
-        } catch (Exception e) {
-            log.error(e);
-            throw new DAOException(ErrorCode.CLONE_ERROR, e.getMessage());
-        }
-        return clone;
+        return (T) BeanUtils.cloneBean(prototype);
     }
 
     public static Connection createConnection() throws SQLException

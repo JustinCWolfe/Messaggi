@@ -1,5 +1,6 @@
 package com.messaggi.dao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class PersistManager
 
     public interface Select<T>
     {
-        String getSelectStoredProcedure(List<T> prototypes) throws DAOException;
+        String getSelectStoredProcedure(List<T> prototypes) throws SQLException;
 
         void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
             throws SQLException;
@@ -66,22 +67,18 @@ public class PersistManager
     
     private static final String MESSAGGI_DATABASE_JNDI_NAME = "java:/comp/env/jdbc/Messaggi";
 
-    private static Connection getConnection() throws DAOException
+    private static Connection getConnection() throws NamingException, SQLException
     {
-        try {
-	        InitialContext cxt = new InitialContext();
-            DataSource ds = (DataSource) cxt.lookup(MESSAGGI_DATABASE_JNDI_NAME);
-	        if (ds == null) {
-                String errMsg = String.format(Messages.DATASOURCE_NOT_FOUND_MESSAGE, "");
-                throw new DAOException(DAOException.ErrorCode.CONFIGURATION_ERROR, errMsg);
-	        }
-            return ds.getConnection();
-        } catch (NamingException | SQLException e) {
-            throw new DAOException(DAOException.ErrorCode.CONFIGURATION_ERROR, e.getMessage());
+        InitialContext cxt = new InitialContext();
+        DataSource ds = (DataSource) cxt.lookup(MESSAGGI_DATABASE_JNDI_NAME);
+        if (ds == null) {
+            throw new SQLException(String.format(Messages.DATASOURCE_NOT_FOUND_MESSAGE, ""));
         }
+        return ds.getConnection();
     }
 
-    public static <T> List<T> insert(Insert<T> persist, List<T> newVersions) throws DAOException
+    public static <T> List<T> insert(Insert<T> persist, List<T> newVersions) throws NamingException, SQLException,
+        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
         try (Connection conn = getConnection()) {
             try {
@@ -89,17 +86,15 @@ public class PersistManager
                 List<T> insertedVersions = insert(persist, newVersions, conn);
                 conn.commit();
                 return insertedVersions;
-            } catch (DAOException e) {
+            } catch (SQLException e) {
                 conn.rollback();
                 throw e;
             }
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.FAIL_TO_INSERT, e.getMessage());
         }
     }
 
-    public static <T> List<T> insert(Insert<T> persist, List<T> newVersions, Connection conn) throws DAOException
+    public static <T> List<T> insert(Insert<T> persist, List<T> newVersions, Connection conn) throws SQLException,
+        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
         try (CallableStatement stmt = conn.prepareCall(persist.getInsertStoredProcedure());) {
             List<T> insertedVersions = new ArrayList<>();
@@ -114,52 +109,40 @@ public class PersistManager
                 }
             }
             return insertedVersions;
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.FAIL_TO_INSERT, e.getMessage());
         }
     }
 
-    public static <T> List<T> select(Select<T> persist, List<T> prototypes) throws DAOException
+    public static <T> List<T> select(Select<T> persist, List<T> prototypes) throws NamingException, SQLException,
+        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
         try (Connection conn = getConnection();) {
             conn.setAutoCommit(false);
             List<T> selectedVersions = select(persist, prototypes, conn);
             conn.commit();
             return selectedVersions;
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
         }
     }
 
-    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn) throws DAOException
+    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn) throws SQLException,
+        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
-        try {
-            try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
-                List<T> selectedDomainObjects = new ArrayList<>();
-                for (T prototype : prototypes) {
-                    persist.beforeSelectInitializeStatementFromDomainObject(stmt, prototype);
-                    try (ResultSet rs = stmt.executeQuery();) {
-                        while (rs.next()) {
-                            T selectedDomainObject = DAOHelper.clonePrototype(prototype);
-                            persist.afterSelectInitializeDomainObjectFromResultSet(rs, selectedDomainObject);
-                            selectedDomainObjects.add(selectedDomainObject);
-                        }
+        try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
+            List<T> selectedDomainObjects = new ArrayList<>();
+            for (T prototype : prototypes) {
+                persist.beforeSelectInitializeStatementFromDomainObject(stmt, prototype);
+                try (ResultSet rs = stmt.executeQuery();) {
+                    while (rs.next()) {
+                        T selectedDomainObject = DAOHelper.clonePrototype(prototype);
+                        persist.afterSelectInitializeDomainObjectFromResultSet(rs, selectedDomainObject);
+                        selectedDomainObjects.add(selectedDomainObject);
                     }
                 }
-                return selectedDomainObjects;
-            } catch (SQLException e) {
-                log.error(e);
-                throw new DAOException(DAOException.ErrorCode.SQL_ERROR, e.getMessage());
             }
-        } catch (DAOException e) {
-            log.error(e);
-            throw e;
+            return selectedDomainObjects;
         }
     }
 
-    private static <T> void updateInternal(Statement stmt, List<T> prototypes) throws DAOException, SQLException
+    private static <T> void updateInternal(Statement stmt, List<T> prototypes) throws SQLException
     {
         int[] updateCounts = stmt.executeBatch();
         int updateFailedCount = 0;
@@ -171,29 +154,25 @@ public class PersistManager
             }
         }
         if (updateFailedCount > 0) {
-            throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, String.format(Messages.UPDATE_FAILED_MESSAGE,
-                    updateFailedCount));
+            throw new SQLException(String.format(Messages.UPDATE_FAILED_MESSAGE, updateFailedCount));
         }
     }
 
-    public static <T> void update(Update<T> persist, List<T> newVersions) throws DAOException
+    public static <T> void update(Update<T> persist, List<T> newVersions) throws NamingException, SQLException
     {
         try (Connection conn = getConnection();) {
             try {
                 conn.setAutoCommit(false);
                 update(persist, newVersions, conn);
                 conn.commit();
-            } catch (DAOException e) {
+            } catch (SQLException e) {
                 conn.rollback();
                 throw e;
             }
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
         }
     }
 
-    public static <T> void update(Update<T> persist, List<T> newVersions, Connection conn) throws DAOException
+    public static <T> void update(Update<T> persist, List<T> newVersions, Connection conn) throws SQLException
     {
         try (CallableStatement stmt = conn.prepareCall(persist.getUpdateStoredProcedure());) {
             for (T newVersion : newVersions) {
@@ -201,9 +180,6 @@ public class PersistManager
                 stmt.addBatch();
             }
             updateInternal(stmt, newVersions);
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
         }
     }
 
@@ -212,22 +188,19 @@ public class PersistManager
      * 
      * @param persist
      * @param prototypes
-     * @throws DAOException
+     * @throws SQLException
      */
-    public static <T> void delete(Delete<T> persist, List<T> prototypes) throws DAOException
+    public static <T> void delete(Delete<T> persist, List<T> prototypes) throws NamingException, SQLException
     {
         try (Connection conn = getConnection();) {
             try {
                 conn.setAutoCommit(false);
                 delete(persist, prototypes, conn);
                 conn.commit();
-            } catch (DAOException e) {
+            } catch (SQLException e) {
                 conn.rollback();
                 throw e;
             }
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
         }
     }
 
@@ -236,9 +209,9 @@ public class PersistManager
      * 
      * @param persist
      * @param prototypes
-     * @throws DAOException
+     * @throws SQLException
      */
-    public static <T> void delete(Delete<T> persist, List<T> prototypes, Connection conn) throws DAOException
+    public static <T> void delete(Delete<T> persist, List<T> prototypes, Connection conn) throws SQLException
     {
         try (CallableStatement stmt = conn.prepareCall(persist.getDeleteStoredProcedure());) {
             for (T prototype : prototypes) {
@@ -246,9 +219,6 @@ public class PersistManager
                 stmt.addBatch();
             }
             updateInternal(stmt, prototypes);
-        } catch (SQLException e) {
-            log.error(e);
-            throw new DAOException(DAOException.ErrorCode.UPDATE_FAILED, e.getMessage());
         }
     }
 }

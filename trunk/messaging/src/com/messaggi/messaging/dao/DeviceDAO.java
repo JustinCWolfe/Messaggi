@@ -1,11 +1,13 @@
 package com.messaggi.messaging.dao;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.messaggi.dao.DAOException;
+import javax.naming.NamingException;
+
 import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
@@ -37,7 +39,7 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
 
     // Select implementation
     @Override
-    public String getSelectStoredProcedure(List<Device> prototypes) throws DAOException
+    public String getSelectStoredProcedure(List<Device> prototypes) throws SQLException
     {
         return "{call m_get_device_by_id(?)}";
     }
@@ -85,22 +87,24 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
         stmt.setLong(1, domainObject.getId());
     }
 
-    public List<Device> insertDevice(List<Device> newVersions) throws DAOException
+    public List<Device> insertDevice(List<Device> newVersions) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.insert(this, newVersions);
     }
 
-    public List<Device> selectDevice(List<Device> prototypes) throws DAOException
+    public List<Device> selectDevice(List<Device> prototypes) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.select(this, prototypes);
     }
 
-    public void updateDevice(List<Device> newVersions) throws DAOException
+    public void updateDevice(List<Device> newVersions) throws NamingException, SQLException
     {
         PersistManager.update(this, newVersions);
     }
 
-    public void deleteDevice(List<Device> prototypes) throws DAOException
+    public void deleteDevice(List<Device> prototypes) throws NamingException, SQLException
     {
         PersistManager.delete(this, prototypes);
     }
