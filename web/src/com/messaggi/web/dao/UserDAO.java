@@ -40,7 +40,7 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void beforeInsertInitializeStatementFromDomainObject(PreparedStatement stmt, User domainObject)
+    public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
         stmt.setString(1, domainObject.getName());
@@ -52,7 +52,8 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void afterInsertInitializeDomainObjectFromResultSet(ResultSet rs, User domainObject) throws SQLException
+    public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
+        throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
         domainObject.setName(rs.getString("name"));
@@ -99,7 +100,7 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, User domainObject)
+    public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
         if (selectBy == SelectBy.EMAIL) {
@@ -110,7 +111,8 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void afterSelectInitializeDomainObjectFromResultSet(ResultSet rs, User domainObject) throws SQLException
+    public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
+        throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
         domainObject.setName(rs.getString("name"));
@@ -130,7 +132,7 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void beforeUpdateInitializeStatementFromDomainObject(PreparedStatement stmt, User domainObject)
+    public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
@@ -143,6 +145,11 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
         stmt.setBoolean(7, domainObject.getActive());
     }
 
+    @Override
+    public void afterUpdateInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
+    {
+    }
+
     // Delete implementation
     @Override
     public String getDeleteStoredProcedure()
@@ -151,10 +158,15 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     }
 
     @Override
-    public void beforeDeleteInitializeStatementFromDomainObject(PreparedStatement stmt, User domainObject)
+    public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
+    }
+
+    @Override
+    public void afterDeleteInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
+    {
     }
 
     public List<User> insertUser(List<User> newVersions) throws NamingException, SQLException,

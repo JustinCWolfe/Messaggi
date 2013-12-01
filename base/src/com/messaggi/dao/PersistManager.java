@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,56 +13,52 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
-
 public class PersistManager
 {
     public interface Insert<T>
     {
         String getInsertStoredProcedure();
 
-        void beforeInsertInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
+        void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<T> domainObjects)
             throws SQLException;
 
-        void afterInsertInitializeDomainObjectFromResultSet(ResultSet rs, T domainObject) throws SQLException;
+        void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws SQLException;
     }
 
     public interface Select<T>
     {
         String getSelectStoredProcedure(List<T> prototypes) throws SQLException;
 
-        void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
+        void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<T> domainObjects)
             throws SQLException;
 
-        void afterSelectInitializeDomainObjectFromResultSet(ResultSet rs, T domainObject) throws SQLException;
+        void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws SQLException;
     }
 
     public interface Update<T>
     {
         String getUpdateStoredProcedure();
 
-        void beforeUpdateInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
+        void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<T> domainObjects)
             throws SQLException;
+
+        void afterUpdateInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws SQLException;
     }
 
     public interface Delete<T>
     {
         String getDeleteStoredProcedure();
 
-        void beforeDeleteInitializeStatementFromDomainObject(PreparedStatement stmt, T domainObject)
+        void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<T> domainObjects)
             throws SQLException;
+
+        void afterDeleteInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws SQLException;
     }
 
     private class Messages
     {
         public static final String DATASOURCE_NOT_FOUND_MESSAGE = "Datasource '%s' not found.";
-
-        public static final String UPDATE_FAILED_FOR_ID_MESSAGE = "Update failed for id %s.";
-
-        public static final String UPDATE_FAILED_MESSAGE = "%s updates failed.";
     }
-    
-    private static Logger log = Logger.getLogger(PersistManager.class);
     
     private static final String MESSAGGI_DATABASE_JNDI_NAME = "java:/comp/env/jdbc/Messaggi";
 
@@ -81,34 +76,14 @@ public class PersistManager
         IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
         try (Connection conn = getConnection()) {
-            try {
-                conn.setAutoCommit(false);
-                List<T> insertedVersions = insert(persist, newVersions, conn);
-                conn.commit();
-                return insertedVersions;
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
-        }
-    }
-
-    public static <T> List<T> insert(Insert<T> persist, List<T> newVersions, Connection conn) throws SQLException,
-        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
-    {
-        try (CallableStatement stmt = conn.prepareCall(persist.getInsertStoredProcedure());) {
-            List<T> insertedVersions = new ArrayList<>();
-            for (T newVersion : newVersions) {
-                persist.beforeInsertInitializeStatementFromDomainObject(stmt, newVersion);
+            try (CallableStatement stmt = conn.prepareCall(persist.getInsertStoredProcedure());) {
+                persist.beforeInsertInitializeStatementFromDomainObjects(stmt, newVersions);
+                List<T> insertedVersions = new ArrayList<>();
                 try (ResultSet rs = stmt.executeQuery();) {
-                    while (rs.next()) {
-                        T insertedVersion = DAOHelper.clonePrototype(newVersion);
-                        persist.afterInsertInitializeDomainObjectFromResultSet(rs, insertedVersion);
-                        insertedVersions.add(insertedVersion);
-                    }
+                    persist.afterInsertInitializeDomainObjectsFromResultSet(rs, insertedVersions);
                 }
+                return insertedVersions;
             }
-            return insertedVersions;
         }
     }
 
@@ -116,90 +91,27 @@ public class PersistManager
         IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
     {
         try (Connection conn = getConnection();) {
-            conn.setAutoCommit(false);
-            List<T> selectedVersions = select(persist, prototypes, conn);
-            conn.commit();
-            return selectedVersions;
-        }
-    }
-
-    public static <T> List<T> select(Select<T> persist, List<T> prototypes, Connection conn) throws SQLException,
-        IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException
-    {
-        try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
-            List<T> selectedDomainObjects = new ArrayList<>();
-            for (T prototype : prototypes) {
-                persist.beforeSelectInitializeStatementFromDomainObject(stmt, prototype);
+            try (CallableStatement stmt = conn.prepareCall(persist.getSelectStoredProcedure(prototypes));) {
+                persist.beforeSelectInitializeStatementFromDomainObjects(stmt, prototypes);
+                List<T> selectedDomainObjects = new ArrayList<>();
                 try (ResultSet rs = stmt.executeQuery();) {
-                    while (rs.next()) {
-                        T selectedDomainObject = DAOHelper.clonePrototype(prototype);
-                        persist.afterSelectInitializeDomainObjectFromResultSet(rs, selectedDomainObject);
-                        selectedDomainObjects.add(selectedDomainObject);
-                    }
+                    persist.afterSelectInitializeDomainObjectsFromResultSet(rs, selectedDomainObjects);
                 }
+                return selectedDomainObjects;
             }
-            return selectedDomainObjects;
         }
     }
 
-    private static <T> void updateInternal(Statement stmt, List<T> prototypes) throws SQLException
-    {
-        int[] updateCounts = stmt.executeBatch();
-        int updateFailedCount = 0;
-        for (int updateCountIndex = 0; updateCountIndex < updateCounts.length; updateCountIndex++) {
-            if (updateCounts[updateCountIndex] == Statement.EXECUTE_FAILED) {
-                String objectIndentifier = prototypes.get(updateCountIndex).toString();
-                log.error(String.format(Messages.UPDATE_FAILED_FOR_ID_MESSAGE, objectIndentifier));
-                updateFailedCount++;
-            }
-        }
-        if (updateFailedCount > 0) {
-            throw new SQLException(String.format(Messages.UPDATE_FAILED_MESSAGE, updateFailedCount));
-        }
-    }
-
-    public static <T> void update(Update<T> persist, List<T> newVersions) throws NamingException, SQLException
+    public static <T> List<T> update(Update<T> persist, List<T> newVersions) throws NamingException, SQLException
     {
         try (Connection conn = getConnection();) {
-            try {
-                conn.setAutoCommit(false);
-                update(persist, newVersions, conn);
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
-        }
-    }
-
-    public static <T> void update(Update<T> persist, List<T> newVersions, Connection conn) throws SQLException
-    {
-        try (CallableStatement stmt = conn.prepareCall(persist.getUpdateStoredProcedure());) {
-            for (T newVersion : newVersions) {
-                persist.beforeUpdateInitializeStatementFromDomainObject(stmt, newVersion);
-                stmt.addBatch();
-            }
-            updateInternal(stmt, newVersions);
-        }
-    }
-
-    /**
-     * Delete is simply an update marking the user's active flag to false.
-     * 
-     * @param persist
-     * @param prototypes
-     * @throws SQLException
-     */
-    public static <T> void delete(Delete<T> persist, List<T> prototypes) throws NamingException, SQLException
-    {
-        try (Connection conn = getConnection();) {
-            try {
-                conn.setAutoCommit(false);
-                delete(persist, prototypes, conn);
-                conn.commit();
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
+            try (CallableStatement stmt = conn.prepareCall(persist.getUpdateStoredProcedure());) {
+                persist.beforeUpdateInitializeStatementFromDomainObjects(stmt, newVersions);
+                List<T> updatedDomainObjects = new ArrayList<>();
+                try (ResultSet rs = stmt.executeQuery();) {
+                    persist.afterUpdateInitializeDomainObjectsFromResultSet(rs, updatedDomainObjects);
+                }
+                return updatedDomainObjects;
             }
         }
     }
@@ -211,14 +123,17 @@ public class PersistManager
      * @param prototypes
      * @throws SQLException
      */
-    public static <T> void delete(Delete<T> persist, List<T> prototypes, Connection conn) throws SQLException
+    public static <T> List<T> delete(Delete<T> persist, List<T> prototypes) throws NamingException, SQLException
     {
-        try (CallableStatement stmt = conn.prepareCall(persist.getDeleteStoredProcedure());) {
-            for (T prototype : prototypes) {
-                persist.beforeDeleteInitializeStatementFromDomainObject(stmt, prototype);
-                stmt.addBatch();
+        try (Connection conn = getConnection();) {
+            try (CallableStatement stmt = conn.prepareCall(persist.getDeleteStoredProcedure());) {
+                persist.beforeDeleteInitializeStatementFromDomainObjects(stmt, prototypes);
+                List<T> updatedDomainObjects = new ArrayList<>();
+                try (ResultSet rs = stmt.executeQuery();) {
+                    persist.afterDeleteInitializeDomainObjectsFromResultSet(rs, updatedDomainObjects);
+                }
+                return updatedDomainObjects;
             }
-            updateInternal(stmt, prototypes);
         }
     }
 }

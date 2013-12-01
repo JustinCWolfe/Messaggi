@@ -25,14 +25,14 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
     }
 
     @Override
-    public void beforeInsertInitializeStatementFromDomainObject(PreparedStatement stmt, Application domainObject)
+    public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
         stmt.setString(1, domainObject.getName());
     }
 
     @Override
-    public void afterInsertInitializeDomainObjectFromResultSet(ResultSet rs, Application domainObject)
+    public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
         throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
@@ -48,14 +48,14 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
     }
 
     @Override
-    public void beforeSelectInitializeStatementFromDomainObject(PreparedStatement stmt, Application domainObject)
+    public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
     }
 
     @Override
-    public void afterSelectInitializeDomainObjectFromResultSet(ResultSet rs, Application domainObject)
+    public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
         throws SQLException
     {
         domainObject.setId(rs.getLong("id"));
@@ -71,12 +71,18 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
     }
 
     @Override
-    public void beforeUpdateInitializeStatementFromDomainObject(PreparedStatement stmt, Application domainObject)
+    public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
         stmt.setString(2, domainObject.getName());
         stmt.setBoolean(3, domainObject.getActive());
+    }
+
+    @Override
+    public void afterUpdateInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
+        throws SQLException
+    {
     }
 
     // Delete implementation
@@ -87,10 +93,16 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
     }
 
     @Override
-    public void beforeDeleteInitializeStatementFromDomainObject(PreparedStatement stmt, Application domainObject)
+    public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
         stmt.setLong(1, domainObject.getId());
+    }
+
+    @Override
+    public void afterDeleteInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
+        throws SQLException
+    {
     }
 
     public List<Application> insertApplication(List<Application> newVersions) throws NamingException, SQLException,
