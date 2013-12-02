@@ -1,6 +1,7 @@
 package com.messaggi.web.dao;
 
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,72 +12,59 @@ import javax.naming.NamingException;
 import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
-import com.messaggi.dao.PersistManager.Select;
 import com.messaggi.dao.PersistManager.Update;
 import com.messaggi.web.domain.Application;
 
-public class ApplicationDAO implements Insert<Application>, Select<Application>, Update<Application>, Delete<Application>
+public class ApplicationDAO implements Insert<Application>, Update<Application>, Delete<Application>
 {
+    private static final String SAVE_STORED_PROCEDURE = "{call m_save_application(?)}";
+
     // Insert implementation
     @Override
     public String getInsertStoredProcedure()
     {
-        return "{call m_create_application(?)}";
+        return SAVE_STORED_PROCEDURE;
     }
 
     @Override
     public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
-        stmt.setString(1, domainObject.getName());
+        Connection conn = stmt.getConnection();
+        for (Application domainObject : domainObjects) {
+            //conn.createArrayOf()
+            //stmt.setArray(1, );
+            //stmt.setString(1, domainObject.getName());
+        }
     }
 
     @Override
     public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
         throws SQLException
     {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setName(rs.getString("name"));
-        domainObject.setActive(rs.getBoolean("active"));
-    }
-
-    // Select implementation
-    @Override
-    public String getSelectStoredProcedure(List<Application> prototypes) throws SQLException
-    {
-        return "{call m_get_application_by_id(?)}";
-    }
-
-    @Override
-    public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
-        throws SQLException
-    {
-        stmt.setLong(1, domainObject.getId());
-    }
-
-    @Override
-    public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<Application> domainObjects)
-        throws SQLException
-    {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setName(rs.getString("name"));
-        domainObject.setActive(rs.getBoolean("active"));
+        for (Application domainObject : domainObjects) {
+            //domainObject.setId(rs.getLong("id"));
+            //domainObject.setName(rs.getString("name"));
+            //domainObject.setActive(rs.getBoolean("active"));
+        }
     }
 
     // Update implementation
     @Override
     public String getUpdateStoredProcedure()
     {
-        return "{call m_update_application(?,?,?)}";
+        return SAVE_STORED_PROCEDURE;
     }
 
     @Override
     public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
-        stmt.setString(2, domainObject.getName());
-        stmt.setBoolean(3, domainObject.getActive());
+        for (Application domainObject : domainObjects) {
+            //stmt.setLong(1, domainObject.getId());
+            //stmt.setString(2, domainObject.getName());
+            //stmt.setBoolean(3, domainObject.getActive());
+        }
     }
 
     @Override
@@ -89,14 +77,16 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
     @Override
     public String getDeleteStoredProcedure()
     {
-        return "{call m_inactivate_application_by_id(?)}";
+        return SAVE_STORED_PROCEDURE;
     }
 
     @Override
     public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Application> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
+        for (Application domainObject : domainObjects) {
+            //stmt.setLong(1, domainObject.getId());
+        }
     }
 
     @Override
@@ -109,12 +99,6 @@ public class ApplicationDAO implements Insert<Application>, Select<Application>,
         InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
     {
         return PersistManager.insert(this, newVersions);
-    }
-
-    public List<Application> selectApplication(List<Application> prototypes) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
-    {
-        return PersistManager.select(this, prototypes);
     }
 
     public void updateApplication(List<Application> newVersions) throws NamingException, SQLException

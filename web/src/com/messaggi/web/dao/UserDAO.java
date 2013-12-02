@@ -43,26 +43,30 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
-        stmt.setString(1, domainObject.getName());
-        stmt.setString(2, domainObject.getEmail());
-        stmt.setString(3, domainObject.getPhone());
-        stmt.setString(4, domainObject.getPassword());
-        String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
-        stmt.setString(5, locale);
+        for (User domainObject : domainObjects) {
+            stmt.setString(1, domainObject.getName());
+            stmt.setString(2, domainObject.getEmail());
+            stmt.setString(3, domainObject.getPhone());
+            stmt.setString(4, domainObject.getPassword());
+            String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
+            stmt.setString(5, locale);
+        }
     }
 
     @Override
     public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
         throws SQLException
     {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setName(rs.getString("name"));
-        domainObject.setEmail(rs.getString("email"));
-        domainObject.setPhone(rs.getString("phone"));
-        domainObject.setPhoneParsed(rs.getString("phone_parsed"));
-        domainObject.setPassword(rs.getString("password"));
-        domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
-        domainObject.setActive(rs.getBoolean("active"));
+        for (User domainObject : domainObjects) {
+            domainObject.setId(rs.getLong("id"));
+            domainObject.setName(rs.getString("name"));
+            domainObject.setEmail(rs.getString("email"));
+            domainObject.setPhone(rs.getString("phone"));
+            domainObject.setPhoneParsed(rs.getString("phone_parsed"));
+            domainObject.setPassword(rs.getString("password"));
+            domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
+            domainObject.setActive(rs.getBoolean("active"));
+        }
     }
 
     private static EnumSet<SelectBy> computeSelectBySetForPrototypes(List<User> prototypes)
@@ -103,10 +107,12 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
-        if (selectBy == SelectBy.EMAIL) {
-            stmt.setString(1, domainObject.getEmail());
-        } else {
-            stmt.setLong(1, domainObject.getId());
+        for (User domainObject : domainObjects) {
+            if (selectBy == SelectBy.EMAIL) {
+                stmt.setString(1, domainObject.getEmail());
+            } else {
+                stmt.setLong(1, domainObject.getId());
+            }
         }
     }
 
@@ -114,14 +120,16 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
         throws SQLException
     {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setName(rs.getString("name"));
-        domainObject.setEmail(rs.getString("email"));
-        domainObject.setPhone(rs.getString("phone"));
-        domainObject.setPhoneParsed(rs.getString("phone_parsed"));
-        domainObject.setPassword(rs.getString("password"));
-        domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
-        domainObject.setActive(rs.getBoolean("active"));
+        for (User domainObject : domainObjects) {
+            domainObject.setId(rs.getLong("id"));
+            domainObject.setName(rs.getString("name"));
+            domainObject.setEmail(rs.getString("email"));
+            domainObject.setPhone(rs.getString("phone"));
+            domainObject.setPhoneParsed(rs.getString("phone_parsed"));
+            domainObject.setPassword(rs.getString("password"));
+            domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
+            domainObject.setActive(rs.getBoolean("active"));
+        }
     }
 
     // Update implementation
@@ -135,14 +143,16 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
-        stmt.setString(2, domainObject.getName());
-        stmt.setString(3, domainObject.getEmail());
-        stmt.setString(4, domainObject.getPhone());
-        stmt.setString(5, domainObject.getPassword());
-        String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
-        stmt.setString(6, locale);
-        stmt.setBoolean(7, domainObject.getActive());
+        for (User domainObject : domainObjects) {
+            stmt.setLong(1, domainObject.getId());
+            stmt.setString(2, domainObject.getName());
+            stmt.setString(3, domainObject.getEmail());
+            stmt.setString(4, domainObject.getPhone());
+            stmt.setString(5, domainObject.getPassword());
+            String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
+            stmt.setString(6, locale);
+            stmt.setBoolean(7, domainObject.getActive());
+        }
     }
 
     @Override
@@ -161,7 +171,9 @@ public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete
     public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
+        for (User domainObject : domainObjects) {
+            stmt.setLong(1, domainObject.getId());
+        }
     }
 
     @Override
