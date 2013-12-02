@@ -43,6 +43,10 @@
         <include name="postgresql-9.2-1003.jdbc4.jar"/>
     </fileset>
 
+    <fileset id="sqljdbc4.lib" dir="${lib}/sqljdbc_4.0">
+        <include name="sqljdbc4.jar"/>
+    </fileset>
+
     <!-- 3rd Party jars that are only used for testing -->
     <path id="3rdParty.unit.test.support">
         <fileset refid="junit.lib"/>
