@@ -34,8 +34,10 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
     public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
         throws SQLException
     {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setActive(rs.getBoolean("active"));
+        for (Device domainObject : domainObjects) {
+            //domainObject.setId(rs.getLong("id"));
+            //domainObject.setActive(rs.getBoolean("active"));
+        }
     }
 
     // Select implementation
@@ -49,15 +51,19 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
     public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
+        for (Device domainObject : domainObjects) {
+            //stmt.setLong(1, domainObject.getId());
+        }
     }
 
     @Override
     public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
         throws SQLException
     {
-        domainObject.setId(rs.getLong("id"));
-        domainObject.setActive(rs.getBoolean("active"));
+        for (Device domainObject : domainObjects) {
+            //domainObject.setId(rs.getLong("id"));
+            //domainObject.setActive(rs.getBoolean("active"));
+        }
     }
 
     // Update implementation
@@ -71,8 +77,10 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
     public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
-        stmt.setBoolean(2, domainObject.getActive());
+        for (Device domainObject : domainObjects) {
+            //stmt.setLong(1, domainObject.getId());
+            //stmt.setBoolean(2, domainObject.getActive());
+        }
     }
 
     @Override
@@ -92,7 +100,9 @@ public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>
     public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
         throws SQLException
     {
-        stmt.setLong(1, domainObject.getId());
+        for (Device domainObject : domainObjects) {
+            //stmt.setLong(1, domainObject.getId());
+        }
     }
 
     @Override
