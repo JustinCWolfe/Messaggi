@@ -1,4 +1,4 @@
-package com.messaggi.web.dao;
+package com.messaggi.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -9,11 +9,10 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
 import com.messaggi.dao.PersistManager.Update;
-import com.messaggi.web.domain.Application;
+import com.messaggi.domain.Application;
 
 public class ApplicationDAO implements Insert<Application>, Update<Application>, Delete<Application>
 {

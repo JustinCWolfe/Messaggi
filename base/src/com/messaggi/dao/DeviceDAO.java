@@ -1,4 +1,4 @@
-package com.messaggi.messaging.dao;
+package com.messaggi.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -8,12 +8,11 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import com.messaggi.dao.PersistManager;
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
 import com.messaggi.dao.PersistManager.Select;
 import com.messaggi.dao.PersistManager.Update;
-import com.messaggi.messaging.domain.Device;
+import com.messaggi.domain.Device;
 
 public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>, Delete<Device>
 {

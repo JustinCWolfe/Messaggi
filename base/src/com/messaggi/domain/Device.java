@@ -1,4 +1,4 @@
-package com.messaggi.messaging.domain;
+package com.messaggi.domain;
 
 import java.util.HashSet;
 
@@ -11,7 +11,7 @@ public class Device
 
     private Boolean active;
 
-    private HashSet<DeviceAttribute> deviceAttributes;
+    private HashSet<ApplicationPlatform> applicationPlatforms;
 
     public Long getId()
     {
@@ -33,24 +33,18 @@ public class Device
         this.active = active;
     }
 
-    public HashSet<DeviceAttribute> getDeviceAttributes()
+    public HashSet<ApplicationPlatform> getApplicationPlatforms()
     {
-        return deviceAttributes;
+        return applicationPlatforms;
     }
 
-    public void setDeviceAttributes(HashSet<DeviceAttribute> deviceAttributes)
+    public void setApplicationPlatforms(HashSet<ApplicationPlatform> applicationPlatforms)
     {
-        this.deviceAttributes = deviceAttributes;
+        this.applicationPlatforms = applicationPlatforms;
     }
 
     public Device()
     {
 
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Device [id=" + id + "]";
     }
 }

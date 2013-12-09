@@ -9,9 +9,9 @@ import org.apache.commons.beanutils.BeanUtils;
 
 public class DAOHelper
 {
-    private static final String DB_DRIVER = "org.postgresql.Driver";
+    private static final String DB_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/Messaggi";
+    private static final String DB_URL = "jdbc:sqlserver://localhost:1433/Messaggi";
 
     private static final String DB_USER = "jcw_dev";
 
@@ -21,7 +21,7 @@ public class DAOHelper
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
-            System.out.println("Where is your PostgreSQL JDBC Driver?" + "Include in your library path!");
+            System.out.println("Where is your SqlServer JDBC Driver?" + "Include in your library path!");
             e.printStackTrace();
         }
     }

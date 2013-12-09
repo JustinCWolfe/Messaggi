@@ -1,4 +1,4 @@
-package com.messaggi.web.domain;
+package com.messaggi.domain;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
