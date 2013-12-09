@@ -1,6 +1,5 @@
-package com.messaggi.web.domain;
+package com.messaggi.domain;
 
-import java.util.HashSet;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -8,15 +7,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ApplicationPlatform
 {
-    private Long id;
+    public enum Platform {
+        IOS("IOS"), ANDROID("ANDROID"), WINDOWS("WINDOWS");
+        
+        private final String value;
+        
+        public String getValue()
+        {
+            return value;
+        }
 
-    private UUID token;
+        private Platform (String value) {
+            this.value = value;
+        }
+    }
+
+    private Long id;
 
     private Application application;
 
     private Platform platform;
 
-    private HashSet<ApplicationPlatformAttribute> attributes;
+    private UUID token;
 
     public Long getId()
     {
@@ -26,16 +38,6 @@ public class ApplicationPlatform
     public void setId(Long id)
     {
         this.id = id;
-    }
-
-    public UUID getToken()
-    {
-        return token;
-    }
-
-    public void setToken(UUID token)
-    {
-        this.token = token;
     }
 
     public Application getApplication()
@@ -58,24 +60,18 @@ public class ApplicationPlatform
         this.platform = platform;
     }
 
-    public HashSet<ApplicationPlatformAttribute> getAttributes()
+    public UUID getToken()
     {
-        return attributes;
+        return token;
     }
 
-    public void setAttributes(HashSet<ApplicationPlatformAttribute> attributes)
+    public void setToken(UUID token)
     {
-        this.attributes = attributes;
+        this.token = token;
     }
 
     public ApplicationPlatform()
     {
 
-    }
-
-    @Override
-    public String toString()
-    {
-        return "ApplicationPlatform [id=" + id + "]";
     }
 }

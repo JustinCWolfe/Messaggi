@@ -1,4 +1,4 @@
-package com.messaggi.web.dao;
+package com.messaggi.dao;
 
 public class ApplicationPlatformDAO
 {

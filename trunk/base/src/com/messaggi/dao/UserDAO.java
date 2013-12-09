@@ -1,48 +1,38 @@
-package com.messaggi.web.dao;
+package com.messaggi.dao;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
 import javax.naming.NamingException;
 
-import com.messaggi.dao.PersistManager;
+import org.eclipse.jdt.internal.compiler.util.Messages;
+
 import com.messaggi.dao.PersistManager.Delete;
 import com.messaggi.dao.PersistManager.Insert;
 import com.messaggi.dao.PersistManager.Select;
 import com.messaggi.dao.PersistManager.Update;
-import com.messaggi.web.domain.User;
+import com.messaggi.domain.User;
 
 public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete<User>
 {
-    private enum SelectBy {
-        ID, EMAIL
-    };
-
-    private class Messages
-    {
-        private static final String BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Can select by id or email, not both.";
-
-        private static final String NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE = "Must specify id or email as select criteria.";
-    }
-
-    private SelectBy selectBy;
-
     // Insert implementation
     @Override
     public String getInsertStoredProcedure()
     {
-        return "{call m_create_user(?,?,?,?,?)}";
+        return "{call SaveUser(?)}";
     }
 
     @Override
     public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
         throws SQLException
     {
+        SQLXML xmlVar = stmt.getConnection().createSQLXML();
         for (User domainObject : domainObjects) {
             stmt.setString(1, domainObject.getName());
             stmt.setString(2, domainObject.getEmail());
