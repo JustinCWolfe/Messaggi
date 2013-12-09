@@ -2,27 +2,30 @@ package com.messaggi.domain;
 
 import java.util.HashSet;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "Device")
 public class Device
 {
-    private Long id;
+    private String code;
 
     private Boolean active;
 
     private HashSet<ApplicationPlatform> applicationPlatforms;
 
-    public Long getId()
+    @XmlAttribute(name = "Code")
+    public String getCode()
     {
-        return id;
+        return code;
     }
 
-    public void setId(Long id)
+    public void setCode(String code)
     {
-        this.id = id;
+        this.code = code;
     }
 
+    @XmlAttribute(name = "Active")
     public Boolean getActive()
     {
         return active;
@@ -33,6 +36,7 @@ public class Device
         this.active = active;
     }
 
+    @XmlAttribute(name = "ApplicationPlatforms")
     public HashSet<ApplicationPlatform> getApplicationPlatforms()
     {
         return applicationPlatforms;

@@ -1,10 +1,12 @@
 package com.messaggi.domain;
 
+import java.util.HashSet;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "ApplicationPlatform")
 public class ApplicationPlatform
 {
     public enum Platform {
@@ -22,7 +24,7 @@ public class ApplicationPlatform
         }
     }
 
-    private Long id;
+    private Integer id;
 
     private Application application;
 
@@ -30,12 +32,15 @@ public class ApplicationPlatform
 
     private UUID token;
 
-    public Long getId()
+    private HashSet<Device> devices;
+
+    @XmlAttribute(name = "ID")
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
@@ -50,6 +55,12 @@ public class ApplicationPlatform
         this.application = application;
     }
 
+    @XmlAttribute(name = "ApplicationID")
+    public Integer getApplicationId()
+    {
+        return (application != null) ? application.getId() : null;
+    }
+
     public Platform getPlatform()
     {
         return platform;
@@ -60,6 +71,13 @@ public class ApplicationPlatform
         this.platform = platform;
     }
 
+    @XmlAttribute(name = "PlatformCode")
+    public String getPlatformCode()
+    {
+        return (platform != null) ? platform.value : null;
+    }
+
+    @XmlAttribute(name = "Token")
     public UUID getToken()
     {
         return token;
@@ -68,6 +86,17 @@ public class ApplicationPlatform
     public void setToken(UUID token)
     {
         this.token = token;
+    }
+
+    @XmlAttribute(name = "Devices")
+    public HashSet<Device> getDevices()
+    {
+        return devices;
+    }
+
+    public void setDevices(HashSet<Device> devices)
+    {
+        this.devices = devices;
     }
 
     public ApplicationPlatform()

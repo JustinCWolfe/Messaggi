@@ -3,12 +3,13 @@ package com.messaggi.domain;
 import java.util.HashSet;
 import java.util.Locale;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "User")
 public class User
 {
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -26,16 +27,18 @@ public class User
 
     private HashSet<Application> applications;
 
-    public Long getId()
+    @XmlAttribute(name = "ID")
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
 
+    @XmlAttribute(name = "Name")
     public String getName()
     {
         return name;
@@ -46,6 +49,7 @@ public class User
         this.name = name;
     }
 
+    @XmlAttribute(name = "Email")
     public String getEmail()
     {
         return email;
@@ -56,6 +60,7 @@ public class User
         this.email = email;
     }
 
+    @XmlAttribute(name = "Phone")
     public String getPhone()
     {
         return phone;
@@ -66,6 +71,7 @@ public class User
         this.phone = phone;
     }
 
+    @XmlAttribute(name = "PasswordHash")
     public String getPasswordHash()
     {
         return passwordHash;
@@ -76,6 +82,7 @@ public class User
         this.passwordHash = passwordHash;
     }
 
+    @XmlAttribute(name = "PasswordSalt")
     public String getPasswordSalt()
     {
         return passwordSalt;
@@ -86,6 +93,7 @@ public class User
         this.passwordSalt = passwordSalt;
     }
 
+    @XmlAttribute(name = "Locale")
     public Locale getLocale()
     {
         return locale;
@@ -96,6 +104,7 @@ public class User
         this.locale = locale;
     }
 
+    @XmlAttribute(name = "Active")
     public Boolean getActive()
     {
         return active;
@@ -106,6 +115,7 @@ public class User
         this.active = active;
     }
 
+    @XmlAttribute(name = "Applications")
     public HashSet<Application> getApplications()
     {
         return applications;
