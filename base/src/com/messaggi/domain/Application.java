@@ -1,11 +1,12 @@
 package com.messaggi.domain;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name = "Application")
 public class Application
 {
-    private Long id;
+    private Integer id;
 
     private String name;
 
@@ -13,16 +14,18 @@ public class Application
 
     private User user;
 
-    public Long getId()
+    @XmlAttribute(name = "ID")
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
 
+    @XmlAttribute(name = "Name")
     public String getName()
     {
         return name;
@@ -33,6 +36,7 @@ public class Application
         this.name = name;
     }
 
+    @XmlAttribute(name = "Active")
     public Boolean getActive()
     {
         return active;
@@ -51,6 +55,12 @@ public class Application
     public void setUser(User user)
     {
         this.user = user;
+    }
+
+    @XmlAttribute(name = "UserID")
+    public Integer getUserId()
+    {
+        return (user != null) ? user.getId() : null;
     }
 
     public Application()

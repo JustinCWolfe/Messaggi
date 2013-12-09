@@ -2,9 +2,13 @@ package com.messaggi.domain;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "ApplicationPlatformMsgLog")
 public class ApplicationPlatformMsgLog
 {
-    private Long id;
+    private Integer id;
 
     private ApplicationPlatform applicationPlatform;
 
@@ -12,12 +16,13 @@ public class ApplicationPlatformMsgLog
 
     private int msgCount;
 
-    public Long getId()
+    @XmlAttribute(name = "ID")
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(Integer id)
     {
         this.id = id;
     }
@@ -32,6 +37,13 @@ public class ApplicationPlatformMsgLog
         this.applicationPlatform = applicationPlatform;
     }
 
+    @XmlAttribute(name = "ApplicationPlatformID")
+    public Integer getApplicationPlatformID()
+    {
+        return (applicationPlatform != null) ? applicationPlatform.getId() : null;
+    }
+
+    @XmlAttribute(name = "ID")
     public Date getDate()
     {
         return date;
@@ -42,6 +54,7 @@ public class ApplicationPlatformMsgLog
         this.date = date;
     }
 
+    @XmlAttribute(name = "MsgCount")
     public int getMsgCount()
     {
         return msgCount;
