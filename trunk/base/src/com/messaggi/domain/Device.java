@@ -1,6 +1,8 @@
 package com.messaggi.domain;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,7 +38,6 @@ public class Device
         this.active = active;
     }
 
-    @XmlAttribute(name = "ApplicationPlatforms")
     public HashSet<ApplicationPlatform> getApplicationPlatforms()
     {
         return applicationPlatforms;
@@ -45,6 +46,28 @@ public class Device
     public void setApplicationPlatforms(HashSet<ApplicationPlatform> applicationPlatforms)
     {
         this.applicationPlatforms = applicationPlatforms;
+    }
+
+    /**
+     * This is used during the save process - at which time a device should only
+     * have a reference to the application platform ID that it is currently
+     * registering for. In this case we can make the set into a list and use the
+     * first (and only) element.
+     * 
+     * @return
+     */
+    @XmlAttribute(name = "Active")
+    public Integer getApplicationPlatformId()
+    {
+        boolean hasApplicationPlatform = (applicationPlatforms != null && applicationPlatforms.size() > 0);
+        if (hasApplicationPlatform) {
+            List<ApplicationPlatform> applicationPlatformList = new ArrayList<>(applicationPlatforms);
+            if (applicationPlatformList.size() == 1) {
+                return applicationPlatformList.get(0).getId();
+            }
+            throw new IllegalStateException();
+        }
+        return null;
     }
 
     public Device()
