@@ -88,7 +88,6 @@ public class ApplicationPlatform
         this.token = token;
     }
 
-    @XmlAttribute(name = "Devices")
     public HashSet<Device> getDevices()
     {
         return devices;
