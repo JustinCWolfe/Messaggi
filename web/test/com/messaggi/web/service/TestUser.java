@@ -17,9 +17,9 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.messaggi.domain.User;
 import com.messaggi.junit.WebServiceTestCase;
 import com.messaggi.service.TokenGenerator.GenerateTokenResponse;
-import com.messaggi.web.domain.User;
 import com.messaggi.web.service.User.UserRequest;
 
 public class TestUser extends WebServiceTestCase
@@ -38,9 +38,13 @@ public class TestUser extends WebServiceTestCase
 
     private static final String PHONE2 = "617-549-8277";
 
-    private static final String PASSWD1 = "test_user_1_pwd";
+    private static final String PASSWD_HASH1 = "test_user_1_pwd";
 
-    private static final String PASSWD2 = "test_user_2_pwd";
+    private static final String PASSWD_SALT1 = "some_salt1";
+
+    private static final String PASSWD_HASH2 = "test_user_2_pwd";
+
+    private static final String PASSWD_SALT2 = "some_salt2";
 
     private static final Locale LOCALE1 = Locale.US;
 
@@ -67,7 +71,8 @@ public class TestUser extends WebServiceTestCase
         user.setName(NAME1);
         user.setEmail(EMAIL1);
         user.setPhone(PHONE1);
-        user.setPassword(PASSWD1);
+        user.setPasswordHash(PASSWD_HASH1);
+        user.setPasswordSalt(PASSWD_SALT1);
         user.setLocale(LOCALE1);
         UserRequest request = new UserRequest(user);
 

@@ -1,11 +1,13 @@
 package com.messaggi.web.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.ws.WebServiceException;
@@ -27,14 +29,14 @@ public interface User
     class UserRequest
     {
         @XmlElement(name = "user")
-        private com.messaggi.web.domain.User user;
+        private com.messaggi.domain.User user;
 
-        public com.messaggi.web.domain.User getUser()
+        public com.messaggi.domain.User getUser()
         {
             return user;
         }
 
-        public void setUser(com.messaggi.web.domain.User user)
+        public void setUser(com.messaggi.domain.User user)
         {
             this.user = user;
         }
@@ -44,7 +46,7 @@ public interface User
 
         }
 
-        public UserRequest(com.messaggi.web.domain.User user)
+        public UserRequest(com.messaggi.domain.User user)
         {
             this.user = user;
         }
@@ -54,14 +56,14 @@ public interface User
     class UserResponse
     {
         @XmlElement(name = "user")
-        private com.messaggi.web.domain.User user;
+        private com.messaggi.domain.User user;
 
-        public com.messaggi.web.domain.User getUser()
+        public com.messaggi.domain.User getUser()
         {
             return user;
         }
 
-        public void setUser(com.messaggi.web.domain.User user)
+        public void setUser(com.messaggi.domain.User user)
         {
             this.user = user;
         }
@@ -71,7 +73,7 @@ public interface User
 
         }
 
-        public UserResponse(com.messaggi.web.domain.User user)
+        public UserResponse(com.messaggi.domain.User user)
         {
             this.user = user;
         }
@@ -79,18 +81,22 @@ public interface User
 
     Response registerNewUser(UriInfo uriInfo, UserRequest request) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException;
+        WebServiceException, IOException, JAXBException;
 
     Response getUserByEmail(String email) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException;
+        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
+        JAXBException;
 
-    Response getUserById(Long id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException;
+    Response getUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
+        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
+        JAXBException;
 
-    Response updateUser(Long id, UserRequest request) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException;
+    Response updateUser(Integer id, UserRequest request) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
+        WebServiceException, IOException, JAXBException;
 
-    Response inactivateUserById(Long id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException;
+    Response inactivateUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
+        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
+        JAXBException;
 }
 

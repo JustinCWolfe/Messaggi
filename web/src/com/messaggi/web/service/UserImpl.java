@@ -1,5 +1,6 @@
 package com.messaggi.web.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.sql.SQLException;
@@ -19,18 +20,19 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.JAXBException;
 import javax.xml.ws.WebServiceException;
 
-import com.messaggi.web.dao.UserDAO;
+import com.messaggi.dao.UserDAO;
 
 @Path("/user")
 public class UserImpl implements User
 {
     private final UserDAO userDAO = new UserDAO();
 
-    private static List<com.messaggi.web.domain.User> getDAOParameters(com.messaggi.web.domain.User user)
+    private static List<com.messaggi.domain.User> getDAOParameters(com.messaggi.domain.User user)
     {
-        List<com.messaggi.web.domain.User> parameters = new ArrayList<>();
+        List<com.messaggi.domain.User> parameters = new ArrayList<>();
         parameters.add(user);
         return parameters;
     }
@@ -55,14 +57,14 @@ public class UserImpl implements User
     @Override
     public Response registerNewUser(@Context UriInfo uriInfo, UserRequest request) throws NamingException,
         SQLException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException
+        WebServiceException, IOException, JAXBException
     {
         validateRequest(request);
         UserResponse response = new UserResponse();
         String uriFragment = null;
-        List<com.messaggi.web.domain.User> users = userDAO.insertUser(getDAOParameters(request.getUser()));
+        List<com.messaggi.domain.User> users = userDAO.saveUser(getDAOParameters(request.getUser()));
         if (users.size() > 0) {
-            com.messaggi.web.domain.User user = users.get(0);
+            com.messaggi.domain.User user = users.get(0);
             response.setUser(user);
             uriFragment = String.format(NEW_USER_URI_FRAGMENT_FORMAT, user.getId().toString());
         }
@@ -76,13 +78,13 @@ public class UserImpl implements User
     @Override
     public Response getUserByEmail(@PathParam("email") String email) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException
+        WebServiceException, IOException, JAXBException
     {
         validateRequest(email);
         UserResponse response = new UserResponse();
-        com.messaggi.web.domain.User prototype = new com.messaggi.web.domain.User();
+        com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setEmail(email);
-        List<com.messaggi.web.domain.User> users = userDAO.selectUser(getDAOParameters(prototype));
+        List<com.messaggi.domain.User> users = userDAO.getUser(getDAOParameters(prototype));
         if (users.size() > 0) {
             response.setUser(users.get(0));
         }
@@ -93,15 +95,15 @@ public class UserImpl implements User
     @Path("/id/{id}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response getUserById(@PathParam("id") Long id) throws NamingException, SQLException,
+    public Response getUserById(@PathParam("id") Integer id) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException
+        WebServiceException, IOException, JAXBException
     {
         validateRequest(id);
         UserResponse response = new UserResponse();
-        com.messaggi.web.domain.User prototype = new com.messaggi.web.domain.User();
+        com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setId(id);
-        List<com.messaggi.web.domain.User> users = userDAO.selectUser(getDAOParameters(prototype));
+        List<com.messaggi.domain.User> users = userDAO.getUser(getDAOParameters(prototype));
         if (users.size() > 0) {
             response.setUser(users.get(0));
         }
@@ -113,29 +115,30 @@ public class UserImpl implements User
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response updateUser(@PathParam("id") Long id, UserRequest request) throws NamingException, SQLException,
+    public Response updateUser(@PathParam("id") Integer id, UserRequest request) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException
+        WebServiceException, IOException, JAXBException
     {
         validateRequest(request);
         // Verify that the user id in the uri and the request body are the same.
         if (!id.equals(request.getUser().getId().toString())) {
             throw new WebServiceException(Messages.PATH_PARAMETER_REQUEST_BODY_MISMATCH);
         }
-        userDAO.updateUser(getDAOParameters(request.getUser()));
+        userDAO.saveUser(getDAOParameters(request.getUser()));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     @DELETE
     @Path("/id/{id}")
     @Override
-    public Response inactivateUserById(Long id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException
+    public Response inactivateUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
+        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
+        JAXBException
     {
         validateRequest(id);
-        com.messaggi.web.domain.User prototype = new com.messaggi.web.domain.User();
+        com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setId(id);
-        userDAO.deleteUser(getDAOParameters(prototype));
+        userDAO.saveUser(getDAOParameters(prototype));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }
