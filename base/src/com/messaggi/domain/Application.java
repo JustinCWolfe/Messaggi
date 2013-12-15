@@ -2,6 +2,7 @@ package com.messaggi.domain;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "Application")
 public class Application
@@ -47,6 +48,7 @@ public class Application
         this.active = active;
     }
 
+    @XmlTransient
     public User getUser()
     {
         return user;

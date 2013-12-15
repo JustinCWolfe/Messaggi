@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "User")
 public class User
@@ -115,7 +116,7 @@ public class User
         this.active = active;
     }
 
-    @XmlAttribute(name = "Applications")
+    @XmlTransient
     public HashSet<Application> getApplications()
     {
         return applications;

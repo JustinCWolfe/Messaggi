@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "ApplicationPlatform")
 public class ApplicationPlatform
@@ -45,6 +46,7 @@ public class ApplicationPlatform
         this.id = id;
     }
 
+    @XmlTransient
     public Application getApplication()
     {
         return application;
@@ -61,6 +63,7 @@ public class ApplicationPlatform
         return (application != null) ? application.getId() : null;
     }
 
+    @XmlTransient
     public Platform getPlatform()
     {
         return platform;
@@ -88,6 +91,7 @@ public class ApplicationPlatform
         this.token = token;
     }
 
+    @XmlTransient
     public HashSet<Device> getDevices()
     {
         return devices;

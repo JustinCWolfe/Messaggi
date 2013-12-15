@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "ApplicationPlatformMsgLog")
 public class ApplicationPlatformMsgLog
@@ -27,6 +28,7 @@ public class ApplicationPlatformMsgLog
         this.id = id;
     }
 
+    @XmlTransient
     public ApplicationPlatform getApplicationPlatform()
     {
         return applicationPlatform;
@@ -43,7 +45,7 @@ public class ApplicationPlatformMsgLog
         return (applicationPlatform != null) ? applicationPlatform.getId() : null;
     }
 
-    @XmlAttribute(name = "ID")
+    @XmlAttribute(name = "Date")
     public Date getDate()
     {
         return date;

@@ -1,195 +1,104 @@
 package com.messaggi.dao;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLXML;
-import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
 
-import org.eclipse.jdt.internal.compiler.util.Messages;
-
-import com.messaggi.dao.PersistManager.Delete;
-import com.messaggi.dao.PersistManager.Insert;
-import com.messaggi.dao.PersistManager.Select;
-import com.messaggi.dao.PersistManager.Update;
+import com.messaggi.dao.PersistManager.Get;
+import com.messaggi.dao.PersistManager.Save;
+import com.messaggi.domain.Application;
 import com.messaggi.domain.User;
 
-public class UserDAO implements Insert<User>, Select<User>, Update<User>, Delete<User>
+public class UserDAO implements Get<User>, Save<User>
 {
-    // Insert implementation
+    // Get implementation
     @Override
-    public String getInsertStoredProcedure()
+    public String getGetStoredProcedure(List<User> prototypes) throws SQLException
+    {
+        return "{call GetUser(?)}";
+    }
+
+    @Override
+    public void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
+        throws SQLException
+    {
+        HashMap<Integer, User> userMap = new HashMap<>();
+        while (rs.next()) {
+            User domainObject = null;
+            Integer userID = rs.getInt("ID");
+            if (!userMap.containsKey(userID)) {
+                domainObject = new User();
+                domainObject.setId(userID);
+                domainObject.setName(rs.getString("Name"));
+                domainObject.setEmail(rs.getString("Email"));
+                domainObject.setPhone(rs.getString("Phone"));
+                domainObject.setPasswordHash(rs.getString("PasswordHash"));
+                domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
+                domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
+                domainObject.setActive(rs.getBoolean("Active"));
+            }
+            else {
+	            domainObject = userMap.get(userID);
+            }
+
+            Application a = new Application();
+            a.setId(rs.getInt("ApplicationID"));
+            a.setName(rs.getString("ApplicationName"));
+            a.setActive(rs.getBoolean("ApplicationActive"));
+            a.setUser(domainObject);
+
+            if (domainObject.getApplications() == null) {
+                domainObject.setApplications(new HashSet<Application>());
+            }
+            domainObject.getApplications().add(a);
+
+            userMap.put(userID, domainObject);
+        }
+        domainObjects.addAll(userMap.values());
+    }
+
+    // Save implementation
+    @Override
+    public String getSaveStoredProcedure()
     {
         return "{call SaveUser(?)}";
     }
 
     @Override
-    public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
+    public void afterSaveInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
         throws SQLException
     {
-        SQLXML xmlVar = stmt.getConnection().createSQLXML();
-        for (User domainObject : domainObjects) {
-            stmt.setString(1, domainObject.getName());
-            stmt.setString(2, domainObject.getEmail());
-            stmt.setString(3, domainObject.getPhone());
-            stmt.setString(4, domainObject.getPassword());
-            String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
-            stmt.setString(5, locale);
+        while (rs.next()) {
+            User domainObject = new User();
+            domainObject.setId(rs.getInt("ID"));
+            domainObject.setName(rs.getString("Name"));
+            domainObject.setEmail(rs.getString("Email"));
+            domainObject.setPhone(rs.getString("Phone"));
+            domainObject.setPasswordHash(rs.getString("PasswordHash"));
+            domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
+            domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
+            domainObject.setActive(rs.getBoolean("Active"));
+            domainObjects.add(domainObject);
         }
     }
 
-    @Override
-    public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
-        throws SQLException
+    public List<User> getUser(List<User> prototypes) throws NamingException, SQLException, InvocationTargetException,
+        NoSuchMethodException, IllegalAccessException, InstantiationException, JAXBException, IOException
     {
-        for (User domainObject : domainObjects) {
-            domainObject.setId(rs.getLong("id"));
-            domainObject.setName(rs.getString("name"));
-            domainObject.setEmail(rs.getString("email"));
-            domainObject.setPhone(rs.getString("phone"));
-            domainObject.setPhoneParsed(rs.getString("phone_parsed"));
-            domainObject.setPassword(rs.getString("password"));
-            domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
-            domainObject.setActive(rs.getBoolean("active"));
-        }
+        return PersistManager.get(this, prototypes);
     }
 
-    private static EnumSet<SelectBy> computeSelectBySetForPrototypes(List<User> prototypes)
+    public List<User> saveUser(List<User> newVersions) throws NamingException, SQLException, InvocationTargetException,
+        NoSuchMethodException, IllegalAccessException, InstantiationException, JAXBException, IOException
     {
-        EnumSet<SelectBy> selectBySet = EnumSet.noneOf(SelectBy.class);
-        for (User prototype : prototypes) {
-            if (prototype.getId() != null) {
-                selectBySet.add(SelectBy.ID);
-            }
-            if (prototype.getEmail() != null) {
-                selectBySet.add(SelectBy.EMAIL);
-            }
-        }
-        return selectBySet;
-    }
-
-    // Select implementation
-    @Override
-    public String getSelectStoredProcedure(List<User> prototypes) throws SQLException
-    {
-        EnumSet<SelectBy> selectBySet = computeSelectBySetForPrototypes(prototypes);
-        String storedProcedure = null;
-        if (selectBySet.size() > 1) {
-            throw new SQLException(Messages.BOTH_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
-        } else if (selectBySet.contains(SelectBy.EMAIL)) {
-            selectBy = SelectBy.EMAIL;
-            storedProcedure = "{call m_get_user_by_email(?)}";
-        } else if (selectBySet.contains(SelectBy.ID)) {
-            selectBy = SelectBy.ID;
-            storedProcedure = "{call m_get_user_by_id(?)}";
-        } else {
-            throw new SQLException(Messages.NO_VALID_SELECT_BY_TYPES_IN_PROTOTYPES_MESSAGE);
-        }
-        return storedProcedure;
-    }
-
-    @Override
-    public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
-        throws SQLException
-    {
-        for (User domainObject : domainObjects) {
-            if (selectBy == SelectBy.EMAIL) {
-                stmt.setString(1, domainObject.getEmail());
-            } else {
-                stmt.setLong(1, domainObject.getId());
-            }
-        }
-    }
-
-    @Override
-    public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
-        throws SQLException
-    {
-        for (User domainObject : domainObjects) {
-            domainObject.setId(rs.getLong("id"));
-            domainObject.setName(rs.getString("name"));
-            domainObject.setEmail(rs.getString("email"));
-            domainObject.setPhone(rs.getString("phone"));
-            domainObject.setPhoneParsed(rs.getString("phone_parsed"));
-            domainObject.setPassword(rs.getString("password"));
-            domainObject.setLocale(Locale.forLanguageTag(rs.getString("locale")));
-            domainObject.setActive(rs.getBoolean("active"));
-        }
-    }
-
-    // Update implementation
-    @Override
-    public String getUpdateStoredProcedure()
-    {
-        return "{call m_update_user(?,?,?,?,?,?,?)}";
-    }
-
-    @Override
-    public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
-        throws SQLException
-    {
-        for (User domainObject : domainObjects) {
-            stmt.setLong(1, domainObject.getId());
-            stmt.setString(2, domainObject.getName());
-            stmt.setString(3, domainObject.getEmail());
-            stmt.setString(4, domainObject.getPhone());
-            stmt.setString(5, domainObject.getPassword());
-            String locale = (domainObject.getLocale() != null) ? domainObject.getLocale().toLanguageTag() : null;
-            stmt.setString(6, locale);
-            stmt.setBoolean(7, domainObject.getActive());
-        }
-    }
-
-    @Override
-    public void afterUpdateInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
-    {
-    }
-
-    // Delete implementation
-    @Override
-    public String getDeleteStoredProcedure()
-    {
-        return "{call m_inactivate_user_by_id(?)}";
-    }
-
-    @Override
-    public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<User> domainObjects)
-        throws SQLException
-    {
-        for (User domainObject : domainObjects) {
-            stmt.setLong(1, domainObject.getId());
-        }
-    }
-
-    @Override
-    public void afterDeleteInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects)
-    {
-    }
-
-    public List<User> insertUser(List<User> newVersions) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
-    {
-        return PersistManager.insert(this, newVersions);
-    }
-
-    public List<User> selectUser(List<User> prototypes) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
-    {
-        return PersistManager.select(this, prototypes);
-    }
-
-    public void updateUser(List<User> newVersions) throws NamingException, SQLException
-    {
-        PersistManager.update(this, newVersions);
-    }
-
-    public void deleteUser(List<User> prototypes) throws NamingException, SQLException
-    {
-        PersistManager.delete(this, prototypes);
+        return PersistManager.save(this, newVersions);
     }
 }
