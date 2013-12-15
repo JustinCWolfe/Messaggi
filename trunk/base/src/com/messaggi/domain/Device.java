@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement(name = "Device")
 public class Device
@@ -38,6 +39,7 @@ public class Device
         this.active = active;
     }
 
+    @XmlTransient
     public HashSet<ApplicationPlatform> getApplicationPlatforms()
     {
         return applicationPlatforms;
@@ -56,7 +58,7 @@ public class Device
      * 
      * @return
      */
-    @XmlAttribute(name = "Active")
+    @XmlAttribute(name = "ApplicationPlatformID")
     public Integer getApplicationPlatformId()
     {
         boolean hasApplicationPlatform = (applicationPlatforms != null && applicationPlatforms.size() > 0);

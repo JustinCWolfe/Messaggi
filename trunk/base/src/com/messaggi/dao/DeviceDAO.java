@@ -1,134 +1,76 @@
 package com.messaggi.dao;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
 
-import com.messaggi.dao.PersistManager.Delete;
-import com.messaggi.dao.PersistManager.Insert;
-import com.messaggi.dao.PersistManager.Select;
-import com.messaggi.dao.PersistManager.Update;
+import com.messaggi.dao.PersistManager.Get;
+import com.messaggi.dao.PersistManager.Save;
+import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 
-public class DeviceDAO implements Insert<Device>, Select<Device>, Update<Device>, Delete<Device>
+public class DeviceDAO implements Get<Device>, Save<Device>
 {
-    // Insert implementation
-    @Override
-    public String getInsertStoredProcedure()
+    private void initializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects) throws SQLException
     {
-        return "{call m_create_device()}";
-    }
-
-    @Override
-    public void beforeInsertInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
-        throws SQLException
-    {
-    }
-
-    @Override
-    public void afterInsertInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
-        throws SQLException
-    {
-        for (Device domainObject : domainObjects) {
-            //domainObject.setId(rs.getLong("id"));
-            //domainObject.setActive(rs.getBoolean("active"));
+        while (rs.next()) {
+            Device domainObject = new Device();
+            domainObject.setCode(rs.getString("Code"));
+            domainObject.setActive(rs.getBoolean("Active"));
+            ApplicationPlatform applicationPlatform = new ApplicationPlatform();
+            applicationPlatform.setId(rs.getInt("ApplicationPlatformID"));
+            HashSet<ApplicationPlatform> applicationPlatforms = new HashSet<>();
+            applicationPlatforms.add(applicationPlatform);
+            domainObject.setApplicationPlatforms(applicationPlatforms);
+            domainObjects.add(domainObject);
         }
     }
 
-    // Select implementation
+    // Get implementation
     @Override
-    public String getSelectStoredProcedure(List<Device> prototypes) throws SQLException
+    public String getGetStoredProcedure(List<Device> prototypes) throws SQLException
     {
-        return "{call m_get_device_by_id(?)}";
+        return "{call GetDevice(?)}";
     }
 
     @Override
-    public void beforeSelectInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
+    public void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
         throws SQLException
     {
-        for (Device domainObject : domainObjects) {
-            //stmt.setLong(1, domainObject.getId());
-        }
+        initializeDomainObjectsFromResultSet(rs, domainObjects);
+    }
+
+    // Save implementation
+    @Override
+    public String getSaveStoredProcedure()
+    {
+        return "{call SaveDevice(?)}";
     }
 
     @Override
-    public void afterSelectInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
+    public void afterSaveInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
         throws SQLException
     {
-        for (Device domainObject : domainObjects) {
-            //domainObject.setId(rs.getLong("id"));
-            //domainObject.setActive(rs.getBoolean("active"));
-        }
+        initializeDomainObjectsFromResultSet(rs, domainObjects);
     }
 
-    // Update implementation
-    @Override
-    public String getUpdateStoredProcedure()
+    public List<Device> getDevice(List<Device> prototypes) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
+        JAXBException, IOException
     {
-        return "{call m_update_device(?,?)}";
+        return PersistManager.get(this, prototypes);
     }
 
-    @Override
-    public void beforeUpdateInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
-        throws SQLException
+    public List<Device> saveDevice(List<Device> newVersions) throws NamingException, SQLException,
+        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
+        JAXBException, IOException
     {
-        for (Device domainObject : domainObjects) {
-            //stmt.setLong(1, domainObject.getId());
-            //stmt.setBoolean(2, domainObject.getActive());
-        }
-    }
-
-    @Override
-    public void afterUpdateInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
-        throws SQLException
-    {
-    }
-
-    // Delete implementation
-    @Override
-    public String getDeleteStoredProcedure()
-    {
-        return "{call m_inactivate_device_by_id(?)}";
-    }
-
-    @Override
-    public void beforeDeleteInitializeStatementFromDomainObjects(PreparedStatement stmt, List<Device> domainObjects)
-        throws SQLException
-    {
-        for (Device domainObject : domainObjects) {
-            //stmt.setLong(1, domainObject.getId());
-        }
-    }
-
-    @Override
-    public void afterDeleteInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
-        throws SQLException
-    {
-    }
-
-    public List<Device> insertDevice(List<Device> newVersions) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
-    {
-        return PersistManager.insert(this, newVersions);
-    }
-
-    public List<Device> selectDevice(List<Device> prototypes) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException
-    {
-        return PersistManager.select(this, prototypes);
-    }
-
-    public void updateDevice(List<Device> newVersions) throws NamingException, SQLException
-    {
-        PersistManager.update(this, newVersions);
-    }
-
-    public void deleteDevice(List<Device> prototypes) throws NamingException, SQLException
-    {
-        PersistManager.delete(this, prototypes);
+        return PersistManager.save(this, newVersions);
     }
 }
