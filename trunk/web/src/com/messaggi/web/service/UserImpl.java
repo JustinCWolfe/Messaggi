@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -29,13 +28,6 @@ import com.messaggi.dao.UserDAO;
 public class UserImpl implements User
 {
     private final UserDAO userDAO = new UserDAO();
-
-    private static List<com.messaggi.domain.User> getDAOParameters(com.messaggi.domain.User user)
-    {
-        List<com.messaggi.domain.User> parameters = new ArrayList<>();
-        parameters.add(user);
-        return parameters;
-    }
 
     private <T> void validateRequest(T requestParameter) throws WebServiceException
     {
@@ -62,7 +54,8 @@ public class UserImpl implements User
         validateRequest(request);
         UserResponse response = new UserResponse();
         String uriFragment = null;
-        List<com.messaggi.domain.User> users = userDAO.saveUser(getDAOParameters(request.getUser()));
+        com.messaggi.domain.User[] newUsers = { request.getUser() };
+        List<com.messaggi.domain.User> users = userDAO.saveUser(newUsers);
         if (users.size() > 0) {
             com.messaggi.domain.User user = users.get(0);
             response.setUser(user);
@@ -84,7 +77,8 @@ public class UserImpl implements User
         UserResponse response = new UserResponse();
         com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setEmail(email);
-        List<com.messaggi.domain.User> users = userDAO.getUser(getDAOParameters(prototype));
+        com.messaggi.domain.User[] protoUsers = { prototype };
+        List<com.messaggi.domain.User> users = userDAO.getUser(protoUsers);
         if (users.size() > 0) {
             response.setUser(users.get(0));
         }
@@ -103,7 +97,8 @@ public class UserImpl implements User
         UserResponse response = new UserResponse();
         com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setId(id);
-        List<com.messaggi.domain.User> users = userDAO.getUser(getDAOParameters(prototype));
+        com.messaggi.domain.User[] protoUsers = { prototype };
+        List<com.messaggi.domain.User> users = userDAO.getUser(protoUsers);
         if (users.size() > 0) {
             response.setUser(users.get(0));
         }
@@ -124,7 +119,8 @@ public class UserImpl implements User
         if (!id.equals(request.getUser().getId().toString())) {
             throw new WebServiceException(Messages.PATH_PARAMETER_REQUEST_BODY_MISMATCH);
         }
-        userDAO.saveUser(getDAOParameters(request.getUser()));
+        com.messaggi.domain.User[] newUsers = { request.getUser() };
+        userDAO.saveUser(newUsers);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -138,7 +134,8 @@ public class UserImpl implements User
         validateRequest(id);
         com.messaggi.domain.User prototype = new com.messaggi.domain.User();
         prototype.setId(id);
-        userDAO.saveUser(getDAOParameters(prototype));
+        com.messaggi.domain.User[] protoUsers = { prototype };
+        userDAO.saveUser(protoUsers);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

@@ -22,7 +22,7 @@ public class PersistManager
 {
     public interface Get<T>
     {
-        String getGetStoredProcedure(List<T> prototypes) throws SQLException;
+        String getGetStoredProcedure(T[] prototypes) throws SQLException;
 
         void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws SQLException;
     }
@@ -38,8 +38,8 @@ public class PersistManager
     {
         public static final String DATASOURCE_NOT_FOUND_MESSAGE = "Datasource '%s' not found.";
     }
-    
-    private static final String MESSAGGI_DATABASE_JNDI_NAME = "java:/comp/env/jdbc/Messaggi";
+
+    public static final String MESSAGGI_DATABASE_JNDI_NAME = "java:/comp/env/jdbc/Messaggi";
 
     private static Connection getConnection() throws NamingException, SQLException
     {
@@ -51,7 +51,7 @@ public class PersistManager
         return ds.getConnection();
     }
 
-    private static <T> void initializeStatementFromDomainObjects(PreparedStatement stmt, List<T> domainObjects)
+    private static <T> void initializeStatementFromDomainObjects(PreparedStatement stmt, T[] domainObjects)
         throws SQLException, JAXBException, IOException
     {
         SQLXML xmlVar = stmt.getConnection().createSQLXML();
@@ -63,7 +63,7 @@ public class PersistManager
         stmt.setObject(1, xmlVar);
     }
 
-    public static <T> List<T> get(Get<T> persist, List<T> prototypes) throws NamingException, SQLException,
+    public static <T> List<T> get(Get<T> persist, T[] prototypes) throws NamingException, SQLException,
         IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
         JAXBException, IOException
     {
@@ -79,7 +79,7 @@ public class PersistManager
         }
     }
 
-    public static <T> List<T> save(Save<T> persist, List<T> newVersions) throws NamingException, SQLException,
+    public static <T> List<T> save(Save<T> persist, T[] newVersions) throws NamingException, SQLException,
         IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException,
         JAXBException, IOException
     {

@@ -21,7 +21,7 @@ public class UserDAO implements Get<User>, Save<User>
 {
     // Get implementation
     @Override
-    public String getGetStoredProcedure(List<User> prototypes) throws SQLException
+    public String getGetStoredProcedure(User[] prototypes) throws SQLException
     {
         return "{call GetUser(?)}";
     }
@@ -90,13 +90,13 @@ public class UserDAO implements Get<User>, Save<User>
         }
     }
 
-    public List<User> getUser(List<User> prototypes) throws NamingException, SQLException, InvocationTargetException,
+    public List<User> getUser(User[] prototypes) throws NamingException, SQLException, InvocationTargetException,
         NoSuchMethodException, IllegalAccessException, InstantiationException, JAXBException, IOException
     {
         return PersistManager.get(this, prototypes);
     }
 
-    public List<User> saveUser(List<User> newVersions) throws NamingException, SQLException, InvocationTargetException,
+    public List<User> saveUser(User[] newVersions) throws NamingException, SQLException, InvocationTargetException,
         NoSuchMethodException, IllegalAccessException, InstantiationException, JAXBException, IOException
     {
         return PersistManager.save(this, newVersions);

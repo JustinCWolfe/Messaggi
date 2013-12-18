@@ -39,12 +39,8 @@
         <include name="commons-beanutils-1.8.3.jar"/>
     </fileset>
 
-    <fileset id="postgresql.lib" dir="${lib}/postgresql-9.2-1003">
-        <include name="postgresql-9.2-1003.jdbc4.jar"/>
-    </fileset>
-
-    <fileset id="sqljdbc4.lib" dir="${lib}/sqljdbc_4.0">
-        <include name="sqljdbc4.jar"/>
+    <fileset id="jtds.lib" dir="${lib}/jtds-1.3.1">
+        <include name="jtds-1.3.1.jar"/>
     </fileset>
 
     <!-- 3rd Party jars that are only used for testing -->

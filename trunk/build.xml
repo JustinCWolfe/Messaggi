@@ -86,8 +86,7 @@
     <!--  This must be deployed to CATALINA_HOME/lib in order for DBCP's classloader to find it.
           http://tomcat.apache.org/tomcat-6.0-doc/jndi-datasource-examples-howto.html -->
     <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
-      <fileset refid="postgresql.lib"/>
-      <fileset refid="sqljdbc4.lib"/>
+      <fileset refid="jtds.lib"/>
     </copy>
   </target>
 

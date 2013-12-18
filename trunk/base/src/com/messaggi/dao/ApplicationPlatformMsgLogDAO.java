@@ -38,7 +38,7 @@ public class ApplicationPlatformMsgLogDAO implements Save<ApplicationPlatformMsg
         }
     }
 
-    public List<ApplicationPlatformMsgLog> saveApplicationPlatformMsgLog(List<ApplicationPlatformMsgLog> newVersions)
+    public List<ApplicationPlatformMsgLog> saveApplicationPlatformMsgLog(ApplicationPlatformMsgLog[] newVersions)
         throws NamingException, SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException,
         InstantiationException, JAXBException, IOException
     {

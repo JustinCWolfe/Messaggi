@@ -38,7 +38,7 @@ public class ApplicationDAO implements Save<Application>
         }
     }
 
-    public List<Application> saveApplication(List<Application> newVersions) throws NamingException, SQLException,
+    public List<Application> saveApplication(Application[] newVersions) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
         JAXBException, IOException
     {
