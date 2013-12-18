@@ -35,7 +35,7 @@ public class ApplicationPlatformDAO implements Get<ApplicationPlatform>, Save<Ap
 
     // Get implementation
     @Override
-    public String getGetStoredProcedure(List<ApplicationPlatform> prototypes) throws SQLException
+    public String getGetStoredProcedure(ApplicationPlatform[] prototypes) throws SQLException
     {
         return "{call GetApplicationPlatform(?)}";
     }
@@ -61,14 +61,14 @@ public class ApplicationPlatformDAO implements Get<ApplicationPlatform>, Save<Ap
         initializeDomainObjectsFromResultSet(rs, domainObjects);
     }
 
-    public List<ApplicationPlatform> getApplicationPlatform(List<ApplicationPlatform> prototypes)
+    public List<ApplicationPlatform> getApplicationPlatform(ApplicationPlatform[] prototypes)
         throws NamingException, SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException,
         InstantiationException, JAXBException, IOException
     {
         return PersistManager.get(this, prototypes);
     }
 
-    public List<ApplicationPlatform> saveApplicationPlatform(List<ApplicationPlatform> newVersions)
+    public List<ApplicationPlatform> saveApplicationPlatform(ApplicationPlatform[] newVersions)
         throws NamingException, SQLException, InvocationTargetException, NoSuchMethodException, IllegalAccessException,
         InstantiationException, JAXBException, IOException
     {

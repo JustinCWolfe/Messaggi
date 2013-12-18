@@ -34,7 +34,7 @@ public class DeviceDAO implements Get<Device>, Save<Device>
 
     // Get implementation
     @Override
-    public String getGetStoredProcedure(List<Device> prototypes) throws SQLException
+    public String getGetStoredProcedure(Device[] prototypes) throws SQLException
     {
         return "{call GetDevice(?)}";
     }
@@ -60,14 +60,14 @@ public class DeviceDAO implements Get<Device>, Save<Device>
         initializeDomainObjectsFromResultSet(rs, domainObjects);
     }
 
-    public List<Device> getDevice(List<Device> prototypes) throws NamingException, SQLException,
+    public List<Device> getDevice(Device[] prototypes) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
         JAXBException, IOException
     {
         return PersistManager.get(this, prototypes);
     }
 
-    public List<Device> saveDevice(List<Device> newVersions) throws NamingException, SQLException,
+    public List<Device> saveDevice(Device[] newVersions) throws NamingException, SQLException,
         InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
         JAXBException, IOException
     {

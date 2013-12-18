@@ -1,41 +1,47 @@
 package com.messaggi.dao;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestUserDAO
+import com.messaggi.TestDataHelper;
+import com.messaggi.TestDataHelper.User1;
+import com.messaggi.domain.User;
+import com.messaggi.junit.MessaggiTestCase;
+
+public class TestUserDAO extends MessaggiTestCase
 {
+    private UserDAO userDAO;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    }
-
+    @Override
     @Before
     public void setUp() throws Exception
     {
+        TestDataHelper.deleteUser1();
+        TestDataHelper.deleteUser2();
+        userDAO = new UserDAO();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception
     {
+        TestDataHelper.deleteUser1();
+        TestDataHelper.deleteUser2();
     }
 
     @Test
-    public void test()
+    public void testGetUser() throws Exception
     {
-        fail("Not yet implemented");
+        User[] users = { User1.getDomainObject() };
+        userDAO.getUser(users);
     }
 
+    @Test
+    public void testSaveUser() throws Exception
+    {
+        User[] users = { User1.getDomainObject() };
+        userDAO.saveUser(users);
+    }
 }
 
