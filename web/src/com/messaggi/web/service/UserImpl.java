@@ -1,12 +1,8 @@
 package com.messaggi.web.service;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.sql.SQLException;
 import java.util.List;
 
-import javax.naming.NamingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,7 +15,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
 import javax.xml.ws.WebServiceException;
 
 import com.messaggi.dao.UserDAO;
@@ -29,14 +24,14 @@ public class UserImpl implements User
 {
     private final UserDAO userDAO = new UserDAO();
 
-    private <T> void validateRequest(T requestParameter) throws WebServiceException
+    private <T> void validateRequest(T requestParameter) throws Exception
     {
         if (requestParameter == null) {
             throw new WebServiceException(Messages.MISSING_PATH_PARAMETER);
         }
     }
 
-    private void validateRequest(UserRequest request) throws WebServiceException
+    private void validateRequest(UserRequest request) throws Exception
     {
         if (request.getUser() == null) {
             throw new WebServiceException(Messages.USER_NOT_SET_IN_REQUEST);
@@ -47,9 +42,7 @@ public class UserImpl implements User
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response registerNewUser(@Context UriInfo uriInfo, UserRequest request) throws NamingException,
-        SQLException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException
+    public Response registerNewUser(@Context UriInfo uriInfo, UserRequest request) throws Exception
     {
         validateRequest(request);
         UserResponse response = new UserResponse();
@@ -69,9 +62,7 @@ public class UserImpl implements User
     @Path("/email/{email}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response getUserByEmail(@PathParam("email") String email) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException
+    public Response getUserByEmail(@PathParam("email") String email) throws Exception
     {
         validateRequest(email);
         UserResponse response = new UserResponse();
@@ -89,9 +80,7 @@ public class UserImpl implements User
     @Path("/id/{id}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response getUserById(@PathParam("id") Integer id) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException
+    public Response getUserById(@PathParam("id") Integer id) throws Exception
     {
         validateRequest(id);
         UserResponse response = new UserResponse();
@@ -110,9 +99,7 @@ public class UserImpl implements User
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Override
-    public Response updateUser(@PathParam("id") Integer id, UserRequest request) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException
+    public Response updateUser(@PathParam("id") Integer id, UserRequest request) throws Exception
     {
         validateRequest(request);
         // Verify that the user id in the uri and the request body are the same.
@@ -127,9 +114,7 @@ public class UserImpl implements User
     @DELETE
     @Path("/id/{id}")
     @Override
-    public Response inactivateUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
-        JAXBException
+    public Response inactivateUserById(Integer id) throws Exception
     {
         validateRequest(id);
         com.messaggi.domain.User prototype = new com.messaggi.domain.User();

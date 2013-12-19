@@ -1,15 +1,13 @@
 package com.messaggi.util;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 public class JAXBHelper
 {
-    public static <T> String objectToXML(T instance) throws JAXBException, IOException
+    public static <T> String objectToXML(T instance) throws Exception
     {
         JAXBContext context = JAXBContext.newInstance(instance.getClass());
         Marshaller m = context.createMarshaller();

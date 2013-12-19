@@ -1,16 +1,9 @@
 package com.messaggi.web.service;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
-
-import javax.naming.NamingException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.ws.WebServiceException;
 
 public interface User
 {
@@ -79,24 +72,14 @@ public interface User
         }
     }
 
-    Response registerNewUser(UriInfo uriInfo, UserRequest request) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException;
+    Response registerNewUser(UriInfo uriInfo, UserRequest request) throws Exception;
 
-    Response getUserByEmail(String email) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
-        JAXBException;
+    Response getUserByEmail(String email) throws Exception;
 
-    Response getUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
-        JAXBException;
+    Response getUserById(Integer id) throws Exception;
 
-    Response updateUser(Integer id, UserRequest request) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-        WebServiceException, IOException, JAXBException;
+    Response updateUser(Integer id, UserRequest request) throws Exception;
 
-    Response inactivateUserById(Integer id) throws NamingException, SQLException, InvocationTargetException,
-        NoSuchMethodException, InstantiationException, IllegalAccessException, WebServiceException, IOException,
-        JAXBException;
+    Response inactivateUserById(Integer id) throws Exception;
 }
 
