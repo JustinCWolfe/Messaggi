@@ -1,9 +1,7 @@
 package com.messaggi.dao;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -27,13 +25,12 @@ public class DAOHelper
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Object> T clonePrototype(T prototype) throws IllegalAccessException,
-        InstantiationException, InvocationTargetException, NoSuchMethodException
+    public static <T extends Object> T clonePrototype(T prototype) throws Exception
     {
         return (T) BeanUtils.cloneBean(prototype);
     }
 
-    public static Connection createConnection() throws SQLException
+    public static Connection createConnection() throws Exception
     {
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }

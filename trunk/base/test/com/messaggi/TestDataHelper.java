@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.Locale;
 
-import com.messaggi.dao.PersistManager;
+import com.messaggi.dao.persist.PersistManager;
 import com.messaggi.domain.User;
 
 public class TestDataHelper

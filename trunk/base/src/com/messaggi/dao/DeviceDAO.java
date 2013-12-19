@@ -1,76 +1,25 @@
 package com.messaggi.dao;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
 
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBException;
-
-import com.messaggi.dao.PersistManager.Get;
-import com.messaggi.dao.PersistManager.Save;
-import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.dao.persist.ObjectRelationalMapper;
+import com.messaggi.dao.persist.ObjectRelationalMapper.Factory.DomainObjectType;
+import com.messaggi.dao.persist.ObjectRelationalMapper.Get;
+import com.messaggi.dao.persist.ObjectRelationalMapper.Save;
+import com.messaggi.dao.persist.PersistManager;
 import com.messaggi.domain.Device;
 
-public class DeviceDAO implements Get<Device>, Save<Device>
+public class DeviceDAO
 {
-    private void initializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects) throws SQLException
+    public List<Device> getDevice(Device[] prototypes) throws Exception
     {
-        while (rs.next()) {
-            Device domainObject = new Device();
-            domainObject.setCode(rs.getString("Code"));
-            domainObject.setActive(rs.getBoolean("Active"));
-            ApplicationPlatform applicationPlatform = new ApplicationPlatform();
-            applicationPlatform.setId(rs.getInt("ApplicationPlatformID"));
-            HashSet<ApplicationPlatform> applicationPlatforms = new HashSet<>();
-            applicationPlatforms.add(applicationPlatform);
-            domainObject.setApplicationPlatforms(applicationPlatforms);
-            domainObjects.add(domainObject);
-        }
+        Get<Device> mapper = ObjectRelationalMapper.Factory.create(DomainObjectType.Device);
+        return PersistManager.get(mapper, prototypes);
     }
 
-    // Get implementation
-    @Override
-    public String getGetStoredProcedure(Device[] prototypes) throws SQLException
+    public List<Device> saveDevice(Device[] newVersions) throws Exception
     {
-        return "{call GetDevice(?)}";
-    }
-
-    @Override
-    public void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
-        throws SQLException
-    {
-        initializeDomainObjectsFromResultSet(rs, domainObjects);
-    }
-
-    // Save implementation
-    @Override
-    public String getSaveStoredProcedure()
-    {
-        return "{call SaveDevice(?)}";
-    }
-
-    @Override
-    public void afterSaveInitializeDomainObjectsFromResultSet(ResultSet rs, List<Device> domainObjects)
-        throws SQLException
-    {
-        initializeDomainObjectsFromResultSet(rs, domainObjects);
-    }
-
-    public List<Device> getDevice(Device[] prototypes) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
-        JAXBException, IOException
-    {
-        return PersistManager.get(this, prototypes);
-    }
-
-    public List<Device> saveDevice(Device[] newVersions) throws NamingException, SQLException,
-        InvocationTargetException, NoSuchMethodException, IllegalAccessException, InstantiationException,
-        JAXBException, IOException
-    {
-        return PersistManager.save(this, newVersions);
+        Save<Device> mapper = ObjectRelationalMapper.Factory.create(DomainObjectType.Device);
+        return PersistManager.save(mapper, newVersions);
     }
 }
