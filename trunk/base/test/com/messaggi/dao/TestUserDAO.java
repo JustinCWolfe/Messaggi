@@ -94,7 +94,7 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testSaveNonExistentUsersSingle() throws Exception
+    public void testSaveNonExistentUserSingle() throws Exception
     {
         user1 = User1.getDomainObject();
 
@@ -113,7 +113,7 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testSaveNonExistentUsersMultiple() throws Exception
+    public void testSaveNonExistentUserMultiple() throws Exception
     {
         user1 = User1.getDomainObject();
         user2 = User2.getDomainObject();
@@ -148,7 +148,7 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testSaveExistingUsersSingle() throws Exception
+    public void testSaveExistingUserSingle() throws Exception
     {
         user1 = User1.getDomainObject();
         TestDataHelper.createUser(user1);
@@ -176,7 +176,7 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testSaveExistingUsersMultiple() throws Exception
+    public void testSaveExistingUserMultiple() throws Exception
     {
         user1 = User1.getDomainObject();
         user2 = User2.getDomainObject();
@@ -233,7 +233,7 @@ public class TestUserDAO extends MessaggiTestCase
      * should be an update while the other is an insert.
      */
     @Test
-    public void testUpsertUsers() throws Exception
+    public void testUpsertUser() throws Exception
     {
         user1 = User1.getDomainObject();
         user2 = User2.getDomainObject();
@@ -304,7 +304,6 @@ public class TestUserDAO extends MessaggiTestCase
         user2 = User2.getDomainObject();
         TestDataHelper.createUser(user1);
         TestDataHelper.createUser(user2);
-
         user1.setActive(false);
         user2.setActive(false);
 

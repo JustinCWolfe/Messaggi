@@ -8,11 +8,48 @@ import java.sql.Types;
 import java.util.Locale;
 
 import com.messaggi.dao.persist.PersistManager;
+import com.messaggi.domain.Application;
 import com.messaggi.domain.DomainHelper;
 import com.messaggi.domain.User;
 
 public class TestDataHelper
 {
+    public static class Application1
+    {
+        public static final String NAME = "Unit Test Application 1";
+
+        public static Application getDomainObject()
+        {
+            Application a = new Application();
+            a.setName(NAME);
+            return a;
+        }
+    }
+
+    public static class Application2
+    {
+        public static final String NAME = "Unit Test Application 2";
+
+        public static Application getDomainObject()
+        {
+            Application a = new Application();
+            a.setName(NAME);
+            return a;
+        }
+    }
+
+    public static class Application3
+    {
+        public static final String NAME = "Unit Test Application 3";
+
+        public static Application getDomainObject()
+        {
+            Application a = new Application();
+            a.setName(NAME);
+            return a;
+        }
+    }
+
     public static class User1
     {
         public static final String NAME = "Unit Test User 1";
@@ -69,7 +106,11 @@ public class TestDataHelper
 
     private static class Statements
     {
-        private static final String CREATE_USER_STMT = "insert into dbo.[User] (Name, Email, Phone, PasswordHash, PasswordSalt, Locale, Active) values (?,?,?,?,?,?,?)";
+        private static final String CREATE_APP_STMT = "insert into dbo.[Application] (UserID, Name) values (?,?)";
+
+        private static final String DELETE_APP_STMT = "delete from dbo.[Application] where ID = ?";
+
+        private static final String CREATE_USER_STMT = "insert into dbo.[User] (Name, Email, Phone, PasswordHash, PasswordSalt, Locale) values (?,?,?,?,?,?)";
 
         private static final String DELETE_USER_STMT = "delete from dbo.[User] where ID = ? or Email = ?";
 
@@ -83,6 +124,40 @@ public class TestDataHelper
         return (Connection) getConnectionMethod.invoke(null);
     }
 
+    public static void createApplication(Application a) throws Exception
+    {
+        if (a == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_STMT);) {
+                stmt.setInt(1, a.getUserId());
+                stmt.setString(2, a.getName());
+                stmt.execute();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.GET_USER_ID_STMT);) {
+                try (ResultSet rs = stmt.executeQuery();) {
+                    while (rs.next()) {
+                        a.setId(rs.getInt(1));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void deleteApplication(Application a) throws Exception
+    {
+        if (a == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_STMT);) {
+                stmt.setInt(1, a.getId());
+                stmt.execute();
+            }
+        }
+    }
     public static void createUser(User u) throws Exception
     {
         if (u == null) {
@@ -96,7 +171,6 @@ public class TestDataHelper
                 stmt.setBytes(4, DomainHelper.encodeBase64Image(u.getPasswordHash()));
                 stmt.setString(5, u.getPasswordSalt());
                 stmt.setString(6, u.getLocale().toLanguageTag());
-                stmt.setBoolean(7, true);
                 stmt.execute();
             }
             try (PreparedStatement stmt = conn.prepareStatement(Statements.GET_USER_ID_STMT);) {
