@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +37,7 @@ public class PersistManager
     private static <T> void initializeStatementFromDomainObjects(PreparedStatement stmt, T[] domainObjects)
         throws Exception
     {
-        SQLXML xmlVar = stmt.getConnection().createSQLXML();
-        StringBuilder sb = new StringBuilder();
-        for (T domainObject : domainObjects) {
-            sb.append(JAXBHelper.objectToXML(domainObject));
-        }
-        xmlVar.setString(sb.toString());
-        stmt.setObject(1, xmlVar);
+        stmt.setString(1, JAXBHelper.objectToXML(domainObjects));
     }
 
     public static <T> List<T> get(Get<T> mapper, T[] prototypes) throws Exception
