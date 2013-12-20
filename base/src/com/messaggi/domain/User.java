@@ -72,7 +72,7 @@ public class User
         this.phone = phone;
     }
 
-    @XmlAttribute(name = "PasswordHash")
+    @XmlTransient
     public String getPasswordHash()
     {
         return passwordHash;
@@ -81,6 +81,17 @@ public class User
     public void setPasswordHash(String passwordHash)
     {
         this.passwordHash = passwordHash;
+    }
+
+    @XmlAttribute(name = "PasswordHash")
+    public byte[] getPasswordHashAsBinary()
+    {
+        return DomainHelper.encodeBase64Image(passwordHash);
+    }
+
+    public void setPasswordHashAsBinary(byte[] passwordHash)
+    {
+        this.passwordHash = DomainHelper.decodeBase64Image(passwordHash);
     }
 
     @XmlAttribute(name = "PasswordSalt")
@@ -95,6 +106,12 @@ public class User
     }
 
     @XmlAttribute(name = "Locale")
+    public String getLocaleAsLanguageTag()
+    {
+        return locale.toLanguageTag();
+    }
+
+    @XmlTransient
     public Locale getLocale()
     {
         return locale;

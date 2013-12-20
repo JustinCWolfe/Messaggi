@@ -33,7 +33,7 @@ public class UserMapper implements Get<User>, Save<User>
                 domainObject.setName(rs.getString("Name"));
                 domainObject.setEmail(rs.getString("Email"));
                 domainObject.setPhone(rs.getString("Phone"));
-                domainObject.setPasswordHash(rs.getString("PasswordHash"));
+                domainObject.setPasswordHashAsBinary(rs.getBytes("PasswordHash"));
                 domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
                 domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
                 domainObject.setActive(rs.getBoolean("Active"));
@@ -73,7 +73,7 @@ public class UserMapper implements Get<User>, Save<User>
             domainObject.setName(rs.getString("Name"));
             domainObject.setEmail(rs.getString("Email"));
             domainObject.setPhone(rs.getString("Phone"));
-            domainObject.setPasswordHash(rs.getString("PasswordHash"));
+            domainObject.setPasswordHashAsBinary(rs.getBytes("PasswordHash"));
             domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
             domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
             domainObject.setActive(rs.getBoolean("Active"));
