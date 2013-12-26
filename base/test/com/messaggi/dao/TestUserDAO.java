@@ -28,8 +28,6 @@ public class TestUserDAO extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
-        TestDataHelper.deleteUser(user1);
-        TestDataHelper.deleteUser(user2);
         userDAO = new UserDAO();
     }
 
@@ -42,7 +40,79 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testGetUser() throws Exception
+    public void testGetUserById() throws Exception
+    {
+        user1 = User1.getDomainObject();
+        user2 = User2.getDomainObject();
+        TestDataHelper.createUser(user1);
+        TestDataHelper.createUser(user2);
+        user1.setEmail(null);
+        user2.setEmail(null);
+        User[] users = { user1, user2, user1, user2 };
+        List<User> retrievedUsers = userDAO.getUser(users);
+        User retrievedUser1 = null, retrievedUser2 = null;
+        for (User user : retrievedUsers) {
+            if (user.getEmail().equals(User1.EMAIL)) {
+                retrievedUser1 = user;
+            } else {
+                retrievedUser2 = user;
+            }
+        }
+        assertEquals(2, retrievedUsers.size());
+        assertEquals(user1.getId(), retrievedUser1.getId());
+        assertEquals(User1.NAME, retrievedUser1.getName());
+        assertEquals(User1.EMAIL, retrievedUser1.getEmail());
+        assertEquals(User1.PHONE, retrievedUser1.getPhone());
+        assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
+        assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
+        assertEquals(User1.LOCALE, retrievedUser1.getLocale());
+        assertEquals(user2.getId(), retrievedUser2.getId());
+        assertEquals(User2.NAME, retrievedUser2.getName());
+        assertEquals(User2.EMAIL, retrievedUser2.getEmail());
+        assertEquals(User2.PHONE, retrievedUser2.getPhone());
+        assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
+        assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
+        assertEquals(User2.LOCALE, retrievedUser2.getLocale());
+    }
+
+    @Test
+    public void testGetUserByEmail() throws Exception
+    {
+        user1 = User1.getDomainObject();
+        user2 = User2.getDomainObject();
+        TestDataHelper.createUser(user1);
+        TestDataHelper.createUser(user2);
+        User noIDUser1 = User1.getDomainObject();
+        User noIDUser2 = User2.getDomainObject();
+        User[] users = { noIDUser1, noIDUser2, noIDUser1, noIDUser2 };
+        List<User> retrievedUsers = userDAO.getUser(users);
+        User retrievedUser1 = null, retrievedUser2 = null;
+        for (User user : retrievedUsers) {
+            if (user.getEmail().equals(User1.EMAIL)) {
+                retrievedUser1 = user;
+            } else {
+                retrievedUser2 = user;
+            }
+        }
+        assertEquals(2, retrievedUsers.size());
+        assertEquals(user1.getId(), retrievedUser1.getId());
+        assertEquals(User1.NAME, retrievedUser1.getName());
+        assertEquals(User1.EMAIL, retrievedUser1.getEmail());
+        assertEquals(User1.PHONE, retrievedUser1.getPhone());
+        assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
+        assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
+        assertEquals(User1.LOCALE, retrievedUser1.getLocale());
+        assertEquals(user2.getId(), retrievedUser2.getId());
+        assertEquals(User2.NAME, retrievedUser2.getName());
+        assertEquals(User2.EMAIL, retrievedUser2.getEmail());
+        assertEquals(User2.PHONE, retrievedUser2.getPhone());
+        assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
+        assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
+        assertEquals(User2.LOCALE, retrievedUser2.getLocale());
+    }
+
+    @Test
+    public void testGetUserByIdAndEmail() throws Exception
     {
         user1 = User1.getDomainObject();
         User[] users1 = { user1 };
@@ -55,7 +125,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(0, retrievedUsers2.size());
 
         TestDataHelper.createUser(user1);
-        List<User> retrievedUsers3 = userDAO.getUser(users2);
+        User[] users3 = { user1, user1, user1, user2, user2 };
+        List<User> retrievedUsers3 = userDAO.getUser(users3);
         User retrievedUser31 = retrievedUsers3.get(0);
         assertEquals(1, retrievedUsers3.size());
         assertEquals(user1.getId(), retrievedUser31.getId());
@@ -67,7 +138,7 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.LOCALE, retrievedUser31.getLocale());
 
         TestDataHelper.createUser(user2);
-        List<User> retrievedUsers4 = userDAO.getUser(users2);
+        List<User> retrievedUsers4 = userDAO.getUser(users3);
         User retrievedUser41 = null, retrievedUser42 = null;
         for (User user : retrievedUsers4) {
             if (user.getEmail().equals(User1.EMAIL)) {
@@ -76,7 +147,7 @@ public class TestUserDAO extends MessaggiTestCase
                 retrievedUser42 = user;
             }
         }
-        assertEquals(users2.length, retrievedUsers4.size());
+        assertEquals(2, retrievedUsers4.size());
         assertEquals(user1.getId(), retrievedUser41.getId());
         assertEquals(User1.NAME, retrievedUser41.getName());
         assertEquals(User1.EMAIL, retrievedUser41.getEmail());
