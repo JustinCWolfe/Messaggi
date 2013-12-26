@@ -38,9 +38,6 @@ public class TestApplicationDAO extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
-        TestDataHelper.deleteApplication(app1);
-        TestDataHelper.deleteApplication(app2);
-        TestDataHelper.deleteApplication(app3);
         user1 = User1.getDomainObject();
         user2 = User2.getDomainObject();
         TestDataHelper.createUser(user1);
@@ -69,6 +66,7 @@ public class TestApplicationDAO extends MessaggiTestCase
         List<Application> savedApps = applicationDAO.saveApplication(apps);
         assertEquals(apps.length, savedApps.size());
         Application savedApp1 = savedApps.get(0);
+        app1.setId(savedApp1.getId());
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
         assertNotNull(savedApp1.getId());
@@ -98,6 +96,9 @@ public class TestApplicationDAO extends MessaggiTestCase
                 savedApp3 = app;
             }
         }
+        app1.setId(savedApp1.getId());
+        app2.setId(savedApp2.getId());
+        app3.setId(savedApp3.getId());
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
         assertNotNull(savedApp1.getId());
@@ -163,9 +164,9 @@ public class TestApplicationDAO extends MessaggiTestCase
         assertEquals(apps.length, savedApps.size());
         Application savedApp1 = null, savedApp2 = null, savedApp3 = null;
         for (Application app : savedApps) {
-            if (app.getName().equals(Application1.NAME)) {
+            if (app.getName().equals(updateApp1Name)) {
                 savedApp1 = app;
-            } else if (app.getName().equals(Application2.NAME)) {
+            } else if (app.getName().equals(updateApp2Name)) {
                 savedApp2 = app;
             } else {
                 savedApp3 = app;
@@ -210,7 +211,7 @@ public class TestApplicationDAO extends MessaggiTestCase
         assertEquals(apps.length, savedApps.size());
         Application savedApp1 = null, savedApp2 = null, savedApp3 = null;
         for (Application app : savedApps) {
-            if (app.getName().equals(Application1.NAME)) {
+            if (app.getName().equals(updateApp1Name)) {
                 savedApp1 = app;
             } else if (app.getName().equals(Application2.NAME)) {
                 savedApp2 = app;
@@ -218,7 +219,8 @@ public class TestApplicationDAO extends MessaggiTestCase
                 savedApp3 = app;
             }
         }
-        assertEquals(apps.length, savedApps.size());
+        app2.setId(savedApp2.getId());
+        app3.setId(savedApp3.getId());
         assertEquals(updateApp1Name, savedApp1.getName());
         assertEquals(user2.getId(), savedApp1.getUser().getId());
         assertNotNull(savedApp1.getId());

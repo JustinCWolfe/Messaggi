@@ -4,11 +4,15 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.Locale;
+import java.util.UUID;
 
 import com.messaggi.dao.persist.PersistManager;
 import com.messaggi.domain.Application;
+import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.domain.ApplicationPlatform.Platform;
 import com.messaggi.domain.DomainHelper;
 import com.messaggi.domain.User;
 
@@ -47,6 +51,66 @@ public class TestDataHelper
             Application a = new Application();
             a.setName(NAME);
             return a;
+        }
+    }
+
+    public static class ApplicationPlatform1
+    {
+        public static final UUID TOKEN = UUID.randomUUID();
+
+        public static final Platform PLATFORM = Platform.ANDROID;
+
+        public static ApplicationPlatform getDomainObject()
+        {
+            ApplicationPlatform ap = new ApplicationPlatform();
+            ap.setPlatform(PLATFORM);
+            ap.setToken(TOKEN);
+            return ap;
+        }
+    }
+
+    public static class ApplicationPlatform2
+    {
+        public static final UUID TOKEN = UUID.randomUUID();
+
+        public static final Platform PLATFORM = Platform.IOS;
+
+        public static ApplicationPlatform getDomainObject()
+        {
+            ApplicationPlatform ap = new ApplicationPlatform();
+            ap.setPlatform(PLATFORM);
+            ap.setToken(TOKEN);
+            return ap;
+        }
+    }
+
+    public static class ApplicationPlatform3
+    {
+        public static final UUID TOKEN = UUID.randomUUID();
+
+        public static final Platform PLATFORM = Platform.WINDOWS;
+
+        public static ApplicationPlatform getDomainObject()
+        {
+            ApplicationPlatform ap = new ApplicationPlatform();
+            ap.setPlatform(PLATFORM);
+            ap.setToken(TOKEN);
+            return ap;
+        }
+    }
+
+    public static class ApplicationPlatform4
+    {
+        public static final UUID TOKEN = UUID.randomUUID();
+
+        public static final Platform PLATFORM = Platform.IOS;
+
+        public static ApplicationPlatform getDomainObject()
+        {
+            ApplicationPlatform ap = new ApplicationPlatform();
+            ap.setPlatform(PLATFORM);
+            ap.setToken(TOKEN);
+            return ap;
         }
     }
 
@@ -108,13 +172,15 @@ public class TestDataHelper
     {
         private static final String CREATE_APP_STMT = "insert into dbo.[Application] (UserID, Name) values (?,?)";
 
-        private static final String DELETE_APP_STMT = "delete from dbo.[Application] where ID = ?";
+        private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token) values (?,?,?)";
 
         private static final String CREATE_USER_STMT = "insert into dbo.[User] (Name, Email, Phone, PasswordHash, PasswordSalt, Locale) values (?,?,?,?,?,?)";
 
-        private static final String DELETE_USER_STMT = "delete from dbo.[User] where ID = ? or Email = ?";
+        private static final String DELETE_APP_STMT = "delete from dbo.[Application] where ID = ?";
 
-        private static final String GET_USER_ID_STMT = "select ID from dbo.[User] where Email = ?";
+        private static final String DELETE_APP_PLAT_STMT = "delete from dbo.[ApplicationPlatform] where ID = ?";
+
+        private static final String DELETE_USER_STMT = "delete from dbo.[User] where ID = ? or Email = ?";
     }
 
     public static Connection getConnection() throws Exception
@@ -130,15 +196,61 @@ public class TestDataHelper
             return;
         }
         try (Connection conn = getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_STMT);) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_STMT,
+                    Statement.RETURN_GENERATED_KEYS);) {
                 stmt.setInt(1, a.getUserId());
                 stmt.setString(2, a.getName());
                 stmt.execute();
-            }
-            try (PreparedStatement stmt = conn.prepareStatement(Statements.GET_USER_ID_STMT);) {
-                try (ResultSet rs = stmt.executeQuery();) {
+                try (ResultSet rs = stmt.getGeneratedKeys();) {
                     while (rs.next()) {
                         a.setId(rs.getInt(1));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void createApplicationPlatform(ApplicationPlatform ap) throws Exception
+    {
+        if (ap == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_PLAT_STMT,
+                    Statement.RETURN_GENERATED_KEYS);) {
+                stmt.setInt(1, ap.getApplicationId());
+                stmt.setString(2, ap.getPlatform().toString());
+                stmt.setString(3, ap.getToken().toString());
+                stmt.execute();
+                try (ResultSet rs = stmt.getGeneratedKeys();) {
+                    while (rs.next()) {
+                        ap.setId(rs.getInt(1));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void createUser(User u) throws Exception
+    {
+        if (u == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_USER_STMT,
+                    Statement.RETURN_GENERATED_KEYS);) {
+                stmt.setString(1, u.getName());
+                stmt.setString(2, u.getEmail());
+                stmt.setString(3, u.getPhone());
+                stmt.setBytes(4, DomainHelper.encodeBase64Image(u.getPasswordHash()));
+                stmt.setString(5, u.getPasswordSalt());
+                stmt.setString(6, u.getLocale().toLanguageTag());
+                stmt.execute();
+                try (ResultSet rs = stmt.getGeneratedKeys();) {
+                    while (rs.next()) {
+                        u.setId(rs.getInt(1));
                         break;
                     }
                 }
@@ -158,29 +270,16 @@ public class TestDataHelper
             }
         }
     }
-    public static void createUser(User u) throws Exception
+
+    public static void deleteApplicationPlatform(ApplicationPlatform ap) throws Exception
     {
-        if (u == null) {
+        if (ap == null) {
             return;
         }
         try (Connection conn = getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_USER_STMT);) {
-                stmt.setString(1, u.getName());
-                stmt.setString(2, u.getEmail());
-                stmt.setString(3, u.getPhone());
-                stmt.setBytes(4, DomainHelper.encodeBase64Image(u.getPasswordHash()));
-                stmt.setString(5, u.getPasswordSalt());
-                stmt.setString(6, u.getLocale().toLanguageTag());
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_STMT);) {
+                stmt.setInt(1, ap.getId());
                 stmt.execute();
-            }
-            try (PreparedStatement stmt = conn.prepareStatement(Statements.GET_USER_ID_STMT);) {
-                stmt.setString(1, u.getEmail());
-                try (ResultSet rs = stmt.executeQuery();) {
-                    while (rs.next()) {
-                        u.setId(rs.getInt(1));
-                        break;
-                    }
-                }
             }
         }
     }
