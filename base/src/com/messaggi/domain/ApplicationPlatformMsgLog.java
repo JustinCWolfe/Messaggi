@@ -15,7 +15,7 @@ public class ApplicationPlatformMsgLog
 
     private Date date;
 
-    private int msgCount;
+    private Integer msgCount;
 
     @XmlAttribute(name = "ID")
     public Integer getId()
@@ -40,12 +40,18 @@ public class ApplicationPlatformMsgLog
     }
 
     @XmlAttribute(name = "ApplicationPlatformID")
-    public Integer getApplicationPlatformID()
+    public Integer getApplicationPlatformId()
     {
         return (applicationPlatform != null) ? applicationPlatform.getId() : null;
     }
 
     @XmlAttribute(name = "Date")
+    public Long getDateAsMilliseconds()
+    {
+        return date.getTime();
+    }
+
+    @XmlTransient
     public Date getDate()
     {
         return date;
@@ -57,12 +63,12 @@ public class ApplicationPlatformMsgLog
     }
 
     @XmlAttribute(name = "MsgCount")
-    public int getMsgCount()
+    public Integer getMsgCount()
     {
         return msgCount;
     }
 
-    public void setMsgCount(int msgCount)
+    public void setMsgCount(Integer msgCount)
     {
         this.msgCount = msgCount;
     }

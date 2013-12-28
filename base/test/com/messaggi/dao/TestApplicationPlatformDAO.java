@@ -396,8 +396,8 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
     }
 
     /*
-     * Insert one application and then perform a save with 3 applications - one
-     * of which should be an update while the other 2 are inserts.
+     * Insert one application platform and then perform a save with 3 - one of
+     * which should be an update while the other 2 are inserts.
      */
     @Test
     public void testUpsertAppPlat() throws Exception
