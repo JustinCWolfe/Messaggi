@@ -1,6 +1,7 @@
 package com.messaggi.dao.persist;
 
 import java.sql.ResultSet;
+import java.util.Date;
 import java.util.List;
 
 import com.messaggi.dao.persist.ObjectRelationalMapper.Save;
@@ -23,7 +24,7 @@ public class ApplicationPlatformMsgLogMapper implements Save<ApplicationPlatform
         while (rs.next()) {
             ApplicationPlatformMsgLog domainObject = new ApplicationPlatformMsgLog();
             domainObject.setId(rs.getInt("ID"));
-            domainObject.setDate(rs.getDate("Date"));
+            domainObject.setDate(new Date(rs.getLong("Date")));
             domainObject.setMsgCount(rs.getInt("MsgCount"));
             ApplicationPlatform applicationPlatform = new ApplicationPlatform();
             applicationPlatform.setId(rs.getInt("ApplicationPlatformID"));

@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -13,6 +15,8 @@ import com.messaggi.dao.persist.PersistManager;
 import com.messaggi.domain.Application;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.ApplicationPlatform.Platform;
+import com.messaggi.domain.ApplicationPlatformMsgLog;
+import com.messaggi.domain.Device;
 import com.messaggi.domain.DomainHelper;
 import com.messaggi.domain.User;
 
@@ -114,6 +118,168 @@ public class TestDataHelper
         }
     }
 
+    public static class ApplicationPlatformMsgLog1
+    {
+        public static final Date DATE = new GregorianCalendar(2009, GregorianCalendar.AUGUST, 28, 2, 56, 50).getTime();
+
+        public static final Integer MSG_COUNT = 2;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class ApplicationPlatformMsgLog2
+    {
+        public static final Date DATE = new GregorianCalendar(2010, GregorianCalendar.OCTOBER, 1, 4, 0, 56).getTime();
+
+        public static final Integer MSG_COUNT = 4;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class ApplicationPlatformMsgLog3
+    {
+        public static final Date DATE = new GregorianCalendar(2011, GregorianCalendar.DECEMBER, 6, 6, 4, 2).getTime();
+
+        public static final Integer MSG_COUNT = 6;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class ApplicationPlatformMsgLog4
+    {
+        public static final Date DATE = new GregorianCalendar(2012, GregorianCalendar.FEBRUARY, 11, 8, 8, 8).getTime();
+
+        public static final Integer MSG_COUNT = 8;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class ApplicationPlatformMsgLog5
+    {
+        public static final Date DATE = new GregorianCalendar(2013, GregorianCalendar.APRIL, 16, 10, 12, 14).getTime();
+
+        public static final Integer MSG_COUNT = 10;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class ApplicationPlatformMsgLog6
+    {
+        public static final Date DATE = new GregorianCalendar(2014, GregorianCalendar.JUNE, 21, 12, 16, 20).getTime();
+
+        public static final Integer MSG_COUNT = 1000000;
+
+        public static ApplicationPlatformMsgLog getDomainObject()
+        {
+            ApplicationPlatformMsgLog apml = new ApplicationPlatformMsgLog();
+            apml.setDate(DATE);
+            apml.setMsgCount(MSG_COUNT);
+            return apml;
+        }
+    }
+
+    public static class Device1
+    {
+        public static final String CODE = "UNIT_TEST_ANDROID_DEVICE1";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class Device2
+    {
+        public static final String CODE = "UNIT_TEST_ANDROID_DEVICE2";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class Device3
+    {
+        public static final String CODE = "UNIT_TEST_IOS_DEVICE1";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class Device4
+    {
+        public static final String CODE = "UNIT_TEST_IOS_DEVICE2";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class Device5
+    {
+        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE1";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class Device6
+    {
+        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
     public static class User1
     {
         public static final String NAME = "Unit Test User 1";
@@ -174,11 +340,23 @@ public class TestDataHelper
 
         private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token) values (?,?,?)";
 
+        private static final String CREATE_APP_PLAT_MSG_LOG_STMT = "insert into dbo.[ApplicationPlatformMsgLog] (ApplicationPlatformID, Date, MsgCount) values (?,?,?)";
+
+        private static final String CREATE_APP_PLAT_DEVICE_STMT = "insert into dbo.[ApplicationPlatformDevice] (ApplicationPlatformId, DeviceCode) values (?,?)";
+
+        private static final String CREATE_DEVICE_STMT = "insert into dbo.[Device] (Code, Active) values (?,?)";
+
         private static final String CREATE_USER_STMT = "insert into dbo.[User] (Name, Email, Phone, PasswordHash, PasswordSalt, Locale) values (?,?,?,?,?,?)";
 
         private static final String DELETE_APP_STMT = "delete from dbo.[Application] where ID = ?";
 
         private static final String DELETE_APP_PLAT_STMT = "delete from dbo.[ApplicationPlatform] where ID = ?";
+
+        private static final String DELETE_APP_PLAT_MSG_LOG_STMT = "delete from dbo.[ApplicationPlatformMsgLog] where ID = ?";
+
+        private static final String DELETE_APP_PLAT_DEVICE_STMT = "delete from dbo.[ApplicationPlatformDevice] where ApplicationPlatformID = ? and DeviceCode = ?";
+
+        private static final String DELETE_DEVICE_STMT = "delete from dbo.[Device] where Code = ?";
 
         private static final String DELETE_USER_STMT = "delete from dbo.[User] where ID = ? or Email = ?";
     }
@@ -233,6 +411,49 @@ public class TestDataHelper
         }
     }
 
+    public static void createApplicationPlatformMsgLog(ApplicationPlatformMsgLog apml) throws Exception
+    {
+        if (apml == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_PLAT_MSG_LOG_STMT,
+                    Statement.RETURN_GENERATED_KEYS);) {
+                stmt.setInt(1, apml.getApplicationPlatformId());
+                stmt.setLong(2, apml.getDateAsMilliseconds());
+                stmt.setInt(3, apml.getMsgCount());
+                stmt.execute();
+                try (ResultSet rs = stmt.getGeneratedKeys();) {
+                    while (rs.next()) {
+                        apml.setId(rs.getInt(1));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static void createDevice(Device d) throws Exception
+    {
+        if (d == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_DEVICE_STMT);) {
+                stmt.setString(1, d.getCode());
+                stmt.setBoolean(2, d.getActive());
+                stmt.execute();
+            }
+            for (ApplicationPlatform ap : d.getApplicationPlatforms()) {
+                try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_PLAT_MSG_LOG_STMT);) {
+                    stmt.setInt(1, ap.getId());
+                    stmt.setString(2, d.getCode());
+                    stmt.execute();
+                }
+            }
+        }
+    }
+
     public static void createUser(User u) throws Exception
     {
         if (u == null) {
@@ -280,6 +501,39 @@ public class TestDataHelper
             try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_STMT);) {
                 stmt.setInt(1, ap.getId());
                 stmt.execute();
+            }
+        }
+    }
+
+    public static void deleteApplicationPlatformMsgLog(ApplicationPlatformMsgLog apml) throws Exception
+    {
+        if (apml == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_MSG_LOG_STMT);) {
+                stmt.setInt(1, apml.getId());
+                stmt.execute();
+            }
+        }
+    }
+
+    public static void deleteDevice(Device d) throws Exception
+    {
+        if (d == null) {
+            return;
+        }
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_DEVICE_STMT);) {
+                stmt.setString(1, d.getCode());
+                stmt.execute();
+            }
+            for (ApplicationPlatform ap : d.getApplicationPlatforms()) {
+                try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_DEVICE_STMT);) {
+                    stmt.setInt(1, ap.getId());
+                    stmt.setString(2, d.getCode());
+                    stmt.execute();
+                }
             }
         }
     }

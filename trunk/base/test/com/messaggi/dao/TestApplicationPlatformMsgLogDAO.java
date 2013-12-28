@@ -1,16 +1,26 @@
 package com.messaggi.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper;
 import com.messaggi.TestDataHelper.Application1;
-import com.messaggi.TestDataHelper.Application2;
-import com.messaggi.TestDataHelper.Application3;
 import com.messaggi.TestDataHelper.ApplicationPlatform1;
 import com.messaggi.TestDataHelper.ApplicationPlatform2;
 import com.messaggi.TestDataHelper.ApplicationPlatform3;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog1;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog2;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog3;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog4;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog5;
+import com.messaggi.TestDataHelper.ApplicationPlatformMsgLog6;
 import com.messaggi.TestDataHelper.User1;
 import com.messaggi.domain.Application;
 import com.messaggi.domain.ApplicationPlatform;
@@ -69,6 +79,12 @@ public class TestApplicationPlatformMsgLogDAO extends MessaggiTestCase
     @After
     public void tearDown() throws Exception
     {
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog1);
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog2);
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog3);
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog4);
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog5);
+        TestDataHelper.deleteApplicationPlatformMsgLog(appPlatMsgLog6);
         TestDataHelper.deleteApplicationPlatform(appPlat1);
         TestDataHelper.deleteApplicationPlatform(appPlat2);
         TestDataHelper.deleteApplicationPlatform(appPlat3);
@@ -79,243 +95,304 @@ public class TestApplicationPlatformMsgLogDAO extends MessaggiTestCase
     @Test
     public void testSaveNonExistentAppSingle() throws Exception
     {
-        app1 = Application1.getDomainObject();
-        app1.setUser(user1);
+        appPlatMsgLog1 = ApplicationPlatformMsgLog1.getDomainObject();
+        appPlatMsgLog1.setApplicationPlatform(appPlat1);
 
-        ApplicationPlatformMsgLog[] msgLogs = { app1 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = savedApps.get(0);
-        app1.setId(savedApp1.getId());
-        assertEquals(Application1.NAME, savedApp1.getName());
-        assertEquals(user1.getId(), savedApp1.getUser().getId());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
+        ApplicationPlatformMsgLog[] msgLogs = { appPlatMsgLog1 };
+        List<ApplicationPlatformMsgLog> savedAppPlatMsgLogs = applicationPlatformMsgLogDAO
+                .saveApplicationPlatformMsgLog(msgLogs);
+        assertEquals(msgLogs.length, savedAppPlatMsgLogs.size());
+        ApplicationPlatformMsgLog savedAppPlatMsgLog1 = savedAppPlatMsgLogs.get(0);
+        appPlatMsgLog1.setId(savedAppPlatMsgLog1.getId());
+        assertEquals(appPlat1.getId(), savedAppPlatMsgLog1.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog1.DATE, savedAppPlatMsgLog1.getDate());
+        assertEquals(ApplicationPlatformMsgLog1.MSG_COUNT, savedAppPlatMsgLog1.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog1.getId());
+        assertTrue(savedAppPlatMsgLog1.getId() > 0);
     }
 
     @Test
     public void testSaveNonExistentAppMultiple() throws Exception
     {
-        app1 = Application1.getDomainObject();
-        app2 = Application2.getDomainObject();
-        app3 = Application3.getDomainObject();
-        app1.setUser(user1);
-        app2.setUser(user1);
-        app3.setUser(user2);
+        appPlatMsgLog1 = ApplicationPlatformMsgLog1.getDomainObject();
+        appPlatMsgLog2 = ApplicationPlatformMsgLog2.getDomainObject();
+        appPlatMsgLog3 = ApplicationPlatformMsgLog3.getDomainObject();
+        appPlatMsgLog4 = ApplicationPlatformMsgLog4.getDomainObject();
+        appPlatMsgLog5 = ApplicationPlatformMsgLog5.getDomainObject();
+        appPlatMsgLog6 = ApplicationPlatformMsgLog6.getDomainObject();
+        appPlatMsgLog1.setApplicationPlatform(appPlat1);
+        appPlatMsgLog2.setApplicationPlatform(appPlat1);
+        appPlatMsgLog3.setApplicationPlatform(appPlat2);
+        appPlatMsgLog4.setApplicationPlatform(appPlat2);
+        appPlatMsgLog5.setApplicationPlatform(appPlat3);
+        appPlatMsgLog6.setApplicationPlatform(appPlat3);
 
-        ApplicationPlatformMsgLog[] apps = { app1, app2, app3 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = null, savedApp2 = null, savedApp3 = null;
-        for (ApplicationPlatformMsgLog app : savedApps) {
-            if (app.getName().equals(Application1.NAME)) {
-                savedApp1 = app;
-            } else if (app.getName().equals(Application2.NAME)) {
-                savedApp2 = app;
-            } else {
-                savedApp3 = app;
+        ApplicationPlatformMsgLog[] msgLogs = { appPlatMsgLog1, appPlatMsgLog2, appPlatMsgLog3, appPlatMsgLog4,
+                appPlatMsgLog5, appPlatMsgLog6 };
+        List<ApplicationPlatformMsgLog> savedAppPlatMsgLogs = applicationPlatformMsgLogDAO
+                .saveApplicationPlatformMsgLog(msgLogs);
+        assertEquals(msgLogs.length, savedAppPlatMsgLogs.size());
+        ApplicationPlatformMsgLog savedAppPlatMsgLog1 = null, savedAppPlatMsgLog2 = null, savedAppPlatMsgLog3 = null, savedAppPlatMsgLog4 = null, savedAppPlatMsgLog5 = null, savedAppPlatMsgLog6 = null;
+        for (ApplicationPlatformMsgLog appPlatMsgLog : savedAppPlatMsgLogs) {
+            if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog1.MSG_COUNT)) {
+                savedAppPlatMsgLog1 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog2.MSG_COUNT)) {
+                savedAppPlatMsgLog2 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog3.MSG_COUNT)) {
+                savedAppPlatMsgLog3 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog4.MSG_COUNT)) {
+                savedAppPlatMsgLog4 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog5.MSG_COUNT)) {
+                savedAppPlatMsgLog5 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog6.MSG_COUNT)) {
+                savedAppPlatMsgLog6 = appPlatMsgLog;
             }
         }
-        app1.setId(savedApp1.getId());
-        app2.setId(savedApp2.getId());
-        app3.setId(savedApp3.getId());
-        assertEquals(Application1.NAME, savedApp1.getName());
-        assertEquals(user1.getId(), savedApp1.getUser().getId());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
-        assertEquals(Application2.NAME, savedApp2.getName());
-        assertEquals(user1.getId(), savedApp2.getUser().getId());
-        assertNotNull(savedApp2.getId());
-        assertTrue(savedApp2.getId() > 0);
-        assertEquals(Application3.NAME, savedApp3.getName());
-        assertEquals(user2.getId(), savedApp3.getUser().getId());
-        assertNotNull(savedApp3.getId());
-        assertTrue(savedApp3.getId() > 0);
+        appPlatMsgLog1.setId(savedAppPlatMsgLog1.getId());
+        appPlatMsgLog2.setId(savedAppPlatMsgLog2.getId());
+        appPlatMsgLog3.setId(savedAppPlatMsgLog3.getId());
+        appPlatMsgLog4.setId(savedAppPlatMsgLog4.getId());
+        appPlatMsgLog5.setId(savedAppPlatMsgLog5.getId());
+        appPlatMsgLog6.setId(savedAppPlatMsgLog6.getId());
+        assertEquals(appPlat1.getId(), savedAppPlatMsgLog1.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog1.DATE, savedAppPlatMsgLog1.getDate());
+        assertEquals(ApplicationPlatformMsgLog1.MSG_COUNT, savedAppPlatMsgLog1.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog1.getId());
+        assertTrue(savedAppPlatMsgLog1.getId() > 0);
+        assertEquals(appPlat1.getId(), savedAppPlatMsgLog2.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog2.DATE, savedAppPlatMsgLog2.getDate());
+        assertEquals(ApplicationPlatformMsgLog2.MSG_COUNT, savedAppPlatMsgLog2.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog2.getId());
+        assertTrue(savedAppPlatMsgLog2.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog3.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog3.DATE, savedAppPlatMsgLog3.getDate());
+        assertEquals(ApplicationPlatformMsgLog3.MSG_COUNT, savedAppPlatMsgLog3.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog3.getId());
+        assertTrue(savedAppPlatMsgLog3.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog4.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog4.DATE, savedAppPlatMsgLog4.getDate());
+        assertEquals(ApplicationPlatformMsgLog4.MSG_COUNT, savedAppPlatMsgLog4.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog4.getId());
+        assertTrue(savedAppPlatMsgLog4.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog5.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog5.DATE, savedAppPlatMsgLog5.getDate());
+        assertEquals(ApplicationPlatformMsgLog5.MSG_COUNT, savedAppPlatMsgLog5.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog5.getId());
+        assertTrue(savedAppPlatMsgLog5.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog6.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog6.DATE, savedAppPlatMsgLog6.getDate());
+        assertEquals(ApplicationPlatformMsgLog6.MSG_COUNT, savedAppPlatMsgLog6.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog6.getId());
+        assertTrue(savedAppPlatMsgLog6.getId() > 0);
     }
 
     @Test
     public void testSaveExistingAppSingle() throws Exception
     {
-        app1 = Application1.getDomainObject();
-        app1.setUser(user1);
-        TestDataHelper.createApplication(app1);
+        appPlatMsgLog1 = ApplicationPlatformMsgLog1.getDomainObject();
+        appPlatMsgLog1.setApplicationPlatform(appPlat1);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog1);
 
-        String updateApp1Name = Application1.NAME + "-2.0";
-        app1.setName(updateApp1Name);
-        app1.setUser(user2);
+        appPlatMsgLog1.setApplicationPlatform(appPlat2);
+        appPlatMsgLog1.setDate(ApplicationPlatformMsgLog2.DATE);
+        appPlatMsgLog1.setMsgCount(ApplicationPlatformMsgLog2.MSG_COUNT);
 
-        ApplicationPlatformMsgLog[] apps = { app1 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = savedApps.get(0);
-        assertEquals(updateApp1Name, savedApp1.getName());
-        assertEquals(user2.getId(), savedApp1.getUser().getId());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
+        ApplicationPlatformMsgLog[] msgLogs = { appPlatMsgLog1 };
+        List<ApplicationPlatformMsgLog> savedAppPlatMsgLogs = applicationPlatformMsgLogDAO
+                .saveApplicationPlatformMsgLog(msgLogs);
+        assertEquals(msgLogs.length, savedAppPlatMsgLogs.size());
+        ApplicationPlatformMsgLog savedAppPlatMsgLog1 = savedAppPlatMsgLogs.get(0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog1.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog2.DATE, savedAppPlatMsgLog1.getDate());
+        assertEquals(ApplicationPlatformMsgLog2.MSG_COUNT, savedAppPlatMsgLog1.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog1.getId());
+        assertTrue(savedAppPlatMsgLog1.getId() > 0);
     }
 
     @Test
     public void testSaveExistingAppMultiple() throws Exception
     {
-        app1 = Application1.getDomainObject();
-        app2 = Application2.getDomainObject();
-        app3 = Application3.getDomainObject();
-        app1.setUser(user1);
-        app2.setUser(user1);
-        app3.setUser(user2);
-        TestDataHelper.createApplication(app1);
-        TestDataHelper.createApplication(app2);
-        TestDataHelper.createApplication(app3);
+        appPlatMsgLog1 = ApplicationPlatformMsgLog1.getDomainObject();
+        appPlatMsgLog2 = ApplicationPlatformMsgLog2.getDomainObject();
+        appPlatMsgLog3 = ApplicationPlatformMsgLog3.getDomainObject();
+        appPlatMsgLog4 = ApplicationPlatformMsgLog4.getDomainObject();
+        appPlatMsgLog5 = ApplicationPlatformMsgLog5.getDomainObject();
+        appPlatMsgLog6 = ApplicationPlatformMsgLog6.getDomainObject();
+        appPlatMsgLog1.setApplicationPlatform(appPlat1);
+        appPlatMsgLog2.setApplicationPlatform(appPlat1);
+        appPlatMsgLog3.setApplicationPlatform(appPlat2);
+        appPlatMsgLog4.setApplicationPlatform(appPlat2);
+        appPlatMsgLog5.setApplicationPlatform(appPlat3);
+        appPlatMsgLog6.setApplicationPlatform(appPlat3);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog1);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog2);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog3);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog4);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog5);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog6);
 
-        String updateApp1Name = Application1.NAME + "-2.0";
-        app1.setName(updateApp1Name);
-        app1.setUser(user2);
+        appPlatMsgLog1.setApplicationPlatform(appPlat2);
+        appPlatMsgLog1.setDate(ApplicationPlatformMsgLog2.DATE);
+        appPlatMsgLog1.setMsgCount(ApplicationPlatformMsgLog2.MSG_COUNT);
 
-        String updateApp2Name = Application2.NAME + "-2.1";
-        app2.setName(updateApp2Name);
-        app2.setUser(user2);
+        appPlatMsgLog2.setApplicationPlatform(appPlat2);
+        appPlatMsgLog2.setDate(ApplicationPlatformMsgLog1.DATE);
+        appPlatMsgLog2.setMsgCount(ApplicationPlatformMsgLog1.MSG_COUNT);
 
-        String updateApp3Name = Application3.NAME + "-2.2";
-        app3.setName(updateApp3Name);
-        app3.setUser(user1);
+        appPlatMsgLog3.setApplicationPlatform(appPlat3);
+        appPlatMsgLog3.setDate(ApplicationPlatformMsgLog4.DATE);
+        appPlatMsgLog3.setMsgCount(ApplicationPlatformMsgLog4.MSG_COUNT);
 
-        ApplicationPlatformMsgLog[] apps = { app1, app2, app3 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = null, savedApp2 = null, savedApp3 = null;
-        for (ApplicationPlatformMsgLog app : savedApps) {
-            if (app.getName().equals(updateApp1Name)) {
-                savedApp1 = app;
-            } else if (app.getName().equals(updateApp2Name)) {
-                savedApp2 = app;
-            } else {
-                savedApp3 = app;
+        appPlatMsgLog4.setApplicationPlatform(appPlat3);
+        appPlatMsgLog4.setDate(ApplicationPlatformMsgLog3.DATE);
+        appPlatMsgLog4.setMsgCount(ApplicationPlatformMsgLog3.MSG_COUNT);
+
+        appPlatMsgLog5.setApplicationPlatform(appPlat1);
+        appPlatMsgLog5.setDate(ApplicationPlatformMsgLog6.DATE);
+        appPlatMsgLog5.setMsgCount(ApplicationPlatformMsgLog6.MSG_COUNT);
+
+        appPlatMsgLog6.setApplicationPlatform(appPlat1);
+        appPlatMsgLog6.setDate(ApplicationPlatformMsgLog5.DATE);
+        appPlatMsgLog6.setMsgCount(ApplicationPlatformMsgLog5.MSG_COUNT);
+
+        ApplicationPlatformMsgLog[] msgLogs = { appPlatMsgLog1, appPlatMsgLog2, appPlatMsgLog3, appPlatMsgLog4,
+                appPlatMsgLog5, appPlatMsgLog6 };
+        List<ApplicationPlatformMsgLog> savedAppPlatMsgLogs = applicationPlatformMsgLogDAO
+                .saveApplicationPlatformMsgLog(msgLogs);
+        assertEquals(msgLogs.length, savedAppPlatMsgLogs.size());
+        ApplicationPlatformMsgLog savedAppPlatMsgLog1 = null, savedAppPlatMsgLog2 = null, savedAppPlatMsgLog3 = null, savedAppPlatMsgLog4 = null, savedAppPlatMsgLog5 = null, savedAppPlatMsgLog6 = null;
+        for (ApplicationPlatformMsgLog appPlatMsgLog : savedAppPlatMsgLogs) {
+            if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog2.MSG_COUNT)) {
+                savedAppPlatMsgLog1 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog1.MSG_COUNT)) {
+                savedAppPlatMsgLog2 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog4.MSG_COUNT)) {
+                savedAppPlatMsgLog3 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog3.MSG_COUNT)) {
+                savedAppPlatMsgLog4 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog6.MSG_COUNT)) {
+                savedAppPlatMsgLog5 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog5.MSG_COUNT)) {
+                savedAppPlatMsgLog6 = appPlatMsgLog;
             }
         }
-        assertEquals(apps.length, savedApps.size());
-        assertEquals(updateApp1Name, savedApp1.getName());
-        assertEquals(user2.getId(), savedApp1.getUser().getId());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
-        assertEquals(updateApp2Name, savedApp2.getName());
-        assertEquals(user2.getId(), savedApp2.getUser().getId());
-        assertNotNull(savedApp2.getId());
-        assertTrue(savedApp2.getId() > 0);
-        assertEquals(updateApp3Name, savedApp3.getName());
-        assertEquals(user1.getId(), savedApp3.getUser().getId());
-        assertNotNull(savedApp3.getId());
-        assertTrue(savedApp3.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog1.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog2.DATE, savedAppPlatMsgLog1.getDate());
+        assertEquals(ApplicationPlatformMsgLog2.MSG_COUNT, savedAppPlatMsgLog1.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog1.getId());
+        assertTrue(savedAppPlatMsgLog1.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog2.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog1.DATE, savedAppPlatMsgLog2.getDate());
+        assertEquals(ApplicationPlatformMsgLog1.MSG_COUNT, savedAppPlatMsgLog2.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog2.getId());
+        assertTrue(savedAppPlatMsgLog2.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog3.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog4.DATE, savedAppPlatMsgLog3.getDate());
+        assertEquals(ApplicationPlatformMsgLog4.MSG_COUNT, savedAppPlatMsgLog3.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog3.getId());
+        assertTrue(savedAppPlatMsgLog3.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog4.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog3.DATE, savedAppPlatMsgLog4.getDate());
+        assertEquals(ApplicationPlatformMsgLog3.MSG_COUNT, savedAppPlatMsgLog4.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog4.getId());
+        assertTrue(savedAppPlatMsgLog4.getId() > 0);
+        assertEquals(appPlat1.getId(), savedAppPlatMsgLog5.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog6.DATE, savedAppPlatMsgLog5.getDate());
+        assertEquals(ApplicationPlatformMsgLog6.MSG_COUNT, savedAppPlatMsgLog5.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog5.getId());
+        assertTrue(savedAppPlatMsgLog5.getId() > 0);
+        assertEquals(appPlat1.getId(), savedAppPlatMsgLog6.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog5.DATE, savedAppPlatMsgLog6.getDate());
+        assertEquals(ApplicationPlatformMsgLog5.MSG_COUNT, savedAppPlatMsgLog6.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog6.getId());
+        assertTrue(savedAppPlatMsgLog6.getId() > 0);
     }
 
     /*
-     * Insert one application and then perform a save with 3 applications - one
-     * of which should be an update while the other 2 are inserts.
+     * Insert 2 application platform message logs and then perform a save with 6
+     * - 2 of which should be an update while the other 4 are inserts.
      */
     @Test
     public void testUpsertApp() throws Exception
     {
-        app1 = Application1.getDomainObject();
-        app2 = Application2.getDomainObject();
-        app3 = Application3.getDomainObject();
-        app1.setUser(user1);
-        app2.setUser(user1);
-        app3.setUser(user2);
-        TestDataHelper.createApplication(app1);
+        appPlatMsgLog1 = ApplicationPlatformMsgLog1.getDomainObject();
+        appPlatMsgLog2 = ApplicationPlatformMsgLog2.getDomainObject();
+        appPlatMsgLog3 = ApplicationPlatformMsgLog3.getDomainObject();
+        appPlatMsgLog4 = ApplicationPlatformMsgLog4.getDomainObject();
+        appPlatMsgLog5 = ApplicationPlatformMsgLog5.getDomainObject();
+        appPlatMsgLog6 = ApplicationPlatformMsgLog6.getDomainObject();
+        appPlatMsgLog1.setApplicationPlatform(appPlat1);
+        appPlatMsgLog2.setApplicationPlatform(appPlat1);
+        appPlatMsgLog3.setApplicationPlatform(appPlat2);
+        appPlatMsgLog4.setApplicationPlatform(appPlat2);
+        appPlatMsgLog5.setApplicationPlatform(appPlat3);
+        appPlatMsgLog6.setApplicationPlatform(appPlat3);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog1);
+        TestDataHelper.createApplicationPlatformMsgLog(appPlatMsgLog2);
 
-        String updateApp1Name = Application1.NAME + "-2.0";
-        app1.setName(updateApp1Name);
-        app1.setUser(user2);
+        appPlatMsgLog1.setApplicationPlatform(appPlat2);
+        appPlatMsgLog1.setDate(ApplicationPlatformMsgLog2.DATE);
+        appPlatMsgLog1.setMsgCount(ApplicationPlatformMsgLog2.MSG_COUNT);
 
-        ApplicationPlatformMsgLog[] apps = { app1, app2, app3 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = null, savedApp2 = null, savedApp3 = null;
-        for (ApplicationPlatformMsgLog app : savedApps) {
-            if (app.getName().equals(updateApp1Name)) {
-                savedApp1 = app;
-            } else if (app.getName().equals(Application2.NAME)) {
-                savedApp2 = app;
-            } else {
-                savedApp3 = app;
+        appPlatMsgLog2.setApplicationPlatform(appPlat2);
+        appPlatMsgLog2.setDate(ApplicationPlatformMsgLog1.DATE);
+        appPlatMsgLog2.setMsgCount(ApplicationPlatformMsgLog1.MSG_COUNT);
+
+        ApplicationPlatformMsgLog[] msgLogs = { appPlatMsgLog1, appPlatMsgLog2, appPlatMsgLog3, appPlatMsgLog4,
+                appPlatMsgLog5, appPlatMsgLog6 };
+        List<ApplicationPlatformMsgLog> savedAppPlatMsgLogs = applicationPlatformMsgLogDAO
+                .saveApplicationPlatformMsgLog(msgLogs);
+        assertEquals(msgLogs.length, savedAppPlatMsgLogs.size());
+        ApplicationPlatformMsgLog savedAppPlatMsgLog1 = null, savedAppPlatMsgLog2 = null, savedAppPlatMsgLog3 = null, savedAppPlatMsgLog4 = null, savedAppPlatMsgLog5 = null, savedAppPlatMsgLog6 = null;
+        for (ApplicationPlatformMsgLog appPlatMsgLog : savedAppPlatMsgLogs) {
+            if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog2.MSG_COUNT)) {
+                savedAppPlatMsgLog1 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog1.MSG_COUNT)) {
+                savedAppPlatMsgLog2 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog3.MSG_COUNT)) {
+                savedAppPlatMsgLog3 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog4.MSG_COUNT)) {
+                savedAppPlatMsgLog4 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog5.MSG_COUNT)) {
+                savedAppPlatMsgLog5 = appPlatMsgLog;
+            } else if (appPlatMsgLog.getMsgCount().equals(ApplicationPlatformMsgLog6.MSG_COUNT)) {
+                savedAppPlatMsgLog6 = appPlatMsgLog;
             }
         }
-        app2.setId(savedApp2.getId());
-        app3.setId(savedApp3.getId());
-        assertEquals(updateApp1Name, savedApp1.getName());
-        assertEquals(user2.getId(), savedApp1.getUser().getId());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
-        assertEquals(Application2.NAME, savedApp2.getName());
-        assertEquals(user1.getId(), savedApp2.getUser().getId());
-        assertNotNull(savedApp2.getId());
-        assertTrue(savedApp2.getId() > 0);
-        assertEquals(Application3.NAME, savedApp3.getName());
-        assertEquals(user2.getId(), savedApp3.getUser().getId());
-        assertNotNull(savedApp3.getId());
-        assertTrue(savedApp3.getId() > 0);
-    }
-
-    @Test
-    public void testInactivateAppSingle() throws Exception
-    {
-        app1 = Application1.getDomainObject();
-        app1.setUser(user1);
-        TestDataHelper.createApplication(app1);
-        app1.setActive(false);
-
-        ApplicationPlatformMsgLog[] apps = { app1 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = savedApps.get(0);
-        assertEquals(Application1.NAME, savedApp1.getName());
-        assertEquals(user1.getId(), savedApp1.getUser().getId());
-        assertEquals(false, savedApp1.getActive());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
-    }
-
-    @Test
-    public void testInactivateAppMultiple() throws Exception
-    {
-        app1 = Application1.getDomainObject();
-        app2 = Application2.getDomainObject();
-        app3 = Application3.getDomainObject();
-        app1.setUser(user1);
-        app2.setUser(user1);
-        app3.setUser(user2);
-        TestDataHelper.createApplication(app1);
-        TestDataHelper.createApplication(app2);
-        TestDataHelper.createApplication(app3);
-        app1.setActive(false);
-        app2.setActive(false);
-        app3.setActive(false);
-
-        ApplicationPlatformMsgLog[] apps = { app1, app2, app3 };
-        List<ApplicationPlatformMsgLog> savedApps = applicationPlatformMsgLogDAO.saveApplicationPlatformMsgLog(apps);
-        assertEquals(apps.length, savedApps.size());
-        ApplicationPlatformMsgLog savedApp1 = null, savedApp2 = null, savedApp3 = null;
-        for (ApplicationPlatformMsgLog app : savedApps) {
-            if (app.getName().equals(Application1.NAME)) {
-                savedApp1 = app;
-            } else if (app.getName().equals(Application2.NAME)) {
-                savedApp2 = app;
-            } else {
-                savedApp3 = app;
-            }
-        }
-        assertEquals(Application1.NAME, savedApp1.getName());
-        assertEquals(user1.getId(), savedApp1.getUser().getId());
-        assertEquals(false, savedApp1.getActive());
-        assertNotNull(savedApp1.getId());
-        assertTrue(savedApp1.getId() > 0);
-        assertEquals(user1.getId(), savedApp2.getUser().getId());
-        assertEquals(false, savedApp2.getActive());
-        assertNotNull(savedApp2.getId());
-        assertTrue(savedApp2.getId() > 0);
-        assertEquals(user2.getId(), savedApp3.getUser().getId());
-        assertEquals(false, savedApp3.getActive());
-        assertNotNull(savedApp3.getId());
-        assertTrue(savedApp3.getId() > 0);
+        appPlatMsgLog3.setId(savedAppPlatMsgLog3.getId());
+        appPlatMsgLog4.setId(savedAppPlatMsgLog4.getId());
+        appPlatMsgLog5.setId(savedAppPlatMsgLog5.getId());
+        appPlatMsgLog6.setId(savedAppPlatMsgLog6.getId());
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog1.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog2.DATE, savedAppPlatMsgLog1.getDate());
+        assertEquals(ApplicationPlatformMsgLog2.MSG_COUNT, savedAppPlatMsgLog1.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog1.getId());
+        assertTrue(savedAppPlatMsgLog1.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog2.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog1.DATE, savedAppPlatMsgLog2.getDate());
+        assertEquals(ApplicationPlatformMsgLog1.MSG_COUNT, savedAppPlatMsgLog2.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog2.getId());
+        assertTrue(savedAppPlatMsgLog2.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog3.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog3.DATE, savedAppPlatMsgLog3.getDate());
+        assertEquals(ApplicationPlatformMsgLog3.MSG_COUNT, savedAppPlatMsgLog3.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog3.getId());
+        assertTrue(savedAppPlatMsgLog3.getId() > 0);
+        assertEquals(appPlat2.getId(), savedAppPlatMsgLog4.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog4.DATE, savedAppPlatMsgLog4.getDate());
+        assertEquals(ApplicationPlatformMsgLog4.MSG_COUNT, savedAppPlatMsgLog4.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog4.getId());
+        assertTrue(savedAppPlatMsgLog4.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog5.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog5.DATE, savedAppPlatMsgLog5.getDate());
+        assertEquals(ApplicationPlatformMsgLog5.MSG_COUNT, savedAppPlatMsgLog5.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog5.getId());
+        assertTrue(savedAppPlatMsgLog5.getId() > 0);
+        assertEquals(appPlat3.getId(), savedAppPlatMsgLog6.getApplicationPlatform().getId());
+        assertEquals(ApplicationPlatformMsgLog6.DATE, savedAppPlatMsgLog6.getDate());
+        assertEquals(ApplicationPlatformMsgLog6.MSG_COUNT, savedAppPlatMsgLog6.getMsgCount());
+        assertNotNull(savedAppPlatMsgLog6.getId());
+        assertTrue(savedAppPlatMsgLog6.getId() > 0);
     }
 }
 
