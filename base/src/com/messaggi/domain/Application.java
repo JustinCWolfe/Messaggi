@@ -1,5 +1,7 @@
 package com.messaggi.domain;
 
+import java.util.HashSet;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -11,9 +13,11 @@ public class Application
 
     private String name;
 
-    private Boolean active;
+    private Boolean active = true;
 
     private User user;
+
+    private HashSet<ApplicationPlatform> applicationPlatforms;
 
     @XmlAttribute(name = "ID")
     public Integer getId()
@@ -63,6 +67,17 @@ public class Application
     public Integer getUserId()
     {
         return (user != null) ? user.getId() : null;
+    }
+
+    @XmlTransient
+    public HashSet<ApplicationPlatform> getApplicationPlatforms()
+    {
+        return applicationPlatforms;
+    }
+
+    public void setApplicationPlatforms(HashSet<ApplicationPlatform> applicationPlatforms)
+    {
+        this.applicationPlatforms = applicationPlatforms;
     }
 
     public Application()

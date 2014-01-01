@@ -24,7 +24,7 @@ public class User
 
     private Locale locale;
 
-    private Boolean active;
+    private Boolean active = true;
 
     private HashSet<Application> applications;
 

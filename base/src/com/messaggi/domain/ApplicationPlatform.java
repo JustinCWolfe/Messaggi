@@ -35,6 +35,8 @@ public class ApplicationPlatform
 
     private HashSet<Device> devices;
 
+    private HashSet<ApplicationPlatformMsgLog> applicationPlatformMsgLogs;
+
     @XmlAttribute(name = "ID")
     public Integer getId()
     {
@@ -100,6 +102,17 @@ public class ApplicationPlatform
     public void setDevices(HashSet<Device> devices)
     {
         this.devices = devices;
+    }
+
+    @XmlTransient
+    public HashSet<ApplicationPlatformMsgLog> getApplicationPlatformMsgLogs()
+    {
+        return applicationPlatformMsgLogs;
+    }
+
+    public void setApplicationPlatformMsgLogs(HashSet<ApplicationPlatformMsgLog> applicationPlatformMsgLogs)
+    {
+        this.applicationPlatformMsgLogs = applicationPlatformMsgLogs;
     }
 
     public ApplicationPlatform()

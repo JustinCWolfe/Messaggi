@@ -48,6 +48,17 @@
     </subant>
   </target>
 
+  <target name="run-tests" depends="compile,compile-test" description="run junit tests" >
+    <subant target="run-tests">
+      <filelist dir=".">       
+        <file name="base/build.xml"/>
+        <file name="messaging/build.xml"/>
+        <file name="web/build.xml"/>
+        <file name="admin/build.xml"/>
+      </filelist>
+    </subant>
+  </target>
+
   <target name="dist" depends="compile,compile-test" description="generate the distribution" >
     <subant target="dist">
       <filelist dir=".">       

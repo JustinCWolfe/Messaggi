@@ -69,6 +69,8 @@ public class TestApplicationDAO extends MessaggiTestCase
         app1.setId(savedApp1.getId());
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
+        assertEquals(1, savedApp1.getUser().getApplications().size());
+        assertEquals(true, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
     }
@@ -101,14 +103,20 @@ public class TestApplicationDAO extends MessaggiTestCase
         app3.setId(savedApp3.getId());
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
+        assertEquals(2, savedApp1.getUser().getApplications().size());
+        assertEquals(true, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
         assertEquals(Application2.NAME, savedApp2.getName());
         assertEquals(user1.getId(), savedApp2.getUser().getId());
+        assertEquals(2, savedApp2.getUser().getApplications().size());
+        assertEquals(true, savedApp2.getActive());
         assertNotNull(savedApp2.getId());
         assertTrue(savedApp2.getId() > 0);
         assertEquals(Application3.NAME, savedApp3.getName());
         assertEquals(user2.getId(), savedApp3.getUser().getId());
+        assertEquals(1, savedApp3.getUser().getApplications().size());
+        assertEquals(true, savedApp3.getActive());
         assertNotNull(savedApp3.getId());
         assertTrue(savedApp3.getId() > 0);
     }
@@ -130,6 +138,8 @@ public class TestApplicationDAO extends MessaggiTestCase
         Application savedApp1 = savedApps.get(0);
         assertEquals(updateApp1Name, savedApp1.getName());
         assertEquals(user2.getId(), savedApp1.getUser().getId());
+        assertEquals(1, savedApp1.getUser().getApplications().size());
+        assertEquals(true, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
     }
@@ -175,14 +185,20 @@ public class TestApplicationDAO extends MessaggiTestCase
         assertEquals(apps.length, savedApps.size());
         assertEquals(updateApp1Name, savedApp1.getName());
         assertEquals(user2.getId(), savedApp1.getUser().getId());
+        assertEquals(2, savedApp1.getUser().getApplications().size());
+        assertEquals(true, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
         assertEquals(updateApp2Name, savedApp2.getName());
         assertEquals(user2.getId(), savedApp2.getUser().getId());
+        assertEquals(2, savedApp2.getUser().getApplications().size());
+        assertEquals(true, savedApp2.getActive());
         assertNotNull(savedApp2.getId());
         assertTrue(savedApp2.getId() > 0);
         assertEquals(updateApp3Name, savedApp3.getName());
         assertEquals(user1.getId(), savedApp3.getUser().getId());
+        assertEquals(1, savedApp3.getUser().getApplications().size());
+        assertEquals(true, savedApp3.getActive());
         assertNotNull(savedApp3.getId());
         assertTrue(savedApp3.getId() > 0);
     }
@@ -223,14 +239,20 @@ public class TestApplicationDAO extends MessaggiTestCase
         app3.setId(savedApp3.getId());
         assertEquals(updateApp1Name, savedApp1.getName());
         assertEquals(user2.getId(), savedApp1.getUser().getId());
+        assertEquals(2, savedApp1.getUser().getApplications().size());
+        assertEquals(true, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
         assertEquals(Application2.NAME, savedApp2.getName());
         assertEquals(user1.getId(), savedApp2.getUser().getId());
+        assertEquals(1, savedApp2.getUser().getApplications().size());
+        assertEquals(true, savedApp2.getActive());
         assertNotNull(savedApp2.getId());
         assertTrue(savedApp2.getId() > 0);
         assertEquals(Application3.NAME, savedApp3.getName());
         assertEquals(user2.getId(), savedApp3.getUser().getId());
+        assertEquals(2, savedApp3.getUser().getApplications().size());
+        assertEquals(true, savedApp3.getActive());
         assertNotNull(savedApp3.getId());
         assertTrue(savedApp3.getId() > 0);
     }
@@ -249,6 +271,7 @@ public class TestApplicationDAO extends MessaggiTestCase
         Application savedApp1 = savedApps.get(0);
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
+        assertEquals(1, savedApp1.getUser().getApplications().size());
         assertEquals(false, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
@@ -285,14 +308,17 @@ public class TestApplicationDAO extends MessaggiTestCase
         }
         assertEquals(Application1.NAME, savedApp1.getName());
         assertEquals(user1.getId(), savedApp1.getUser().getId());
+        assertEquals(2, savedApp1.getUser().getApplications().size());
         assertEquals(false, savedApp1.getActive());
         assertNotNull(savedApp1.getId());
         assertTrue(savedApp1.getId() > 0);
         assertEquals(user1.getId(), savedApp2.getUser().getId());
+        assertEquals(2, savedApp2.getUser().getApplications().size());
         assertEquals(false, savedApp2.getActive());
         assertNotNull(savedApp2.getId());
         assertTrue(savedApp2.getId() > 0);
         assertEquals(user2.getId(), savedApp3.getUser().getId());
+        assertEquals(1, savedApp3.getUser().getApplications().size());
         assertEquals(false, savedApp3.getActive());
         assertNotNull(savedApp3.getId());
         assertTrue(savedApp3.getId() > 0);

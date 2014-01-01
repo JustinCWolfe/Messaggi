@@ -106,17 +106,21 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(4, retrievedAppPlats.size());
         assertEquals(appPlat1.getId(), retrievedAppPlat1.getId());
         assertEquals(app1.getId(), retrievedAppPlat1.getApplication().getId());
+        assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(app1.getId(), retrievedAppPlat2.getApplication().getId());
+        assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
+        assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertEquals(app1.getId(), retrievedAppPlat3.getApplication().getId());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
+        assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertEquals(app2.getId(), retrievedAppPlat4.getApplication().getId());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
@@ -163,18 +167,22 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(4, retrievedAppPlats.size());
         assertEquals(appPlat1.getId(), retrievedAppPlat1.getId());
         assertEquals(appPlat1.getApplication().getId(), retrievedAppPlat1.getApplication().getId());
+        assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat2.getApplication().getId());
+        assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat3.getApplication().getId());
+        assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(appPlat4.getApplication().getId(), retrievedAppPlat4.getApplication().getId());
+        assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
     }
@@ -205,6 +213,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(1, retrievedAppPlats3.size());
         assertEquals(appPlat1.getId(), retrievedAppPlat31.getId());
         assertEquals(appPlat1.getApplication().getId(), retrievedAppPlat31.getApplication().getId());
+        assertEquals(1, retrievedAppPlat31.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat31.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat31.getToken());
 
@@ -227,18 +236,22 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(4, retrievedAppPlats4.size());
         assertEquals(appPlat1.getId(), retrievedAppPlat41.getId());
         assertEquals(appPlat1.getApplication().getId(), retrievedAppPlat41.getApplication().getId());
+        assertEquals(3, retrievedAppPlat41.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat41.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat41.getToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat42.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat42.getApplication().getId());
+        assertEquals(3, retrievedAppPlat42.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat42.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat42.getToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat43.getId());
         assertEquals(appPlat3.getApplication().getId(), retrievedAppPlat43.getApplication().getId());
+        assertEquals(3, retrievedAppPlat43.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat43.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat43.getToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat44.getId());
         assertEquals(appPlat4.getApplication().getId(), retrievedAppPlat44.getApplication().getId());
+        assertEquals(1, retrievedAppPlat44.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat44.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat44.getToken());
     }
@@ -257,6 +270,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat1.getToken());
         assertEquals(app1.getId(), savedAppPlat1.getApplication().getId());
+        assertEquals(1, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
     }
@@ -295,21 +309,25 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat1.getToken());
         assertEquals(app1.getId(), savedAppPlat1.getApplication().getId());
+        assertEquals(3, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat2.getToken());
         assertEquals(app1.getId(), savedAppPlat2.getApplication().getId());
+        assertEquals(3, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat3.getToken());
         assertEquals(app1.getId(), savedAppPlat3.getApplication().getId());
+        assertEquals(3, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
         assertTrue(savedAppPlat3.getId() > 0);
         assertEquals(ApplicationPlatform4.PLATFORM, savedAppPlat4.getPlatform());
         assertEquals(ApplicationPlatform4.TOKEN, savedAppPlat4.getToken());
         assertEquals(app2.getId(), savedAppPlat4.getApplication().getId());
+        assertEquals(1, savedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat4.getId());
         assertTrue(savedAppPlat4.getId() > 0);
     }
@@ -333,6 +351,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat1.getToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
+        assertEquals(1, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
     }
@@ -381,16 +400,19 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat1.getToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
+        assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat2.getToken());
         assertEquals(app2.getId(), savedAppPlat2.getApplication().getId());
+        assertEquals(2, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat3.getToken());
         assertEquals(app1.getId(), savedAppPlat3.getApplication().getId());
+        assertEquals(1, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
         assertTrue(savedAppPlat3.getId() > 0);
     }
@@ -433,16 +455,19 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(ApplicationPlatform4.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform4.TOKEN, savedAppPlat1.getToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
+        assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat2.getToken());
         assertEquals(app1.getId(), savedAppPlat2.getApplication().getId());
+        assertEquals(1, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat3.getToken());
         assertEquals(app2.getId(), savedAppPlat3.getApplication().getId());
+        assertEquals(2, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
         assertTrue(savedAppPlat3.getId() > 0);
     }

@@ -66,6 +66,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser1.getLocale());
+        assertEquals(true, retrievedUser1.getActive());
+        assertEquals(0, retrievedUser1.getApplications().size());
         assertEquals(user2.getId(), retrievedUser2.getId());
         assertEquals(User2.NAME, retrievedUser2.getName());
         assertEquals(User2.EMAIL, retrievedUser2.getEmail());
@@ -73,6 +75,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser2.getLocale());
+        assertEquals(true, retrievedUser2.getActive());
+        assertEquals(0, retrievedUser2.getApplications().size());
     }
 
     @Test
@@ -102,6 +106,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser1.getLocale());
+        assertEquals(true, retrievedUser1.getActive());
+        assertEquals(0, retrievedUser1.getApplications().size());
         assertEquals(user2.getId(), retrievedUser2.getId());
         assertEquals(User2.NAME, retrievedUser2.getName());
         assertEquals(User2.EMAIL, retrievedUser2.getEmail());
@@ -109,6 +115,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser2.getLocale());
+        assertEquals(true, retrievedUser2.getActive());
+        assertEquals(0, retrievedUser2.getApplications().size());
     }
 
     @Test
@@ -136,6 +144,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, retrievedUser31.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, retrievedUser31.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser31.getLocale());
+        assertEquals(true, retrievedUser31.getActive());
+        assertEquals(0, retrievedUser31.getApplications().size());
 
         TestDataHelper.createUser(user2);
         List<User> retrievedUsers4 = userDAO.getUser(users3);
@@ -155,6 +165,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, retrievedUser41.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, retrievedUser41.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser41.getLocale());
+        assertEquals(true, retrievedUser41.getActive());
+        assertEquals(0, retrievedUser41.getApplications().size());
         assertEquals(user2.getId(), retrievedUser42.getId());
         assertEquals(User2.NAME, retrievedUser42.getName());
         assertEquals(User2.EMAIL, retrievedUser42.getEmail());
@@ -162,6 +174,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, retrievedUser42.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, retrievedUser42.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser42.getLocale());
+        assertEquals(true, retrievedUser42.getActive());
+        assertEquals(0, retrievedUser42.getApplications().size());
     }
 
     @Test
@@ -179,6 +193,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
+        assertEquals(true, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
     }
@@ -206,6 +222,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
+        assertEquals(true, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
         assertEquals(User2.NAME, savedUser2.getName());
@@ -214,6 +232,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, savedUser2.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
+        assertEquals(true, savedUser2.getActive());
+        assertEquals(0, savedUser2.getApplications().size());
         assertNotNull(savedUser2.getId());
         assertTrue(savedUser2.getId() > 0);
     }
@@ -242,6 +262,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
+        assertEquals(true, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
     }
@@ -287,6 +309,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
+        assertEquals(true, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
         assertEquals(User1.NAME, savedUser2.getName());
@@ -295,6 +319,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_HASH, savedUser2.getPasswordHash());
         assertEquals(User1.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser2.getLocale());
+        assertEquals(true, savedUser2.getActive());
+        assertEquals(0, savedUser2.getApplications().size());
         assertNotNull(savedUser2.getId());
         assertTrue(savedUser2.getId() > 0);
     }
@@ -335,6 +361,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
+        assertEquals(true, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
         assertEquals(User2.NAME, savedUser2.getName());
@@ -343,6 +371,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_HASH, savedUser2.getPasswordHash());
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
+        assertEquals(true, savedUser2.getActive());
+        assertEquals(0, savedUser2.getApplications().size());
         assertNotNull(savedUser2.getId());
     }
 
@@ -396,6 +426,7 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
         assertEquals(false, savedUser1.getActive());
+        assertEquals(0, savedUser1.getApplications().size());
         assertNotNull(savedUser1.getId());
         assertTrue(savedUser1.getId() > 0);
         assertEquals(User2.NAME, savedUser2.getName());
@@ -405,6 +436,7 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
         assertEquals(false, savedUser2.getActive());
+        assertEquals(0, savedUser2.getApplications().size());
         assertNotNull(savedUser2.getId());
         assertTrue(savedUser2.getId() > 0);
     }
