@@ -1,6 +1,8 @@
 package com.messaggi.dao.persist;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,14 +17,32 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, Save
     private void initializeDomainObjectsFromResultSet(ResultSet rs, List<ApplicationPlatform> domainObjects)
         throws Exception
     {
+        HashMap<Integer, Application> applicationMap = new HashMap<>();
         while (rs.next()) {
             ApplicationPlatform domainObject = new ApplicationPlatform();
-            domainObject.setId(rs.getInt("ID"));
+
+            int id = rs.getInt("ID");
+            domainObject.setId(rs.wasNull() ? null : id);
+
             domainObject.setPlatform(Platform.valueOf(Platform.class, rs.getString("PlatformCode")));
             domainObject.setToken(UUID.fromString(rs.getString("Token")));
-            Application application = new Application();
-            application.setId(rs.getInt("ApplicationID"));
-            domainObject.setApplication(application);
+
+            int applicationId = rs.getInt("ApplicationID");
+            Integer applicationIdObj = rs.wasNull() ? null : applicationId;
+            if (applicationIdObj != null) {
+                Application application = null;
+                if (!applicationMap.containsKey(applicationIdObj)) {
+                    application = new Application();
+                    application.setId(applicationIdObj);
+                    application.setApplicationPlatforms(new HashSet<ApplicationPlatform>());
+                    applicationMap.put(applicationIdObj, application);
+                } else {
+                    application = applicationMap.get(applicationIdObj);
+                }
+                application.getApplicationPlatforms().add(domainObject);
+                domainObject.setApplication(application);
+            }
+
             domainObjects.add(domainObject);
         }
     }

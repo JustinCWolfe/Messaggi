@@ -13,7 +13,7 @@ public class Device
 {
     private String code;
 
-    private Boolean active;
+    private Boolean active = true;
 
     private HashSet<ApplicationPlatform> applicationPlatforms;
 

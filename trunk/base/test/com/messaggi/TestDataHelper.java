@@ -60,7 +60,7 @@ public class TestDataHelper
 
     public static class ApplicationPlatform1
     {
-        public static final UUID TOKEN = UUID.randomUUID();
+        public static final UUID TOKEN = UUID.fromString("3994F653-B5FC-4AF9-BFE0-68DDD42F7ED9");
 
         public static final Platform PLATFORM = Platform.ANDROID;
 
@@ -75,7 +75,7 @@ public class TestDataHelper
 
     public static class ApplicationPlatform2
     {
-        public static final UUID TOKEN = UUID.randomUUID();
+        public static final UUID TOKEN = UUID.fromString("C35793A8-5981-4A77-B1C1-7211EB82AC9B");
 
         public static final Platform PLATFORM = Platform.IOS;
 
@@ -90,7 +90,7 @@ public class TestDataHelper
 
     public static class ApplicationPlatform3
     {
-        public static final UUID TOKEN = UUID.randomUUID();
+        public static final UUID TOKEN = UUID.fromString("8CA72FDF-EA74-44D7-9F03-01C46BD8FCFF");
 
         public static final Platform PLATFORM = Platform.WINDOWS;
 
@@ -344,7 +344,7 @@ public class TestDataHelper
 
         private static final String CREATE_APP_PLAT_DEVICE_STMT = "insert into dbo.[ApplicationPlatformDevice] (ApplicationPlatformId, DeviceCode) values (?,?)";
 
-        private static final String CREATE_DEVICE_STMT = "insert into dbo.[Device] (Code, Active) values (?,?)";
+        private static final String CREATE_DEVICE_STMT = "insert into dbo.[Device] (Code) values (?)";
 
         private static final String CREATE_USER_STMT = "insert into dbo.[User] (Name, Email, Phone, PasswordHash, PasswordSalt, Locale) values (?,?,?,?,?,?)";
 
@@ -354,7 +354,7 @@ public class TestDataHelper
 
         private static final String DELETE_APP_PLAT_MSG_LOG_STMT = "delete from dbo.[ApplicationPlatformMsgLog] where ID = ?";
 
-        private static final String DELETE_APP_PLAT_DEVICE_STMT = "delete from dbo.[ApplicationPlatformDevice] where ApplicationPlatformID = ? and DeviceCode = ?";
+        private static final String DELETE_APP_PLAT_DEVICE_STMT = "delete from dbo.[ApplicationPlatformDevice] where DeviceCode = ?";
 
         private static final String DELETE_DEVICE_STMT = "delete from dbo.[Device] where Code = ?";
 
@@ -441,11 +441,10 @@ public class TestDataHelper
         try (Connection conn = getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_DEVICE_STMT);) {
                 stmt.setString(1, d.getCode());
-                stmt.setBoolean(2, d.getActive());
                 stmt.execute();
             }
             for (ApplicationPlatform ap : d.getApplicationPlatforms()) {
-                try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_PLAT_MSG_LOG_STMT);) {
+                try (PreparedStatement stmt = conn.prepareStatement(Statements.CREATE_APP_PLAT_DEVICE_STMT);) {
                     stmt.setInt(1, ap.getId());
                     stmt.setString(2, d.getCode());
                     stmt.execute();
@@ -524,16 +523,13 @@ public class TestDataHelper
             return;
         }
         try (Connection conn = getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_DEVICE_STMT);) {
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_DEVICE_STMT);) {
                 stmt.setString(1, d.getCode());
                 stmt.execute();
             }
-            for (ApplicationPlatform ap : d.getApplicationPlatforms()) {
-                try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_APP_PLAT_DEVICE_STMT);) {
-                    stmt.setInt(1, ap.getId());
-                    stmt.setString(2, d.getCode());
-                    stmt.execute();
-                }
+            try (PreparedStatement stmt = conn.prepareStatement(Statements.DELETE_DEVICE_STMT);) {
+                stmt.setString(1, d.getCode());
+                stmt.execute();
             }
         }
     }

@@ -24,35 +24,54 @@ public class UserMapper implements Get<User>, Save<User>
     public void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<User> domainObjects) throws Exception
     {
         HashMap<Integer, User> userMap = new HashMap<>();
+        HashMap<Integer, Application> applicationMap = new HashMap<>();
         while (rs.next()) {
             User domainObject = null;
-            Integer userID = rs.getInt("ID");
-            if (!userMap.containsKey(userID)) {
-                domainObject = new User();
-                domainObject.setId(userID);
-                domainObject.setName(rs.getString("Name"));
-                domainObject.setEmail(rs.getString("Email"));
-                domainObject.setPhone(rs.getString("Phone"));
-                domainObject.setPasswordHashAsBinary(rs.getBytes("PasswordHash"));
-                domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
-                domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
-                domainObject.setActive(rs.getBoolean("Active"));
-            } else {
-                domainObject = userMap.get(userID);
+            int id = rs.getInt("ID");
+            Integer idObj = rs.wasNull() ? null : id;
+            if (idObj != null) {
+                if (!userMap.containsKey(idObj)) {
+                    domainObject = new User();
+                    domainObject.setId(idObj);
+                    domainObject.setName(rs.getString("Name"));
+                    domainObject.setEmail(rs.getString("Email"));
+                    domainObject.setPhone(rs.getString("Phone"));
+
+                    byte[] passwordHash = rs.getBytes("PasswordHash");
+                    domainObject.setPasswordHashAsBinary(rs.wasNull() ? null : passwordHash);
+
+                    domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
+                    domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
+
+                    boolean active = rs.getBoolean("Active");
+                    domainObject.setActive(rs.wasNull() ? null : active);
+
+                    domainObject.setApplications(new HashSet<Application>());
+                    userMap.put(idObj, domainObject);
+                } else {
+                    domainObject = userMap.get(idObj);
+                }
+
+                int applicationId = rs.getInt("ApplicationID");
+                Integer applicationIdObj = rs.wasNull() ? null : applicationId;
+                if (applicationIdObj != null) {
+                    Application application = null;
+                    if (!applicationMap.containsKey(applicationId)) {
+                        application = new Application();
+                        application.setId(applicationIdObj);
+                        application.setName(rs.getString("ApplicationName"));
+
+                        boolean active = rs.getBoolean("ApplicationActive");
+                        application.setActive(rs.wasNull() ? null : active);
+
+                        application.setUser(domainObject);
+                        applicationMap.put(applicationIdObj, application);
+                    } else {
+                        application = applicationMap.get(applicationIdObj);
+                    }
+                    domainObject.getApplications().add(application);
+                }
             }
-
-            Application a = new Application();
-            a.setId(rs.getInt("ApplicationID"));
-            a.setName(rs.getString("ApplicationName"));
-            a.setActive(rs.getBoolean("ApplicationActive"));
-            a.setUser(domainObject);
-
-            if (domainObject.getApplications() == null) {
-                domainObject.setApplications(new HashSet<Application>());
-            }
-            domainObject.getApplications().add(a);
-
-            userMap.put(userID, domainObject);
         }
         domainObjects.addAll(userMap.values());
     }
@@ -77,6 +96,7 @@ public class UserMapper implements Get<User>, Save<User>
             domainObject.setPasswordSalt(rs.getString("PasswordSalt"));
             domainObject.setLocale(Locale.forLanguageTag(rs.getString("Locale")));
             domainObject.setActive(rs.getBoolean("Active"));
+            domainObject.setApplications(new HashSet<Application>());
             domainObjects.add(domainObject);
         }
     }
