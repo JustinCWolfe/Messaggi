@@ -27,6 +27,11 @@
       <fileset refid="hamcrest.lib"/>
   </path>
 
+  <path id="classpath.run.test">
+      <fileset refid="ant-junit.lib"/>   
+      <path refid="classpath.test"/>
+  </path>
+
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
@@ -65,6 +70,19 @@
   <target name="compile-test" depends="init-test" description="compile the source" >
     <!-- Compile the java code from ${test} into ${build-test} -->
     <javac classpathref="classpath.test" srcdir="${test}" destdir="${build-test}" debug="true" debuglevel="lines,vars,source" />
+  </target>
+
+  <target name="run-tests" depends="compile,compile-test" description="run junit tests" >
+    <junit fork="true">
+        <classpath refid="classpath.run.test"/>
+        <batchtest>
+           <fileset dir="${test}">
+             <include name="**/Test*" />
+           </fileset>
+        </batchtest>
+        <formatter type="brief" usefile="false"/> <!-- to screen -->
+        <formatter type="plain"/>
+    </junit>
   </target>
 
   <target name="dist" description="generate the distribution" >

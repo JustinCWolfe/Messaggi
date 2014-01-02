@@ -73,7 +73,7 @@
   </target>
 
   <target name="run-tests" depends="compile,compile-test" description="run junit tests" >
-    <junit>
+    <junit fork="true">
         <classpath refid="classpath.run.test"/>
         <batchtest>
            <fileset dir="${test}">
