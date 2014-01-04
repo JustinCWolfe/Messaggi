@@ -84,12 +84,77 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat2);
         TestDataHelper.createApplicationPlatform(appPlat3);
         TestDataHelper.createApplicationPlatform(appPlat4);
-        appPlat1.setApplication(null);
-        appPlat2.setApplication(null);
-        appPlat3.setApplication(null);
-        appPlat4.setApplication(null);
-        ApplicationPlatform[] appPlats = { appPlat1, appPlat1, appPlat2, appPlat2, appPlat3, appPlat3, appPlat4,
-                appPlat4 };
+        ApplicationPlatform queryAppPlat1 = ApplicationPlatform1.getDomainObject();
+        ApplicationPlatform queryAppPlat2 = ApplicationPlatform2.getDomainObject();
+        ApplicationPlatform queryAppPlat3 = ApplicationPlatform3.getDomainObject();
+        ApplicationPlatform queryAppPlat4 = ApplicationPlatform4.getDomainObject();
+        queryAppPlat1.setId(appPlat1.getId());
+        queryAppPlat1.setToken(null);
+        queryAppPlat2.setId(appPlat2.getId());
+        queryAppPlat2.setToken(null);
+        queryAppPlat3.setId(appPlat3.getId());
+        queryAppPlat3.setToken(null);
+        queryAppPlat4.setId(appPlat4.getId());
+        queryAppPlat4.setToken(null);
+        ApplicationPlatform[] appPlats = { queryAppPlat1, queryAppPlat1, queryAppPlat2, queryAppPlat2, queryAppPlat3,
+                queryAppPlat3, queryAppPlat4, queryAppPlat4 };
+        List<ApplicationPlatform> retrievedAppPlats = applicationPlatformDAO.getApplicationPlatform(appPlats);
+        ApplicationPlatform retrievedAppPlat1 = null, retrievedAppPlat2 = null, retrievedAppPlat3 = null, retrievedAppPlat4 = null;
+        for (ApplicationPlatform appPlat : retrievedAppPlats) {
+            if (appPlat.getToken().equals(ApplicationPlatform1.TOKEN)) {
+                retrievedAppPlat1 = appPlat;
+            } else if (appPlat.getToken().equals(ApplicationPlatform2.TOKEN)) {
+                retrievedAppPlat2 = appPlat;
+            } else if (appPlat.getToken().equals(ApplicationPlatform3.TOKEN)) {
+                retrievedAppPlat3 = appPlat;
+            } else {
+                retrievedAppPlat4 = appPlat;
+            }
+        }
+        assertEquals(4, retrievedAppPlats.size());
+        assertEquals(appPlat1.getId(), retrievedAppPlat1.getId());
+        assertEquals(app1.getId(), retrievedAppPlat1.getApplication().getId());
+        assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
+        assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
+        assertEquals(app1.getId(), retrievedAppPlat2.getApplication().getId());
+        assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
+        assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
+        assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
+        assertEquals(app1.getId(), retrievedAppPlat3.getApplication().getId());
+        assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
+        assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
+        assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
+        assertEquals(app2.getId(), retrievedAppPlat4.getApplication().getId());
+        assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
+        assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+    }
+
+    @Test
+    public void testGetApplicationPlatformByToken() throws Exception
+    {
+        appPlat1 = ApplicationPlatform1.getDomainObject();
+        appPlat2 = ApplicationPlatform2.getDomainObject();
+        appPlat3 = ApplicationPlatform3.getDomainObject();
+        appPlat4 = ApplicationPlatform4.getDomainObject();
+        appPlat1.setApplication(app1);
+        appPlat2.setApplication(app1);
+        appPlat3.setApplication(app1);
+        appPlat4.setApplication(app2);
+        TestDataHelper.createApplicationPlatform(appPlat1);
+        TestDataHelper.createApplicationPlatform(appPlat2);
+        TestDataHelper.createApplicationPlatform(appPlat3);
+        TestDataHelper.createApplicationPlatform(appPlat4);
+        ApplicationPlatform queryAppPlat1 = ApplicationPlatform1.getDomainObject();
+        ApplicationPlatform queryAppPlat2 = ApplicationPlatform2.getDomainObject();
+        ApplicationPlatform queryAppPlat3 = ApplicationPlatform3.getDomainObject();
+        ApplicationPlatform queryAppPlat4 = ApplicationPlatform4.getDomainObject();
+        ApplicationPlatform[] appPlats = { queryAppPlat1, queryAppPlat1, queryAppPlat2, queryAppPlat2, queryAppPlat3,
+                queryAppPlat3, queryAppPlat4, queryAppPlat4 };
         List<ApplicationPlatform> retrievedAppPlats = applicationPlatformDAO.getApplicationPlatform(appPlats);
         ApplicationPlatform retrievedAppPlat1 = null, retrievedAppPlat2 = null, retrievedAppPlat3 = null, retrievedAppPlat4 = null;
         for (ApplicationPlatform appPlat : retrievedAppPlats) {
@@ -141,16 +206,20 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat2);
         TestDataHelper.createApplicationPlatform(appPlat3);
         TestDataHelper.createApplicationPlatform(appPlat4);
-        ApplicationPlatform noIDAppPlat1 = ApplicationPlatform1.getDomainObject();
-        ApplicationPlatform noIDAppPlat2 = ApplicationPlatform2.getDomainObject();
-        ApplicationPlatform noIDAppPlat3 = ApplicationPlatform3.getDomainObject();
-        ApplicationPlatform noIDAppPlat4 = ApplicationPlatform4.getDomainObject();
-        noIDAppPlat1.setApplication(app1);
-        noIDAppPlat2.setApplication(app1);
-        noIDAppPlat3.setApplication(app1);
-        noIDAppPlat4.setApplication(app2);
-        ApplicationPlatform[] appPlats = { noIDAppPlat1, noIDAppPlat1, noIDAppPlat2, noIDAppPlat2, noIDAppPlat3,
-                noIDAppPlat3, noIDAppPlat4, noIDAppPlat4 };
+        ApplicationPlatform queryAppPlat1 = ApplicationPlatform1.getDomainObject();
+        ApplicationPlatform queryAppPlat2 = ApplicationPlatform2.getDomainObject();
+        ApplicationPlatform queryAppPlat3 = ApplicationPlatform3.getDomainObject();
+        ApplicationPlatform queryAppPlat4 = ApplicationPlatform4.getDomainObject();
+        queryAppPlat1.setApplication(app1);
+        queryAppPlat1.setToken(null);
+        queryAppPlat2.setApplication(app1);
+        queryAppPlat2.setToken(null);
+        queryAppPlat3.setApplication(app1);
+        queryAppPlat3.setToken(null);
+        queryAppPlat4.setApplication(app2);
+        queryAppPlat4.setToken(null);
+        ApplicationPlatform[] appPlats = { queryAppPlat1, queryAppPlat1, queryAppPlat2, queryAppPlat2, queryAppPlat3,
+                queryAppPlat3, queryAppPlat4, queryAppPlat4 };
         List<ApplicationPlatform> retrievedAppPlats = applicationPlatformDAO.getApplicationPlatform(appPlats);
         ApplicationPlatform retrievedAppPlat1 = null, retrievedAppPlat2 = null, retrievedAppPlat3 = null, retrievedAppPlat4 = null;
         for (ApplicationPlatform appPlat : retrievedAppPlats) {
@@ -188,7 +257,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testGetApplicationPlatformByIdAndApplicationId() throws Exception
+    public void testGetApplicationPlatformByIdAndApplicationIdAndToken() throws Exception
     {
         appPlat1 = ApplicationPlatform1.getDomainObject();
         appPlat1.setApplication(app1);
@@ -472,4 +541,3 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertTrue(savedAppPlat3.getId() > 0);
     }
 }
-
