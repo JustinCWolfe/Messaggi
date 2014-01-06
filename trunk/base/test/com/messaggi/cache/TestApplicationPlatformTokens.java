@@ -132,7 +132,7 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
     }
 
     @Test
-    public void testInvalidToken() throws Exception
+    public void testLoadInvalidToken() throws Exception
     {
         validateCacheInitialState();
 
@@ -165,7 +165,13 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
     }
 
     @Test
-    public void testValidToken() throws Exception
+    public void testLoadAllInvalidTokens() throws Exception
+    {
+
+    }
+
+    @Test
+    public void testLoadValidToken() throws Exception
     {
         validateCacheInitialState();
 
@@ -315,6 +321,12 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
         assertEquals(.666666, stats6.missRate(), EPSILON);
         assertEquals(6, stats6.requestCount());
         assertEquals(lastLoadTime, stats6.totalLoadTime());
+    }
+
+    @Test
+    public void testLoadAllValidTokens() throws Exception
+    {
+
     }
 }
 
