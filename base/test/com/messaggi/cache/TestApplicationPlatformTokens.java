@@ -1,6 +1,7 @@
 package com.messaggi.cache;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
@@ -33,8 +34,6 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
 {
     private static final double EPSILON = 1e-5;
 
-    private static LoadingCache<UUID, Integer> cache;
-
     private static Application app1;
 
     private static Application app2;
@@ -49,8 +48,10 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
 
     private static User user1;
 
+    private LoadingCache<UUID, Integer> cache;
+
     @SuppressWarnings("unchecked")
-    private static void createCacheReference() throws Exception
+    private void createCacheReference() throws Exception
     {
         Field cacheField = ApplicationPlatformTokensImpl.class.getDeclaredField("applicationPlatformTokenCache");
         cacheField.setAccessible(true);
@@ -60,7 +61,6 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-        createCacheReference();
         user1 = User1.getDomainObject();
         TestDataHelper.createUser(user1);
         app1 = Application1.getDomainObject();
@@ -101,6 +101,7 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
     {
         CacheInitializationParameters cip = new CacheInitializationParameters(1000, true);
         ApplicationPlatformTokens.Instance.getInstance().initialize(cip);
+        createCacheReference();
     }
 
     @Override
@@ -109,17 +110,17 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
     {
     }
 
-    private static ConcurrentMap<UUID, Integer> getCacheMap()
+    private ConcurrentMap<UUID, Integer> getCacheMap()
     {
         return cache.asMap();
     }
 
-    private static long getCacheSize()
+    private long getCacheSize()
     {
         return cache.size();
     }
 
-    private static CacheStats getCacheStats()
+    private CacheStats getCacheStats()
     {
         return cache.stats();
     }
@@ -132,10 +133,8 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
         assertEquals(0, map.size());
 
         CacheStats stats = getCacheStats();
-        assertEquals(0, stats.averageLoadPenalty(), EPSILON);
         assertEquals(0, stats.evictionCount());
         assertEquals(0, stats.hitCount());
-        assertEquals(1.0, stats.hitRate(), EPSILON);
         assertEquals(0, stats.loadCount());
         assertEquals(0, stats.loadExceptionCount());
         assertEquals(0, stats.loadExceptionRate(), EPSILON);
@@ -155,7 +154,23 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
             ApplicationPlatformTokens.Instance.getInstance().get(nonExistentUUID);
             fail("The call above should have thrown");
         } catch (UncheckedExecutionException e) {
-            validateCacheInitialState();
+            assertEquals(0, getCacheSize());
+
+            ConcurrentMap<UUID, Integer> map = getCacheMap();
+            assertEquals(0, map.size());
+
+            CacheStats stats = getCacheStats();
+            assertEquals(0, stats.evictionCount());
+            assertEquals(0, stats.hitCount());
+            assertEquals(1, stats.loadCount());
+            assertEquals(1, stats.loadExceptionCount());
+            assertEquals(1.0, stats.loadExceptionRate(), EPSILON);
+            assertEquals(0, stats.loadSuccessCount());
+            assertEquals(1, stats.missCount());
+            assertEquals(1.0, stats.missRate(), EPSILON);
+            assertEquals(1, stats.requestCount());
+            assertNotEquals(0, stats.totalLoadTime());
+
             return;
         }
         fail("The call above should have thrown and UncheckedExecutionException");
@@ -175,18 +190,17 @@ public class TestApplicationPlatformTokens extends MessaggiTestCase
         assertEquals(appPlat1.getId(), map.get(ApplicationPlatform1.TOKEN));
 
         CacheStats stats = getCacheStats();
-        assertEquals(0, stats.averageLoadPenalty(), EPSILON);
         assertEquals(0, stats.evictionCount());
         assertEquals(0, stats.hitCount());
-        assertEquals(1.0, stats.hitRate(), EPSILON);
-        assertEquals(0, stats.loadCount());
+        assertEquals(0, stats.hitRate(), EPSILON);
+        assertEquals(1, stats.loadCount());
         assertEquals(0, stats.loadExceptionCount());
         assertEquals(0, stats.loadExceptionRate(), EPSILON);
-        assertEquals(0, stats.loadSuccessCount());
-        assertEquals(0, stats.missCount());
-        assertEquals(0, stats.missRate(), EPSILON);
-        assertEquals(0, stats.requestCount());
-        assertEquals(0, stats.totalLoadTime());
+        assertEquals(1, stats.loadSuccessCount());
+        assertEquals(1, stats.missCount());
+        assertEquals(1.0, stats.missRate(), EPSILON);
+        assertEquals(1, stats.requestCount());
+        assertNotEquals(0, stats.totalLoadTime());
     }
 }
 

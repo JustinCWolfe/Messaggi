@@ -7,6 +7,27 @@
 		value="com.messaggi.cache.ApplicationPlatformTokensImpl" 
 		type="java.lang.String" 
 		override="false"/>
+		
+	<Environment 
+		name="ApplicationPlatformsCacheImpl" 
+		description="Implementation class name for ApplicationPlatforms cache." 
+		value="com.messaggi.cache.ApplicationPlatformsImpl" 
+		type="java.lang.String" 
+		override="false"/>
+		
+	<Environment 
+		name="ApplicationPlatformDevicesCacheImpl" 
+		description="Implementation class name for ApplicationPlatformDevices cache." 
+		value="com.messaggi.cache.ApplicationPlatformDevicesImpl" 
+		type="java.lang.String" 
+		override="false"/>
+		
+	<Environment 
+		name="ApplicationPlatformTokensCacheImpl" 
+		description="Implementation class name for ApplicationPlatformTokens cache." 
+		value="com.messaggi.cache.ApplicationPlatformTokensImpl" 
+		type="java.lang.String" 
+		override="false"/>
 
 	<Resource 
 		name="jdbc/Messaggi" 
