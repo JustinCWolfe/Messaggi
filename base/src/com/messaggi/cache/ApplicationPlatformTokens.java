@@ -1,79 +1,39 @@
 package com.messaggi.cache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.messaggi.dao.ApplicationPlatformDAO;
-import com.messaggi.domain.ApplicationPlatform;
+import javax.naming.InitialContext;
 
 /**
  * Maps application platform tokens to application platform ids. Tokens are
  * passed-in the client applications but internally I use application platform
  * ids.
  */
-public class ApplicationPlatformTokens
+public interface ApplicationPlatformTokens
 {
-    private static ApplicationPlatformTokens instance;
-
-    private final LoadingCache<UUID, Integer> applicationPlatformTokenCache;
-
-    private final ApplicationPlatformDAO dao = new ApplicationPlatformDAO();
-
-    public static synchronized ApplicationPlatformTokens getInstance()
+    public static class Instance
     {
-        if (instance == null) {
-            instance = new ApplicationPlatformTokens();
-        }
-        return instance;
-    }
+        private static ApplicationPlatformTokens instance;
 
-    private ApplicationPlatformTokens()
-    {
-        applicationPlatformTokenCache = createApplicationPlatformTokenCache();
-    }
+        private static final String CACHE_IMPL_CLASS_JNDI_NAME = "java:/comp/env/ApplicationPlatformTokensCacheImpl";
 
-    private LoadingCache<UUID, Integer> createApplicationPlatformTokenCache()
-    {
-        CacheLoader<UUID, Integer> tokenCacheLoader = new CacheLoader<UUID, Integer>()
+        public static synchronized ApplicationPlatformTokens getInstance() throws Exception
         {
-            @Override
-            public Integer load(UUID token) throws Exception
-            {
-                List<ApplicationPlatform> retrieved = dao
-                        .getApplicationPlatform(new ApplicationPlatform[] { createPrototype(token) });
-                return retrieved.get(0).getId();
+            if (instance == null) {
+                String cacheImplClassName = (String) InitialContext.doLookup(CACHE_IMPL_CLASS_JNDI_NAME);
+                Class<?> clazz = Class.forName(cacheImplClassName);
+                Constructor<?> ctor = clazz.getDeclaredConstructor(new Class[0]);
+                ctor.setAccessible(true);
+                instance = (ApplicationPlatformTokens) ctor.newInstance();
             }
-
-            @Override
-            public Map<UUID, Integer> loadAll(Iterable<? extends UUID> tokens) throws Exception
-            {
-                List<ApplicationPlatform> prototypes = new ArrayList<>();
-                for (UUID token : tokens) {
-                    prototypes.add(createPrototype(token));
-                }
-                List<ApplicationPlatform> retrieved = dao.getApplicationPlatform(prototypes
-                        .toArray(new ApplicationPlatform[prototypes.size()]));
-                Map<UUID, Integer> retrievedMap = new HashMap<>();
-                for (ApplicationPlatform ap : retrieved) {
-                    retrievedMap.put(ap.getToken(), ap.getId());
-                }
-                return retrievedMap;
-            }
-        };
-        return CacheBuilder.newBuilder().maximumSize(1000).build(tokenCacheLoader);
+            return instance;
+        }
     }
 
-    private ApplicationPlatform createPrototype(UUID token)
-    {
-        ApplicationPlatform prototype = new ApplicationPlatform();
-        prototype.setToken(token);
-        return prototype;
-    }
+    public Integer get(UUID token) throws ExecutionException;
+
+    public void initialize(CacheInitializationParameters initParams);
 }
 

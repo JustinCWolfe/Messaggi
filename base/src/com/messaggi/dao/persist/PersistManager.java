@@ -26,8 +26,7 @@ public class PersistManager
 
     private static Connection getConnection() throws Exception
     {
-        InitialContext cxt = new InitialContext();
-        DataSource ds = (DataSource) cxt.lookup(MESSAGGI_DATABASE_JNDI_NAME);
+        DataSource ds = (DataSource) InitialContext.doLookup(MESSAGGI_DATABASE_JNDI_NAME);
         if (ds == null) {
             throw new SQLException(String.format(Messages.DATASOURCE_NOT_FOUND_MESSAGE, ""));
         }

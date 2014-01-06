@@ -83,7 +83,7 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         ic.createSubcontext("java:/comp");
         ic.createSubcontext("java:/comp/env");
         ic.createSubcontext("java:/comp/env/jdbc");
-
+        
         // Construct DataSource
         Properties p = new Properties();
         p.load(new FileInputStream("unittest.properties"));
@@ -102,6 +102,9 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         ds.setPassword(dbPwd);
         ds.setDescription("Messaggi SqlServer(jTDS) Unit Testing DataSource");
         ic.bind(PersistManager.MESSAGGI_DATABASE_JNDI_NAME, ds);
+
+        // Implementation class names for caches.
+        ic.bind("java:/comp/env/ApplicationPlatformTokensCacheImpl", "com.messaggi.cache.ApplicationPlatformTokensImpl");
     }
 
     public static void startTomcat() throws Exception
