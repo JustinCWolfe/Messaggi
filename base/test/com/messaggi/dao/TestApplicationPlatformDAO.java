@@ -326,6 +326,45 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
     }
 
     @Test
+    public void testGetAllApplicationPlatformIdsAndTokens() throws Exception
+    {
+        List<ApplicationPlatform> retrievedAppPlats = applicationPlatformDAO.getAllApplicationPlatformIdsAndTokens();
+        assertTrue(retrievedAppPlats.size() >= 4);
+        ApplicationPlatform retrievedAppPlat1 = null, retrievedAppPlat2 = null, retrievedAppPlat3 = null, retrievedAppPlat4 = null;
+        for (ApplicationPlatform appPlat : retrievedAppPlats) {
+            if (appPlat.getToken().equals(ApplicationPlatform1.TOKEN)) {
+                retrievedAppPlat1 = appPlat;
+            } else if (appPlat.getToken().equals(ApplicationPlatform2.TOKEN)) {
+                retrievedAppPlat2 = appPlat;
+            } else if (appPlat.getToken().equals(ApplicationPlatform3.TOKEN)) {
+                retrievedAppPlat3 = appPlat;
+            } else {
+                retrievedAppPlat4 = appPlat;
+            }
+        }
+        assertEquals(appPlat1.getId(), retrievedAppPlat1.getId());
+        assertEquals(appPlat1.getApplication().getId(), retrievedAppPlat1.getApplication().getId());
+        assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
+        assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
+        assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat2.getApplication().getId());
+        assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
+        assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
+        assertEquals(appPlat3.getApplication().getId(), retrievedAppPlat3.getApplication().getId());
+        assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
+        assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
+        assertEquals(appPlat4.getApplication().getId(), retrievedAppPlat4.getApplication().getId());
+        assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
+        assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
+        assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+    }
+
+    @Test
     public void testSaveNonExistentAppPlatSingle() throws Exception
     {
         appPlat1 = ApplicationPlatform1.getDomainObject();
