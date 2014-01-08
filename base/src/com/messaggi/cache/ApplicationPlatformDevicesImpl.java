@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -13,128 +14,120 @@ import com.messaggi.dao.DeviceDAO;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 
-public class ApplicationPlatformDevicesImpl
+public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevices
 {
-    private final ApplicationPlatformDAO dao = new ApplicationPlatformDAO();
+    private static final ApplicationPlatformDAO applicationPlatformsDao;
 
-    private final CacheLoader<Integer, Devices> cacheLoader;
+    private static final DeviceDAO devicesDao;
 
-    private LoadingCache<Integer, Devices> cache;
+    private static final CacheLoader<Integer, LoadingCache<String, Device>> applicationPlatformsCacheLoader;
+
+    private static final CacheLoader<String, Device> devicesCacheLoader;
+
+    private LoadingCache<Integer, LoadingCache<String, Device>> cache;
+
+    static {
+        applicationPlatformsDao = new ApplicationPlatformDAO();
+        devicesDao = new DeviceDAO();
+        devicesCacheLoader = createDevicesCacheLoader();
+        applicationPlatformsCacheLoader = createApplicationPlatformsCacheLoader();
+    }
 
     private ApplicationPlatformDevicesImpl()
     {
-        cacheLoader = createCacheLoader();
-        //initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
+        initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
 
-    /**
-     * We have a devices class (and devices cache) for each application
-     * platform. Doing it this way would allow me to configure the device
-     * caching on a per-application or per-application-platform basis. For
-     * example, if an application needed a larger devices cache it could be set
-     * as a parameter on the application platform record (new column) and we
-     * could use that application platform attribute to configure the devices
-     * cache.
-     */
-    private CacheLoader<Integer, Devices> createCacheLoader()
+    private static CacheLoader<String, Device> createDevicesCacheLoader()
     {
-        CacheLoader<Integer, Devices> cacheLoader = new CacheLoader<Integer, Devices>()
+        CacheLoader<String, Device> cacheLoader = new CacheLoader<String, Device>()
         {
             @Override
-            public Devices load(Integer id) throws Exception
+            public Device load(String code) throws Exception
             {
-                return new Devices();
+                List<Device> retrieved = devicesDao.getDevice(new Device[] { createDevicePrototype(code) });
+                return (retrieved.size() == 1) ? retrieved.get(0) : null;
             }
 
             @Override
-            public Map<Integer, Devices> loadAll(Iterable<? extends Integer> ids) throws Exception
+            public Map<String, Device> loadAll(Iterable<? extends String> codes) throws Exception
             {
-                Map<Integer, Devices> initializedMap = new HashMap<>();
-                for (Integer id : ids) {
-                    initializedMap.put(id, new Devices());
+                List<Device> prototypes = new ArrayList<>();
+                for (String code : codes) {
+                    prototypes.add(createDevicePrototype(code));
                 }
-                return initializedMap;
+                List<Device> retrieved = devicesDao.getDevice(prototypes.toArray(new Device[prototypes.size()]));
+                Map<String, Device> retrievedMap = null;
+                if (retrieved.size() > 0) {
+                    retrievedMap = new HashMap<>();
+                    for (Device d : retrieved) {
+                        retrievedMap.put(d.getCode(), d);
+                    }
+                }
+                return retrievedMap;
             }
         };
         return cacheLoader;
     }
 
-    private ApplicationPlatform createPrototype(Integer id)
+    private static CacheLoader<Integer, LoadingCache<String, Device>> createApplicationPlatformsCacheLoader()
+    {
+        CacheLoader<Integer, LoadingCache<String, Device>> cacheLoader = new CacheLoader<Integer, LoadingCache<String, Device>>()
+        {
+            @Override
+            public LoadingCache<String, Device> load(Integer id) throws Exception
+            {
+                // What this should do is load the application platform.  This application platform could have 
+                // configuration options in attribute columns (these aren't there today but I might add them so 
+                // that applications can have device caching specific to their needs). 
+                List<ApplicationPlatform> retrieved = applicationPlatformsDao
+                        .getApplicationPlatform(new ApplicationPlatform[] { createApplicationPlatformPrototype(id) });
+                if (retrieved.size() == 1) {
+                    //TODO: get the maximum size for this application platforms' device cache from the domain object.
+                    int maxSize = 1000;
+                    //TODO: get the record stats for this application platforms' device cache from the domain object.
+                    boolean isRecordStats = true;
+                    CacheBuilder<Object, Object> devicesCacheBuilder = CacheBuilder.newBuilder().maximumSize(maxSize);
+                    if (isRecordStats) {
+                        devicesCacheBuilder.recordStats();
+                    }
+                    return devicesCacheBuilder.build(devicesCacheLoader);
+                }
+                throw new InvalidCacheLoadException("Could not load application platform for id: " + id);
+            }
+        };
+        return cacheLoader;
+    }
+
+    private static ApplicationPlatform createApplicationPlatformPrototype(Integer id)
     {
         ApplicationPlatform prototype = new ApplicationPlatform();
         prototype.setId(id);
         return prototype;
     }
 
-    public class Devices
+    private static Device createDevicePrototype(String code)
     {
-        private static final int DEFAULT_MAX_SIZE = 1000;
-
-        private final LoadingCache<String, Device> deviceCache;
-
-        private final DeviceDAO dao = new DeviceDAO();
-
-        private Devices()
-        {
-            this(DEFAULT_MAX_SIZE);
-        }
-
-        private Devices(int maxSize)
-        {
-            deviceCache = createDeviceCache(maxSize);
-        }
-
-        private LoadingCache<String, Device> createDeviceCache(int maxSize)
-        {
-            CacheLoader<String, Device> cacheLoader = new CacheLoader<String, Device>()
-            {
-                @Override
-                public Device load(String code) throws Exception
-                {
-                    List<Device> retrieved = dao.getDevice(new Device[] { createPrototype(code) });
-                    return retrieved.get(0);
-                }
-
-                @Override
-                public Map<String, Device> loadAll(Iterable<? extends String> codes) throws Exception
-                {
-                    List<Device> prototypes = new ArrayList<>();
-                    for (String code : codes) {
-                        prototypes.add(createPrototype(code));
-                    }
-                    List<Device> retrieved = dao.getDevice(prototypes.toArray(new Device[prototypes.size()]));
-                    Map<String, Device> retrievedMap = new HashMap<>();
-                    for (Device d : retrieved) {
-                        retrievedMap.put(d.getCode(), d);
-                    }
-                    return retrievedMap;
-                }
-            };
-            return CacheBuilder.newBuilder().maximumSize(maxSize).build(cacheLoader);
-        }
-
-        private Device createPrototype(String code)
-        {
-            Device prototype = new Device();
-            prototype.setCode(code);
-            return prototype;
-        }
+        Device prototype = new Device();
+        prototype.setCode(code);
+        return prototype;
     }
 
-    //@Override
-    //public Integer get(UUID token) throws ExecutionException
-    //{
-    //    return applicationPlatformTokenCache.get(token);
-    //}
+    @Override
+    public Device getDevice(Integer applicationPlatformId, String deviceCode) throws ExecutionException
+    {
+        LoadingCache<String, Device> deviceCache = cache.get(applicationPlatformId);
+        return deviceCache.get(deviceCode);
+    }
 
-    //@Override
-    //public void initialize(CacheInitializationParameters initParams)
-    //{
-    //CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(initParams.getMaxSize());
-    //if (initParams.isRecordStats()) {
-    //    builder.recordStats();
-    //}
-    //    cache = createApplicationPlatformDeviceCache();
-    //}
+    @Override
+    public void initialize(CacheInitializationParameters initParams)
+    {
+        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(initParams.getMaxSize());
+        if (initParams.isRecordStats()) {
+            builder.recordStats();
+        }
+        cache = builder.build(applicationPlatformsCacheLoader);
+    }
 }
 

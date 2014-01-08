@@ -15,19 +15,23 @@ import com.messaggi.domain.ApplicationPlatform;
 
 public class ApplicationPlatformsImpl implements ApplicationPlatforms
 {
-    private final ApplicationPlatformDAO dao = new ApplicationPlatformDAO();
+    private static final ApplicationPlatformDAO dao;
 
-    private final CacheLoader<Integer, ApplicationPlatform> cacheLoader;
+    private static final CacheLoader<Integer, ApplicationPlatform> cacheLoader;
 
     private LoadingCache<Integer, ApplicationPlatform> cache;
 
+    static {
+        dao = new ApplicationPlatformDAO();
+        cacheLoader = createCacheLoader();
+    }
+
     private ApplicationPlatformsImpl()
     {
-        cacheLoader = createCacheLoader();
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
 
-    private CacheLoader<Integer, ApplicationPlatform> createCacheLoader()
+    private static CacheLoader<Integer, ApplicationPlatform> createCacheLoader()
     {
         CacheLoader<Integer, ApplicationPlatform> cacheLoader = new CacheLoader<Integer, ApplicationPlatform>()
         {
@@ -61,7 +65,7 @@ public class ApplicationPlatformsImpl implements ApplicationPlatforms
         return cacheLoader;
     }
 
-    private ApplicationPlatform createPrototype(Integer id)
+    private static ApplicationPlatform createPrototype(Integer id)
     {
         ApplicationPlatform prototype = new ApplicationPlatform();
         prototype.setId(id);
