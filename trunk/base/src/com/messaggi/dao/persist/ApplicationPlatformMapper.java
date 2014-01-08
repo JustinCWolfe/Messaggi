@@ -75,7 +75,13 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
     public void afterGetAllInitializeDomainObjectsFromResultSet(ResultSet rs, List<ApplicationPlatform> domainObjects)
         throws Exception
     {
-        initializeDomainObjectsFromResultSet(rs, domainObjects);
+        while (rs.next()) {
+            ApplicationPlatform domainObject = new ApplicationPlatform();
+            int id = rs.getInt("ID");
+            domainObject.setId(rs.wasNull() ? null : id);
+            domainObject.setToken(UUID.fromString(rs.getString("Token")));
+            domainObjects.add(domainObject);
+        }
     }
 
     // Save implementation
