@@ -1,7 +1,10 @@
 package com.messaggi.cache;
 
+import java.util.concurrent.ExecutionException;
 
-public class ApplicationPlatformDevices
+import com.messaggi.domain.Device;
+
+public interface ApplicationPlatformDevices
 {
     public static class Instance
     {
@@ -24,8 +27,8 @@ public class ApplicationPlatformDevices
         }
     }
 
-    //public Integer get(UUID token) throws ExecutionException;
+    Device getDevice(Integer applicationPlatformId, String deviceCode) throws ExecutionException;
 
-    //public void initialize(CacheInitializationParameters initParams);
+    void initialize(CacheInitializationParameters initParams);
 }
 
