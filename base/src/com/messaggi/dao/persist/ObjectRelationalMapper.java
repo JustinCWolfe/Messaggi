@@ -12,6 +12,13 @@ public interface ObjectRelationalMapper
         void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws Exception;
     }
 
+    public interface GetAll<T>
+    {
+        String getGetAllStoredProcedure();
+
+        void afterGetAllInitializeDomainObjectsFromResultSet(ResultSet rs, List<T> domainObjects) throws Exception;
+    }
+
     public interface Save<T>
     {
         String getSaveStoredProcedure();

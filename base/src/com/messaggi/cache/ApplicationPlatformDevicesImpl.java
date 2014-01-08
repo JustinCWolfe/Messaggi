@@ -17,10 +17,13 @@ public class ApplicationPlatformDevicesImpl
 {
     private final ApplicationPlatformDAO dao = new ApplicationPlatformDAO();
 
-    private LoadingCache<Integer, Devices> applicationPlatformDeviceCache;
+    private final CacheLoader<Integer, Devices> cacheLoader;
+
+    private LoadingCache<Integer, Devices> cache;
 
     private ApplicationPlatformDevicesImpl()
     {
+        cacheLoader = createCacheLoader();
         //initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
 
@@ -33,7 +36,7 @@ public class ApplicationPlatformDevicesImpl
      * could use that application platform attribute to configure the devices
      * cache.
      */
-    private LoadingCache<Integer, Devices> createApplicationPlatformDeviceCache(CacheInitializationParameters initParams)
+    private CacheLoader<Integer, Devices> createCacheLoader()
     {
         CacheLoader<Integer, Devices> cacheLoader = new CacheLoader<Integer, Devices>()
         {
@@ -53,7 +56,7 @@ public class ApplicationPlatformDevicesImpl
                 return initializedMap;
             }
         };
-        return CacheBuilder.newBuilder().maximumSize(1000).build(cacheLoader);
+        return cacheLoader;
     }
 
     private ApplicationPlatform createPrototype(Integer id)
@@ -127,7 +130,11 @@ public class ApplicationPlatformDevicesImpl
     //@Override
     //public void initialize(CacheInitializationParameters initParams)
     //{
-    //    applicationPlatformDeviceCache = createApplicationPlatformDeviceCache();
+    //CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(initParams.getMaxSize());
+    //if (initParams.isRecordStats()) {
+    //    builder.recordStats();
+    //}
+    //    cache = createApplicationPlatformDeviceCache();
     //}
 }
 
