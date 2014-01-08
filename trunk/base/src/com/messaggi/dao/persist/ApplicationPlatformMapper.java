@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.UUID;
 
 import com.messaggi.dao.persist.ObjectRelationalMapper.Get;
+import com.messaggi.dao.persist.ObjectRelationalMapper.GetAll;
 import com.messaggi.dao.persist.ObjectRelationalMapper.Save;
 import com.messaggi.domain.Application;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.ApplicationPlatform.Platform;
 
-public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, Save<ApplicationPlatform>
+public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetAll<ApplicationPlatform>,
+        Save<ApplicationPlatform>
 {
     private void initializeDomainObjectsFromResultSet(ResultSet rs, List<ApplicationPlatform> domainObjects)
         throws Exception
@@ -47,6 +49,7 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, Save
         }
     }
 
+
     // Get implementation
     @Override
     public String getGetStoredProcedure()
@@ -56,6 +59,20 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, Save
 
     @Override
     public void afterGetInitializeDomainObjectsFromResultSet(ResultSet rs, List<ApplicationPlatform> domainObjects)
+        throws Exception
+    {
+        initializeDomainObjectsFromResultSet(rs, domainObjects);
+    }
+
+    // Get all implementation
+    @Override
+    public String getGetAllStoredProcedure()
+    {
+        return "{call GetAllApplicationPlatformIdsAndTokens()}";
+    }
+
+    @Override
+    public void afterGetAllInitializeDomainObjectsFromResultSet(ResultSet rs, List<ApplicationPlatform> domainObjects)
         throws Exception
     {
         initializeDomainObjectsFromResultSet(rs, domainObjects);

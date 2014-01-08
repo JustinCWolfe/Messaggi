@@ -1,73 +1,37 @@
 package com.messaggi.cache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.messaggi.dao.ApplicationPlatformDAO;
+import com.google.common.collect.ImmutableMap;
 import com.messaggi.domain.ApplicationPlatform;
 
-public class ApplicationPlatforms
+public interface ApplicationPlatforms
 {
-    private static ApplicationPlatforms instance;
-
-    private final LoadingCache<Integer, ApplicationPlatform> applicationPlatformCache;
-
-    private final ApplicationPlatformDAO dao = new ApplicationPlatformDAO();
-
-    public static synchronized ApplicationPlatforms getInstance()
+    public static class Instance
     {
-        if (instance == null) {
-            instance = new ApplicationPlatforms();
-        }
-        return instance;
-    }
+        private static final String CACHE_IMPL_CLASS_JNDI_NAME = "java:/comp/env/ApplicationPlatformsCacheImpl";
 
-    private ApplicationPlatforms()
-    {
-        applicationPlatformCache = createApplicationPlatformCache();
-    }
+        private static final Object lock = new Object();
 
-    private LoadingCache<Integer, ApplicationPlatform> createApplicationPlatformCache()
-    {
-        CacheLoader<Integer, ApplicationPlatform> tokenCacheLoader = new CacheLoader<Integer, ApplicationPlatform>()
+        private static volatile ApplicationPlatforms instance;
+
+        public static ApplicationPlatforms getInstance() throws Exception
         {
-            @Override
-            public ApplicationPlatform load(Integer id) throws Exception
-            {
-                List<ApplicationPlatform> retrieved = dao
-                        .getApplicationPlatform(new ApplicationPlatform[] { createPrototype(id) });
-                return retrieved.get(0);
-            }
-
-            @Override
-            public Map<Integer, ApplicationPlatform> loadAll(Iterable<? extends Integer> ids) throws Exception
-            {
-                List<ApplicationPlatform> prototypes = new ArrayList<>();
-                for (Integer id : ids) {
-                    prototypes.add(createPrototype(id));
+            if (instance == null) {
+                synchronized (lock) {
+                    if (instance == null) {
+                        instance = CacheHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
+                    }
                 }
-                List<ApplicationPlatform> retrieved = dao.getApplicationPlatform(prototypes
-                        .toArray(new ApplicationPlatform[prototypes.size()]));
-                Map<Integer, ApplicationPlatform> retrievedMap = new HashMap<>();
-                for (ApplicationPlatform ap : retrieved) {
-                    retrievedMap.put(ap.getId(), ap);
-                }
-                return retrievedMap;
             }
-        };
-        return CacheBuilder.newBuilder().maximumSize(1000).build(tokenCacheLoader);
+            return instance;
+        }
     }
 
-    private ApplicationPlatform createPrototype(Integer id)
-    {
-        ApplicationPlatform prototype = new ApplicationPlatform();
-        prototype.setId(id);
-        return prototype;
-    }
+    ApplicationPlatform get(Integer id) throws ExecutionException;
+
+    ImmutableMap<Integer, ApplicationPlatform> getAll(Iterable<? extends Integer> ids) throws ExecutionException;
+
+    void initialize(CacheInitializationParameters initParams);
 }
 

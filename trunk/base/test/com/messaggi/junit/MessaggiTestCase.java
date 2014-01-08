@@ -105,6 +105,9 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
 
         // Implementation class names for caches.
         ic.bind("java:/comp/env/ApplicationPlatformTokensCacheImpl", "com.messaggi.cache.ApplicationPlatformTokensImpl");
+        ic.bind("java:/comp/env/ApplicationPlatformsCacheImpl", "com.messaggi.cache.ApplicationPlatformsImpl");
+        ic.bind("java:/comp/env/ApplicationPlatformDevicessCacheImpl",
+                "com.messaggi.cache.ApplicationPlatformDevicesImpl");
     }
 
     public static void startTomcat() throws Exception
