@@ -80,6 +80,23 @@ public class TestUserDAO extends MessaggiTestCase
     }
 
     @Test
+    public void testGetUserByIdAndIncorrectEmailForUser() throws Exception
+    {
+        user1 = User1.getDomainObject();
+        user2 = User2.getDomainObject();
+        TestDataHelper.createUser(user1);
+        TestDataHelper.createUser(user2);
+        // Swap the emails for user1 and user2.  This should put the query prototypes in
+        // a state where no users will be returned (the intersection of the prototype query 
+        // criteria should filter out all results).
+        user1.setEmail(User2.EMAIL);
+        user2.setEmail(User1.EMAIL);
+        User[] users = { user1, user2, user1, user2 };
+        List<User> retrievedUsers = userDAO.getUser(users);
+        assertEquals(0, retrievedUsers.size());
+    }
+
+    @Test
     public void testGetUserByEmail() throws Exception
     {
         user1 = User1.getDomainObject();
@@ -117,6 +134,25 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.LOCALE, retrievedUser2.getLocale());
         assertEquals(true, retrievedUser2.getActive());
         assertEquals(0, retrievedUser2.getApplications().size());
+    }
+
+    @Test
+    public void testGetUserByEmailAndIncorrectIdForUser() throws Exception
+    {
+        user1 = User1.getDomainObject();
+        user2 = User2.getDomainObject();
+        TestDataHelper.createUser(user1);
+        TestDataHelper.createUser(user2);
+        // Swap the ids for user1 and user2.  This should put the query prototypes in
+        // a state where no users will be returned (the intersection of the prototype query 
+        // criteria should filter out all results).
+        User wrongIDUser1 = User1.getDomainObject();
+        User wrongIDUser2 = User2.getDomainObject();
+        wrongIDUser1.setId(user2.getId());
+        wrongIDUser2.setId(user1.getId());
+        User[] users = { wrongIDUser1, wrongIDUser2, wrongIDUser1, wrongIDUser2 };
+        List<User> retrievedUsers = userDAO.getUser(users);
+        assertEquals(0, retrievedUsers.size());
     }
 
     @Test

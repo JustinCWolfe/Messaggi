@@ -57,6 +57,7 @@ public class TestApplicationPlatforms extends TestApplicationPlatformBase
             CacheStats stats = cache.stats();
             assertEquals(0, stats.evictionCount());
             assertEquals(0, stats.hitCount());
+            assertEquals(0.0, stats.hitRate(), EPSILON);
             assertEquals(1, stats.loadCount());
             assertEquals(1, stats.loadExceptionCount());
             assertEquals(1.0, stats.loadExceptionRate(), EPSILON);
@@ -92,6 +93,7 @@ public class TestApplicationPlatforms extends TestApplicationPlatformBase
             CacheStats stats = cache.stats();
             assertEquals(0, stats.evictionCount());
             assertEquals(0, stats.hitCount());
+            assertEquals(0.0, stats.hitRate(), EPSILON);
             assertEquals(1, stats.loadCount());
             assertEquals(1, stats.loadExceptionCount());
             assertEquals(1.0, stats.loadExceptionRate(), EPSILON);

@@ -240,6 +240,48 @@ public class TestDeviceDAO extends MessaggiTestCase
     }
 
     @Test
+    public void testGetDeviceByCodeAndIncorrectApplicationPlatformId() throws Exception
+    {
+        d1 = Device1.getDomainObject();
+        d2 = Device2.getDomainObject();
+        d3 = Device3.getDomainObject();
+        d4 = Device4.getDomainObject();
+        d5 = Device5.getDomainObject();
+        d6 = Device6.getDomainObject();
+        ApplicationPlatform[] appPlats1 = { appPlat1 };
+        ApplicationPlatform[] appPlats2 = { appPlat2 };
+        ApplicationPlatform[] appPlats3 = { appPlat3 };
+        d1.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d2.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d3.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d4.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d5.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        d6.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        TestDataHelper.createDevice(d1);
+        TestDataHelper.createDevice(d2);
+        TestDataHelper.createDevice(d3);
+        TestDataHelper.createDevice(d4);
+        TestDataHelper.createDevice(d5);
+        TestDataHelper.createDevice(d6);
+        d1.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d2.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d3.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        d4.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        d5.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d6.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+
+        Device[] devices = { d1, d1, d2, d2, d3, d3, d4, d4, d5, d5, d6, d6 };
+        List<Device> retrievedDevices = deviceDAO.getDevice(devices);
+        d1.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d2.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d3.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d4.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d5.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        d6.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        assertEquals(0, retrievedDevices.size());
+    }
+
+    @Test
     public void testGetDeviceByApplicationPlatformId() throws Exception
     {
         d1 = Device1.getDomainObject();
@@ -378,7 +420,49 @@ public class TestDeviceDAO extends MessaggiTestCase
     }
 
     @Test
-    public void testGetDeviceByIdAndApplicationPlatformId() throws Exception
+    public void testGetDeviceByApplicationPlatformIdAndIncorrectDeviceCode() throws Exception
+    {
+        d1 = Device1.getDomainObject();
+        d2 = Device2.getDomainObject();
+        d3 = Device3.getDomainObject();
+        d4 = Device4.getDomainObject();
+        d5 = Device5.getDomainObject();
+        d6 = Device6.getDomainObject();
+        ApplicationPlatform[] appPlats1 = { appPlat1 };
+        ApplicationPlatform[] appPlats2 = { appPlat2 };
+        ApplicationPlatform[] appPlats3 = { appPlat3 };
+        d1.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d2.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats1)));
+        d3.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d4.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats2)));
+        d5.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        d6.setApplicationPlatforms(new HashSet<ApplicationPlatform>(Arrays.asList(appPlats3)));
+        TestDataHelper.createDevice(d1);
+        TestDataHelper.createDevice(d2);
+        TestDataHelper.createDevice(d3);
+        TestDataHelper.createDevice(d4);
+        TestDataHelper.createDevice(d5);
+        TestDataHelper.createDevice(d6);
+        d1.setCode(Device3.CODE);
+        d2.setCode(Device4.CODE);
+        d3.setCode(Device5.CODE);
+        d4.setCode(Device6.CODE);
+        d5.setCode(Device1.CODE);
+        d6.setCode(Device2.CODE);
+
+        Device[] devices = { d1, d1, d2, d2, d3, d3, d4, d4, d5, d5, d6, d6 };
+        List<Device> retrievedDevices = deviceDAO.getDevice(devices);
+        d1.setCode(Device1.CODE);
+        d2.setCode(Device2.CODE);
+        d3.setCode(Device3.CODE);
+        d4.setCode(Device4.CODE);
+        d5.setCode(Device5.CODE);
+        d6.setCode(Device6.CODE);
+        assertEquals(0, retrievedDevices.size());
+    }
+
+    @Test
+    public void testGetDeviceByCodeAndApplicationPlatformId() throws Exception
     {
         d1 = Device1.getDomainObject();
         d2 = Device2.getDomainObject();

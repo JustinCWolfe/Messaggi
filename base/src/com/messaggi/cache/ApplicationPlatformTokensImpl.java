@@ -43,6 +43,7 @@ public class ApplicationPlatformTokensImpl implements ApplicationPlatformTokens
                         .getApplicationPlatform(new ApplicationPlatform[] { createPrototype(token) });
                 return (retrieved.size() == 1) ? retrieved.get(0).getId() : null;
             }
+
             @Override
             public Map<UUID, Integer> loadAll(Iterable<? extends UUID> tokens) throws Exception
             {
