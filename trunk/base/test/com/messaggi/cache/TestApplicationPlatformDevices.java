@@ -239,7 +239,15 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
         Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d2.getCode());
-        Device d31 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d3.getCode());
+
+        try {
+            Device d31 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d3.getCode());
+            fail("The call above should have thrown");
+        } catch (InvalidCacheLoadException e) {
+        } catch (Exception e) {
+            fail("The call above should have thrown");
+        }
+
         Device d41 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
         assertEquals(d1.getCode(), d11.getCode());
         assertEquals(d2.getCode(), d21.getCode());
