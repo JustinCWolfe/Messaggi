@@ -238,7 +238,93 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         validateCacheInitialState(cache);
 
         Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
+
+        assertEquals(1, cache.size());
+
+        ConcurrentMap<Integer, LoadingCache<String, Device>> map1 = cache.asMap();
+        assertEquals(1, map1.size());
+        assertTrue(map1.containsKey(appPlat1.getId()));
+
+        long lastLoadTime = 0;
+        CacheStats stats1 = cache.stats();
+        assertEquals(0, stats1.evictionCount());
+        assertEquals(0, stats1.hitCount());
+        assertEquals(0, stats1.hitRate(), EPSILON);
+        assertEquals(1, stats1.loadCount());
+        assertEquals(0, stats1.loadExceptionCount());
+        assertEquals(0, stats1.loadExceptionRate(), EPSILON);
+        assertEquals(1, stats1.loadSuccessCount());
+        assertEquals(1, stats1.missCount());
+        assertEquals(1.0, stats1.missRate(), EPSILON);
+        assertEquals(1, stats1.requestCount());
+        assertTrue(stats1.totalLoadTime() > lastLoadTime);
+        lastLoadTime = stats1.totalLoadTime();
+
+        LoadingCache<String, Device> deviceCache1 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+        assertEquals(1, deviceCache1.size());
+
+        ConcurrentMap<String, Device> deviceMap1 = deviceCache1.asMap();
+        assertEquals(1, deviceMap1.size());
+        assertTrue(deviceMap1.containsKey(d1.getCode()));
+
+        long deviceLastLoadTime = 0;
+        CacheStats deviceStats1 = deviceCache1.stats();
+        assertEquals(0, deviceStats1.evictionCount());
+        assertEquals(1, deviceStats1.hitCount());
+        assertEquals(.25, deviceStats1.hitRate(), EPSILON);
+        assertEquals(2, deviceStats1.loadCount());
+        assertEquals(1, deviceStats1.loadExceptionCount());
+        assertEquals(.25, deviceStats1.loadExceptionRate(), EPSILON);
+        assertEquals(2, deviceStats1.loadSuccessCount());
+        assertEquals(2, deviceStats1.missCount());
+        assertEquals(.75, deviceStats1.missRate(), EPSILON);
+        assertEquals(4, deviceStats1.requestCount());
+        assertTrue(deviceStats1.totalLoadTime() > deviceLastLoadTime);
+        deviceLastLoadTime = deviceStats1.totalLoadTime();
+
         Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d2.getCode());
+
+        assertEquals(1, cache.size());
+
+        ConcurrentMap<Integer, LoadingCache<String, Device>> map2 = cache.asMap();
+        assertEquals(1, map2.size());
+        assertTrue(map2.containsKey(appPlat1.getId()));
+
+        CacheStats stats2 = cache.stats();
+        assertEquals(0, stats2.evictionCount());
+        assertEquals(0, stats2.hitCount());
+        assertEquals(0, stats2.hitRate(), EPSILON);
+        assertEquals(1, stats2.loadCount());
+        assertEquals(0, stats2.loadExceptionCount());
+        assertEquals(0, stats2.loadExceptionRate(), EPSILON);
+        assertEquals(1, stats2.loadSuccessCount());
+        assertEquals(1, stats2.missCount());
+        assertEquals(1.0, stats2.missRate(), EPSILON);
+        assertEquals(1, stats2.requestCount());
+        assertTrue(stats2.totalLoadTime() > lastLoadTime);
+        lastLoadTime = stats2.totalLoadTime();
+
+        LoadingCache<String, Device> deviceCache2 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+        assertEquals(2, deviceCache2.size());
+
+        ConcurrentMap<String, Device> deviceMap2 = deviceCache2.asMap();
+        assertEquals(2, deviceMap2.size());
+        assertTrue(deviceMap2.containsKey(d2.getCode()));
+        assertTrue(deviceMap2.containsKey(d2.getCode()));
+
+        CacheStats deviceStats2 = deviceCache2.stats();
+        assertEquals(0, deviceStats2.evictionCount());
+        assertEquals(1, deviceStats2.hitCount());
+        assertEquals(.25, deviceStats2.hitRate(), EPSILON);
+        assertEquals(2, deviceStats2.loadCount());
+        assertEquals(1, deviceStats2.loadExceptionCount());
+        assertEquals(.25, deviceStats2.loadExceptionRate(), EPSILON);
+        assertEquals(2, deviceStats2.loadSuccessCount());
+        assertEquals(2, deviceStats2.missCount());
+        assertEquals(.75, deviceStats2.missRate(), EPSILON);
+        assertEquals(4, deviceStats2.requestCount());
+        assertTrue(deviceStats2.totalLoadTime() > deviceLastLoadTime);
+        deviceLastLoadTime = deviceStats2.totalLoadTime();
 
         try {
             Device d31 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d3.getCode());
