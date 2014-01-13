@@ -2,7 +2,6 @@ package com.messaggi.cache;
 
 import java.util.concurrent.ExecutionException;
 
-import com.messaggi.cache.ApplicationPlatformDevicesImpl.DeviceKey;
 import com.messaggi.domain.Device;
 
 public interface ApplicationPlatformDevices
@@ -30,7 +29,7 @@ public interface ApplicationPlatformDevices
 
     void createDeviceCacheForAllApplicationPlatforms(Iterable<? extends Integer> ids) throws ExecutionException;
 
-    Device getDevice(DeviceKey key) throws ExecutionException;
+    Device getDevice(Integer applicationPlatformId, String deviceCode) throws ExecutionException;
 
     void initialize(CacheInitializationParameters initParams);
 }
