@@ -126,7 +126,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         int nonExistentID = -1;
         String nonExistentCode = "some device code that does not exists - " + UUID.randomUUID().toString();
         try {
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(nonExistentID, nonExistentCode);
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey(nonExistentID, nonExistentCode));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
@@ -160,7 +160,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         int nonExistentID = -1;
         try {
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(nonExistentID, d1.getCode());
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey(nonExistentID, d1.getCode()));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
@@ -194,7 +194,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         String nonExistentCode = "some device code that does not exists - " + UUID.randomUUID().toString();
         try {
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), nonExistentCode);
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat1.getId(), nonExistentCode));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(1, cache.size());
@@ -456,7 +457,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         int hits = 0;
         int requests = 0;
 
-        Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
+        Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat1.getId(), d1.getCode()));
         requests++;
         assertEquals(d1.getCode(), d11.getCode());
 
@@ -489,7 +491,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         requests++;
         long deviceLastLoadTime = validateDeviceCache1(deviceCache1, d1Key);
 
-        Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d2.getCode());
+        Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat1.getId(), d2.getCode()));
         hits++;
         requests++;
         assertEquals(d2.getCode(), d21.getCode());
@@ -522,7 +525,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             // Increment before because the getDevice call below will fail on the device load.
             hits++;
             requests++;
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d3.getCode());
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey(appPlat1.getId(), d3.getCode()));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(1, cache.size());
@@ -552,7 +555,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             fail("The call above should have thrown");
         }
 
-        Device d41 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
+        Device d41 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat1.getId(), d1.getCode()));
         hits++;
         requests++;
         assertEquals(d1.getCode(), d41.getCode());
@@ -582,7 +586,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         requests++;
         validateDeviceCache4(deviceCache4, deviceLastLoadTime, d1Key, d2Key);
 
-        Device d12 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d3.getCode());
+        Device d12 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat2.getId(), d3.getCode()));
         requests++;
         assertEquals(d3.getCode(), d12.getCode());
 
@@ -615,7 +620,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         requests++;
         deviceLastLoadTime = validateDeviceCache1(deviceCache5, d3Key);
 
-        Device d22 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d4.getCode());
+        Device d22 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat2.getId(), d4.getCode()));
         hits++;
         requests++;
         assertEquals(d4.getCode(), d22.getCode());
@@ -650,7 +656,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             // Increment before because the getDevice call below will fail on the device load.
             hits++;
             requests++;
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d1.getCode());
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey(appPlat2.getId(), d1.getCode()));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(2, cache.size());
@@ -682,7 +688,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             fail("The call above should have thrown");
         }
 
-        Device d42 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d4.getCode());
+        Device d42 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat2.getId(), d4.getCode()));
         hits++;
         requests++;
         assertEquals(d4.getCode(), d42.getCode());
@@ -713,7 +720,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         requests++;
         deviceLastLoadTime = validateDeviceCache4(deviceCache8, deviceLastLoadTime, d3Key, d4Key);
 
-        Device d13 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat3.getId(), d5.getCode());
+        Device d13 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat3.getId(), d5.getCode()));
         requests++;
         assertEquals(d5.getCode(), d13.getCode());
 
@@ -746,7 +754,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         requests++;
         deviceLastLoadTime = validateDeviceCache1(deviceCache9, d5Key);
 
-        Device d23 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat3.getId(), d6.getCode());
+        Device d23 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat3.getId(), d6.getCode()));
         hits++;
         requests++;
         assertEquals(d6.getCode(), d23.getCode());
@@ -781,7 +790,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             // Increment before because the getDevice call below will fail on the device load.
             hits++;
             requests++;
-            ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat3.getId(), d1.getCode());
+            ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey(appPlat3.getId(), d1.getCode()));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(2, cache.size());
@@ -813,7 +822,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             fail("The call above should have thrown");
         }
 
-        Device d43 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat3.getId(), d5.getCode());
+        Device d43 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                new DeviceKey(appPlat3.getId(), d5.getCode()));
         hits++;
         requests++;
         assertEquals(d5.getCode(), d43.getCode());
@@ -871,7 +881,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             int hits = 0;
             int requests = 0;
 
-            Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
+            Device d11 = ApplicationPlatformDevices.Instance.getInstance().getDevice(new DeviceKey (appPlat1.getId(), d1.getCode()));
             requests++;
             assertEquals(d1.getCode(), d11.getCode());
 
@@ -906,7 +916,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             long deviceLastLoadTime = validateDeviceCache1(deviceCache1, d1Key);
 
-            Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d2.getCode());
+            Device d21 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat1.getId(), d2.getCode()));
             hits++;
             requests++;
             assertEquals(d2.getCode(), d21.getCode());
@@ -935,7 +946,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache2, deviceLastLoadTime, d1Key, d2Key);
 
-            Device d31 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d3.getCode());
+            Device d31 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat1.getId(), d3.getCode()));
             hits++;
             requests++;
             assertEquals(d3.getCode(), d31.getCode());
@@ -965,7 +977,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache3, deviceLastLoadTime, d1Key, d2Key, d3Key);
 
-            Device d41 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d4.getCode());
+            Device d41 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat1.getId(), d4.getCode()));
             hits++;
             requests++;
             assertEquals(d4.getCode(), d41.getCode());
@@ -999,7 +1012,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 // Increment before because the getDevice call below will fail on the device load.
                 hits++;
                 requests++;
-                ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d5.getCode());
+                ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                        new DeviceKey(appPlat1.getId(), d5.getCode()));
                 fail("The call above should have thrown");
             } catch (InvalidCacheLoadException e) {
                 assertEquals(1, cache.size());
@@ -1030,7 +1044,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 fail("The call above should have thrown");
             }
 
-            Device d61 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat1.getId(), d1.getCode());
+            Device d61 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat1.getId(), d1.getCode()));
             hits++;
             requests++;
             assertEquals(d1.getCode(), d61.getCode());
@@ -1065,7 +1080,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             d3Key = new DeviceKey(appPlat2.getId(), d5.getCode());
             d4Key = new DeviceKey(appPlat2.getId(), d6.getCode());
 
-            Device d7 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d3.getCode());
+            Device d7 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat2.getId(), d3.getCode()));
             requests++;
             assertEquals(d3.getCode(), d7.getCode());
 
@@ -1095,7 +1111,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             deviceLastLoadTime = validateDeviceCache1(deviceCache7, d1Key);
 
-            Device d22 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d4.getCode());
+            Device d22 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat2.getId(), d4.getCode()));
             hits++;
             requests++;
             assertEquals(d4.getCode(), d22.getCode());
@@ -1125,7 +1142,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache8, deviceLastLoadTime, d1Key, d2Key);
 
-            Device d32 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d5.getCode());
+            Device d32 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat2.getId(), d5.getCode()));
             hits++;
             requests++;
             assertEquals(d5.getCode(), d32.getCode());
@@ -1156,7 +1174,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache9, deviceLastLoadTime, d1Key, d2Key, d3Key);
 
-            Device d42 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d6.getCode());
+            Device d42 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat2.getId(), d6.getCode()));
             hits++;
             requests++;
             assertEquals(d6.getCode(), d42.getCode());
@@ -1191,7 +1210,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 // Increment before because the getDevice call below will fail on the device load.
                 hits++;
                 requests++;
-                ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d1.getCode());
+                ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                        new DeviceKey(appPlat2.getId(), d1.getCode()));
                 fail("The call above should have thrown");
             } catch (InvalidCacheLoadException e) {
                 assertEquals(2, cache.size());
@@ -1199,6 +1219,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 ConcurrentMap<Integer, LoadingCache<String, Device>> map11 = cache.asMap();
                 assertEquals(2, map11.size());
                 assertTrue(map11.containsKey(appPlat1.getId()));
+                assertTrue(map11.containsKey(appPlat2.getId()));
 
                 CacheStats stats11 = cache.stats();
                 assertEquals(0, stats11.evictionCount());
@@ -1222,7 +1243,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 fail("The call above should have thrown");
             }
 
-            Device d62 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d3.getCode());
+            Device d62 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat2.getId(), d3.getCode()));
             hits++;
             requests++;
             assertEquals(d3.getCode(), d62.getCode());
@@ -1251,13 +1273,14 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             hits++;
             requests++;
             validateDeviceCache6(deviceCache12, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
-
+            
             d1Key = new DeviceKey(appPlat3.getId(), d1.getCode());
             d2Key = new DeviceKey(appPlat3.getId(), d2.getCode());
             d3Key = new DeviceKey(appPlat3.getId(), d5.getCode());
             d4Key = new DeviceKey(appPlat3.getId(), d6.getCode());
 
-            Device d13 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat3.getId(), d1.getCode());
+            Device d13 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat3.getId(), d1.getCode()));
             requests++;
             assertEquals(d1.getCode(), d13.getCode());
 
@@ -1272,109 +1295,112 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(1, stats13.evictionCount());
             assertEquals(hits, stats13.hitCount());
             assertEquals(hits / (double) requests, stats13.hitRate(), EPSILON);
-            assertEquals(2, stats13.loadCount());
+            assertEquals(3, stats13.loadCount());
             assertEquals(0, stats13.loadExceptionCount());
             assertEquals(0, stats13.loadExceptionRate(), EPSILON);
-            assertEquals(2, stats13.loadSuccessCount());
+            assertEquals(3, stats13.loadSuccessCount());
             assertEquals(requests - hits, stats13.missCount());
             assertEquals((requests - hits) / (double) requests, stats13.missRate(), EPSILON);
             assertEquals(requests, stats13.requestCount());
             assertTrue(stats13.totalLoadTime() > lastLoadTime);
             lastLoadTime = stats13.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache13 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<String, Device> deviceCache13 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache1(deviceCache13, d1Key);
 
-            Device d23 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d4.getCode());
+            Device d23 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat3.getId(), d2.getCode()));
             hits++;
             requests++;
-            assertEquals(d4.getCode(), d23.getCode());
+            assertEquals(d2.getCode(), d23.getCode());
 
             assertEquals(2, cache.size());
 
             ConcurrentMap<Integer, LoadingCache<String, Device>> map14 = cache.asMap();
             assertEquals(2, map14.size());
-            assertTrue(map14.containsKey(appPlat1.getId()));
             assertTrue(map14.containsKey(appPlat2.getId()));
+            assertTrue(map14.containsKey(appPlat3.getId()));
 
             CacheStats stats14 = cache.stats();
-            assertEquals(0, stats14.evictionCount());
+            assertEquals(1, stats14.evictionCount());
             assertEquals(hits, stats14.hitCount());
             assertEquals(hits / (double) requests, stats14.hitRate(), EPSILON);
-            assertEquals(2, stats14.loadCount());
+            assertEquals(3, stats14.loadCount());
             assertEquals(0, stats14.loadExceptionCount());
             assertEquals(0, stats14.loadExceptionRate(), EPSILON);
-            assertEquals(2, stats14.loadSuccessCount());
+            assertEquals(3, stats14.loadSuccessCount());
             assertEquals(requests - hits, stats14.missCount());
             assertEquals((requests - hits) / (double) requests, stats14.missRate(), EPSILON);
             assertEquals(requests, stats14.requestCount());
             assertEquals(stats14.totalLoadTime(), lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache14 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<String, Device> deviceCache14 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache14, deviceLastLoadTime, d1Key, d2Key);
 
-            Device d32 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d5.getCode());
+            Device d33 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat3.getId(), d5.getCode()));
             hits++;
             requests++;
-            assertEquals(d5.getCode(), d32.getCode());
+            assertEquals(d5.getCode(), d33.getCode());
 
             assertEquals(2, cache.size());
 
             ConcurrentMap<Integer, LoadingCache<String, Device>> map15 = cache.asMap();
             assertEquals(2, map15.size());
-            assertTrue(map15.containsKey(appPlat1.getId()));
             assertTrue(map15.containsKey(appPlat2.getId()));
+            assertTrue(map15.containsKey(appPlat3.getId()));
 
             CacheStats stats15 = cache.stats();
-            assertEquals(0, stats15.evictionCount());
+            assertEquals(1, stats15.evictionCount());
             assertEquals(hits, stats15.hitCount());
             assertEquals(hits / (double) requests, stats15.hitRate(), EPSILON);
-            assertEquals(2, stats15.loadcount());
-            assertequals(0, stats15.loadExceptionCount());
+            assertEquals(3, stats15.loadCount());
+            assertEquals(0, stats15.loadExceptionCount());
             assertEquals(0, stats15.loadExceptionRate(), EPSILON);
-            assertEquals(2, stats15.loadSuccessCount());
+            assertEquals(3, stats15.loadSuccessCount());
             assertEquals(requests - hits, stats15.missCount());
             assertEquals((requests - hits) / (double) requests, stats15.missRate(), EPSILON);
             assertEquals(requests, stats15.requestCount());
             assertEquals(stats15.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats15.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache15 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<String, Device> deviceCache15 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache15, deviceLastLoadTime, d1Key, d2Key, d3Key);
 
-            Device d42 = ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d6.getCode());
+            Device d43 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat3.getId(), d6.getCode()));
             hits++;
             requests++;
-            assertEquals(d6.getCode(), d42.getCode());
+            assertEquals(d6.getCode(), d43.getCode());
 
             assertEquals(2, cache.size());
 
             ConcurrentMap<Integer, LoadingCache<String, Device>> map16 = cache.asMap();
             assertEquals(2, map16.size());
-            assertTrue(map16.containsKey(appPlat1.getId()));
             assertTrue(map16.containsKey(appPlat2.getId()));
+            assertTrue(map16.containsKey(appPlat3.getId()));
 
             CacheStats stats16 = cache.stats();
-            assertEquals(0, stats16.evictionCount());
+            assertEquals(1, stats16.evictionCount());
             assertEquals(hits, stats16.hitCount());
             assertEquals(hits / (double) requests, stats16.hitRate(), EPSILON);
-            assertEquals(2, stats16.loadCount());
+            assertEquals(3, stats16.loadCount());
             assertEquals(0, stats16.loadExceptionCount());
             assertEquals(0, stats16.loadExceptionRate(), EPSILON);
-            assertEquals(2, stats16.loadSuccessCount());
+            assertEquals(3, stats16.loadSuccessCount());
             assertEquals(requests - hits, stats16.missCount());
             assertEquals((requests - hits) / (double) requests, stats16.missRate(), EPSILON);
             assertEquals(requests, stats16.requestCount());
             assertEquals(stats16.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats16.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache16 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<String, Device> deviceCache16 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache4(deviceCache16, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1383,33 +1409,67 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 // Increment before because the getDevice call below will fail on the device load.
                 hits++;
                 requests++;
-                ApplicationPlatformDevices.Instance.getInstance().getDevice(appPlat2.getId(), d1.getCode());
+                ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                        new DeviceKey(appPlat3.getId(), d3.getCode()));
                 fail("The call above should have thrown");
             } catch (InvalidCacheLoadException e) {
                 assertEquals(2, cache.size());
 
                 ConcurrentMap<Integer, LoadingCache<String, Device>> map17 = cache.asMap();
                 assertEquals(2, map17.size());
-                assertTrue(map17.containsKey(appPlat1.getId()));
+                assertTrue(map17.containsKey(appPlat2.getId()));
+                assertTrue(map17.containsKey(appPlat3.getId()));
 
                 CacheStats stats17 = cache.stats();
-                assertEquals(0, stats17.evictionCount());
+                assertEquals(1, stats17.evictionCount());
                 assertEquals(hits, stats17.hitCount());
                 assertEquals(hits / (double) requests, stats17.hitRate(), EPSILON);
-                assertEquals(2, stats17.loadCount());
+                assertEquals(3, stats17.loadCount());
                 assertEquals(0, stats17.loadExceptionCount());
                 assertEquals(0, stats17.loadExceptionRate(), EPSILON);
-                assertEquals(2, stats17.loadSuccessCount());
+                assertEquals(3, stats17.loadSuccessCount());
                 assertEquals(requests - hits, stats17.missCount());
                 assertEquals((requests - hits) / (double) requests, stats17.missRate(), EPSILON);
                 assertEquals(requests, stats17.requestCount());
                 assertEquals(stats17.totalLoadTime(), lastLoadTime);
 
-                LoadingCache<String, Device> deviceCache11 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                LoadingCache<String, Device> deviceCache17 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
                         .getId());
                 hits++;
                 requests++;
-                deviceLastLoadTime = validateDeviceCache5(deviceCache11, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
+                deviceLastLoadTime = validateDeviceCache5(deviceCache17, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
+            }
+
+            Device d63 = ApplicationPlatformDevices.Instance.getInstance().getDevice(
+                    new DeviceKey(appPlat3.getId(), d1.getCode()));
+            hits++;
+            requests++;
+            assertEquals(d1.getCode(), d63.getCode());
+
+            assertEquals(2, cache.size());
+
+            ConcurrentMap<Integer, LoadingCache<String, Device>> map18 = cache.asMap();
+            assertEquals(2, map18.size());
+            assertTrue(map18.containsKey(appPlat2.getId()));
+
+            CacheStats stats18 = cache.stats();
+            assertEquals(1, stats18.evictionCount());
+            assertEquals(hits, stats18.hitCount());
+            assertEquals(hits / (double) requests, stats18.hitRate(), EPSILON);
+            assertEquals(3, stats18.loadCount());
+            assertEquals(0, stats18.loadExceptionCount());
+            assertEquals(0, stats18.loadExceptionRate(), EPSILON);
+            assertEquals(3, stats18.loadSuccessCount());
+            assertEquals(requests - hits, stats18.missCount());
+            assertEquals((requests - hits) / (double) requests, stats18.missRate(), EPSILON);
+            assertEquals(requests, stats18.requestCount());
+            assertEquals(stats18.totalLoadTime(), lastLoadTime);
+            lastLoadTime = stats18.totalLoadTime();
+
+            LoadingCache<String, Device> deviceCache18 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            hits++;
+            requests++;
+            validateDeviceCache6(deviceCache18, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
         } finally {
             tearDownDevices();
             setUpDevices();
