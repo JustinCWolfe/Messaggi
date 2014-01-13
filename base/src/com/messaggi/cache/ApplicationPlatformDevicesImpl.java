@@ -152,10 +152,10 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
     }
 
     @Override
-    public Device getDevice(DeviceKey key) throws ExecutionException
+    public Device getDevice(Integer applicationPlatformId, String deviceCode) throws ExecutionException
     {
-        LoadingCache<DeviceKey, Device> deviceCache = cache.get(key.applicationPlatformId);
-        return deviceCache.get(key);
+        LoadingCache<DeviceKey, Device> deviceCache = cache.get(applicationPlatformId);
+        return deviceCache.get(new DeviceKey(applicationPlatformId, deviceCode));
     }
 
     @Override
