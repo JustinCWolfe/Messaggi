@@ -33,6 +33,8 @@ public class ApplicationPlatform
 
     private UUID token;
 
+    private String externalServiceToken;
+
     private HashSet<Device> devices;
 
     private HashSet<ApplicationPlatformMsgLog> applicationPlatformMsgLogs;
@@ -91,6 +93,28 @@ public class ApplicationPlatform
     public void setToken(UUID token)
     {
         this.token = token;
+    }
+
+    @XmlTransient
+    public String getExternalServiceToken()
+    {
+        return externalServiceToken;
+    }
+
+    public void setExternalServiceToken(String externalServiceToken)
+    {
+        this.externalServiceToken = externalServiceToken;
+    }
+
+    @XmlAttribute(name = "ExternalServiceToken")
+    public byte[] getExternalServiceTokenAsBinary()
+    {
+        return DomainHelper.encodeBase64Image(externalServiceToken);
+    }
+
+    public void setExternalServiceTokenAsBinary(byte[] externalServiceToken)
+    {
+        this.externalServiceToken = DomainHelper.decodeBase64Image(externalServiceToken);
     }
 
     @XmlTransient

@@ -62,6 +62,8 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.fromString("3994F653-B5FC-4AF9-BFE0-68DDD42F7ED9");
 
+        public static final String EXTERNAL_SERVICE_TOKEN = "ANDROID_APPLICATION_TOKEN1";
+
         public static final Platform PLATFORM = Platform.ANDROID;
 
         public static ApplicationPlatform getDomainObject()
@@ -69,6 +71,7 @@ public class TestDataHelper
             ApplicationPlatform ap = new ApplicationPlatform();
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
+            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
             return ap;
         }
     }
@@ -77,6 +80,8 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.fromString("C35793A8-5981-4A77-B1C1-7211EB82AC9B");
 
+        public static final String EXTERNAL_SERVICE_TOKEN = "IOS_APPLICATION_TOKEN1";
+
         public static final Platform PLATFORM = Platform.IOS;
 
         public static ApplicationPlatform getDomainObject()
@@ -84,6 +89,7 @@ public class TestDataHelper
             ApplicationPlatform ap = new ApplicationPlatform();
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
+            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
             return ap;
         }
     }
@@ -92,6 +98,8 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.fromString("8CA72FDF-EA74-44D7-9F03-01C46BD8FCFF");
 
+        public static final String EXTERNAL_SERVICE_TOKEN = "WINDOWS_APPLICATION_TOKEN1";
+
         public static final Platform PLATFORM = Platform.WINDOWS;
 
         public static ApplicationPlatform getDomainObject()
@@ -99,6 +107,7 @@ public class TestDataHelper
             ApplicationPlatform ap = new ApplicationPlatform();
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
+            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
             return ap;
         }
     }
@@ -107,6 +116,8 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.randomUUID();
 
+        public static final String EXTERNAL_SERVICE_TOKEN = "IOS_APPLICATION_TOKEN2";
+
         public static final Platform PLATFORM = Platform.IOS;
 
         public static ApplicationPlatform getDomainObject()
@@ -114,6 +125,7 @@ public class TestDataHelper
             ApplicationPlatform ap = new ApplicationPlatform();
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
+            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
             return ap;
         }
     }
@@ -338,7 +350,7 @@ public class TestDataHelper
     {
         private static final String CREATE_APP_STMT = "insert into dbo.[Application] (UserID, Name) values (?,?)";
 
-        private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token) values (?,?,?)";
+        private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token, ExternalServiceToken) values (?,?,?,?)";
 
         private static final String CREATE_APP_PLAT_MSG_LOG_STMT = "insert into dbo.[ApplicationPlatformMsgLog] (ApplicationPlatformID, Date, MsgCount) values (?,?,?)";
 
@@ -400,6 +412,7 @@ public class TestDataHelper
                 stmt.setInt(1, ap.getApplicationId());
                 stmt.setString(2, ap.getPlatform().toString());
                 stmt.setString(3, ap.getToken().toString());
+                stmt.setBytes(4, ap.getExternalServiceTokenAsBinary());
                 stmt.execute();
                 try (ResultSet rs = stmt.getGeneratedKeys();) {
                     while (rs.next()) {

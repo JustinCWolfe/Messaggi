@@ -29,6 +29,9 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
             domainObject.setPlatform(Platform.valueOf(Platform.class, rs.getString("PlatformCode")));
             domainObject.setToken(UUID.fromString(rs.getString("Token")));
 
+            byte[] externalServiceToken = rs.getBytes("ExternalServiceToken");
+            domainObject.setExternalServiceTokenAsBinary(rs.wasNull() ? null : externalServiceToken);
+
             int applicationId = rs.getInt("ApplicationID");
             Integer applicationIdObj = rs.wasNull() ? null : applicationId;
             if (applicationIdObj != null) {
@@ -80,6 +83,8 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
             int id = rs.getInt("ID");
             domainObject.setId(rs.wasNull() ? null : id);
             domainObject.setToken(UUID.fromString(rs.getString("Token")));
+            byte[] externalServiceToken = rs.getBytes("ExternalServiceToken");
+            domainObject.setExternalServiceTokenAsBinary(externalServiceToken);
             domainObjects.add(domainObject);
         }
     }
