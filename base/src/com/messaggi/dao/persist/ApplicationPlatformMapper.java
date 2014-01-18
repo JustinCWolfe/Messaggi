@@ -83,8 +83,6 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
             int id = rs.getInt("ID");
             domainObject.setId(rs.wasNull() ? null : id);
             domainObject.setToken(UUID.fromString(rs.getString("Token")));
-            byte[] externalServiceToken = rs.getBytes("ExternalServiceToken");
-            domainObject.setExternalServiceTokenAsBinary(externalServiceToken);
             domainObjects.add(domainObject);
         }
     }

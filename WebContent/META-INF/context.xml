@@ -21,6 +21,13 @@
 		value="com.messaggi.cache.ApplicationPlatformDevicesImpl" 
 		type="java.lang.String" 
 		override="false"/>
+		
+	<Environment 
+		name="ApplicationPlatformConnectionsCacheImpl" 
+		description="Implementation class name for ApplicationPlatformConnections cache." 
+		value="com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl" 
+		type="java.lang.String" 
+		override="false"/>
 
 	<Resource 
 		name="jdbc/Messaggi" 
