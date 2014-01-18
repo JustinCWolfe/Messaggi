@@ -118,21 +118,25 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertEquals(appPlat1.getExternalServiceToken(), retrievedAppPlat1.getExternalServiceToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(app1.getId(), retrievedAppPlat2.getApplication().getId());
         assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertEquals(appPlat2.getExternalServiceToken(), retrievedAppPlat2.getExternalServiceToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertEquals(app1.getId(), retrievedAppPlat3.getApplication().getId());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertEquals(appPlat3.getExternalServiceToken(), retrievedAppPlat3.getExternalServiceToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertEquals(app2.getId(), retrievedAppPlat4.getApplication().getId());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+        assertEquals(appPlat4.getExternalServiceToken(), retrievedAppPlat4.getExternalServiceToken());
     }
 
     @Test
@@ -286,21 +290,25 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertEquals(appPlat1.getExternalServiceToken(), retrievedAppPlat1.getExternalServiceToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(app1.getId(), retrievedAppPlat2.getApplication().getId());
         assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertEquals(appPlat2.getExternalServiceToken(), retrievedAppPlat2.getExternalServiceToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertEquals(app1.getId(), retrievedAppPlat3.getApplication().getId());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertEquals(appPlat3.getExternalServiceToken(), retrievedAppPlat3.getExternalServiceToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertEquals(app2.getId(), retrievedAppPlat4.getApplication().getId());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+        assertEquals(appPlat4.getExternalServiceToken(), retrievedAppPlat4.getExternalServiceToken());
     }
 
     @Test
@@ -425,21 +433,25 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(3, retrievedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat1.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertEquals(appPlat1.getExternalServiceToken(), retrievedAppPlat1.getExternalServiceToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat2.getApplication().getId());
         assertEquals(3, retrievedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat2.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertEquals(appPlat2.getExternalServiceToken(), retrievedAppPlat2.getExternalServiceToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat3.getApplication().getId());
         assertEquals(3, retrievedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat3.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertEquals(appPlat3.getExternalServiceToken(), retrievedAppPlat3.getExternalServiceToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(appPlat4.getApplication().getId(), retrievedAppPlat4.getApplication().getId());
         assertEquals(1, retrievedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat4.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+        assertEquals(appPlat4.getExternalServiceToken(), retrievedAppPlat4.getExternalServiceToken());
     }
 
     @Test
@@ -545,6 +557,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(1, retrievedAppPlat31.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat31.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat31.getToken());
+        assertEquals(appPlat1.getExternalServiceToken(), retrievedAppPlat31.getExternalServiceToken());
 
         TestDataHelper.createApplicationPlatform(appPlat2);
         TestDataHelper.createApplicationPlatform(appPlat3);
@@ -568,21 +581,25 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(3, retrievedAppPlat41.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat1.getPlatform(), retrievedAppPlat41.getPlatform());
         assertEquals(appPlat1.getToken(), retrievedAppPlat41.getToken());
+        assertEquals(appPlat1.getExternalServiceToken(), retrievedAppPlat41.getExternalServiceToken());
         assertEquals(appPlat2.getId(), retrievedAppPlat42.getId());
         assertEquals(appPlat2.getApplication().getId(), retrievedAppPlat42.getApplication().getId());
         assertEquals(3, retrievedAppPlat42.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat2.getPlatform(), retrievedAppPlat42.getPlatform());
         assertEquals(appPlat2.getToken(), retrievedAppPlat42.getToken());
+        assertEquals(appPlat2.getExternalServiceToken(), retrievedAppPlat42.getExternalServiceToken());
         assertEquals(appPlat3.getId(), retrievedAppPlat43.getId());
         assertEquals(appPlat3.getApplication().getId(), retrievedAppPlat43.getApplication().getId());
         assertEquals(3, retrievedAppPlat43.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat3.getPlatform(), retrievedAppPlat43.getPlatform());
         assertEquals(appPlat3.getToken(), retrievedAppPlat43.getToken());
+        assertEquals(appPlat3.getExternalServiceToken(), retrievedAppPlat43.getExternalServiceToken());
         assertEquals(appPlat4.getId(), retrievedAppPlat44.getId());
         assertEquals(appPlat4.getApplication().getId(), retrievedAppPlat44.getApplication().getId());
         assertEquals(1, retrievedAppPlat44.getApplication().getApplicationPlatforms().size());
         assertEquals(appPlat4.getPlatform(), retrievedAppPlat44.getPlatform());
         assertEquals(appPlat4.getToken(), retrievedAppPlat44.getToken());
+        assertEquals(appPlat4.getExternalServiceToken(), retrievedAppPlat44.getExternalServiceToken());
     }
 
     @Test
@@ -617,18 +634,22 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         }
         assertEquals(appPlat1.getId(), retrievedAppPlat1.getId());
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
+        assertNull(retrievedAppPlat1.getExternalServiceToken());
         assertNull(retrievedAppPlat1.getApplication());
         assertNull(retrievedAppPlat1.getPlatform());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
+        assertNull(retrievedAppPlat2.getExternalServiceToken());
         assertNull(retrievedAppPlat2.getApplication());
         assertNull(retrievedAppPlat2.getPlatform());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
+        assertNull(retrievedAppPlat3.getExternalServiceToken());
         assertNull(retrievedAppPlat3.getApplication());
         assertNull(retrievedAppPlat3.getPlatform());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
+        assertNull(retrievedAppPlat4.getExternalServiceToken());
         assertNull(retrievedAppPlat4.getApplication());
         assertNull(retrievedAppPlat4.getPlatform());
     }
@@ -646,6 +667,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         appPlat1.setId(savedAppPlat1.getId());
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat1.getToken());
+        assertEquals(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN, savedAppPlat1.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(1, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
@@ -685,24 +707,28 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         appPlat4.setId(savedAppPlat4.getId());
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat1.getToken());
+        assertEquals(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN, savedAppPlat1.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(3, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat2.getToken());
+        assertEquals(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN, savedAppPlat2.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat2.getApplication().getId());
         assertEquals(3, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat3.getToken());
+        assertEquals(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN, savedAppPlat3.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat3.getApplication().getId());
         assertEquals(3, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
         assertTrue(savedAppPlat3.getId() > 0);
         assertEquals(ApplicationPlatform4.PLATFORM, savedAppPlat4.getPlatform());
         assertEquals(ApplicationPlatform4.TOKEN, savedAppPlat4.getToken());
+        assertEquals(ApplicationPlatform4.EXTERNAL_SERVICE_TOKEN, savedAppPlat4.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat4.getApplication().getId());
         assertEquals(1, savedAppPlat4.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat4.getId());
@@ -717,6 +743,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat1);
 
         appPlat1.setToken(ApplicationPlatform2.TOKEN);
+        appPlat1.setExternalServiceToken(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN);
         appPlat1.setPlatform(ApplicationPlatform2.PLATFORM);
         appPlat1.setApplication(app2);
 
@@ -727,6 +754,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         appPlat1.setId(savedAppPlat1.getId());
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat1.getToken());
+        assertEquals(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN, savedAppPlat1.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(1, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
@@ -747,14 +775,17 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat3);
 
         appPlat1.setToken(ApplicationPlatform3.TOKEN);
+        appPlat1.setExternalServiceToken(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN);
         appPlat1.setPlatform(ApplicationPlatform3.PLATFORM);
         appPlat1.setApplication(app2);
 
         appPlat2.setToken(ApplicationPlatform1.TOKEN);
+        appPlat2.setExternalServiceToken(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN);
         appPlat2.setPlatform(ApplicationPlatform1.PLATFORM);
         appPlat2.setApplication(app2);
 
         appPlat3.setToken(ApplicationPlatform2.TOKEN);
+        appPlat3.setExternalServiceToken(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN);
         appPlat3.setPlatform(ApplicationPlatform2.PLATFORM);
         appPlat3.setApplication(app1);
 
@@ -776,18 +807,21 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         appPlat3.setId(savedAppPlat3.getId());
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat1.getToken());
+        assertEquals(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN, savedAppPlat1.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform1.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform1.TOKEN, savedAppPlat2.getToken());
+        assertEquals(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN, savedAppPlat2.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat2.getApplication().getId());
         assertEquals(2, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat3.getToken());
+        assertEquals(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN, savedAppPlat3.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat3.getApplication().getId());
         assertEquals(1, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
@@ -810,6 +844,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat1);
 
         appPlat1.setToken(ApplicationPlatform4.TOKEN);
+        appPlat1.setExternalServiceToken(ApplicationPlatform4.EXTERNAL_SERVICE_TOKEN);
         appPlat1.setPlatform(ApplicationPlatform4.PLATFORM);
         appPlat1.setApplication(app2);
 
@@ -831,18 +866,21 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         appPlat3.setId(savedAppPlat3.getId());
         assertEquals(ApplicationPlatform4.PLATFORM, savedAppPlat1.getPlatform());
         assertEquals(ApplicationPlatform4.TOKEN, savedAppPlat1.getToken());
+        assertEquals(ApplicationPlatform4.EXTERNAL_SERVICE_TOKEN, savedAppPlat1.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
         assertTrue(savedAppPlat1.getId() > 0);
         assertEquals(ApplicationPlatform2.PLATFORM, savedAppPlat2.getPlatform());
         assertEquals(ApplicationPlatform2.TOKEN, savedAppPlat2.getToken());
+        assertEquals(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN, savedAppPlat2.getExternalServiceToken());
         assertEquals(app1.getId(), savedAppPlat2.getApplication().getId());
         assertEquals(1, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
         assertTrue(savedAppPlat2.getId() > 0);
         assertEquals(ApplicationPlatform3.PLATFORM, savedAppPlat3.getPlatform());
         assertEquals(ApplicationPlatform3.TOKEN, savedAppPlat3.getToken());
+        assertEquals(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN, savedAppPlat3.getExternalServiceToken());
         assertEquals(app2.getId(), savedAppPlat3.getApplication().getId());
         assertEquals(2, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());

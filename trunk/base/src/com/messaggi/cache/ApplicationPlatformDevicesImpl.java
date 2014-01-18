@@ -43,17 +43,17 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
     {
         CacheLoader<Integer, LoadingCache<DeviceKey, Device>> cacheLoader = new CacheLoader<Integer, LoadingCache<DeviceKey, Device>>()
         {
-            private LoadingCache<DeviceKey, Device> createDevicesCache(ApplicationPlatform ap)
+            private LoadingCache<DeviceKey, Device> createDeviceCache(ApplicationPlatform ap)
             {
                 //TODO: get the maximum size for this application platforms' device cache from the domain object.
                 int maxSize = 1000;
                 //TODO: get the record stats for this application platforms' device cache from the domain object.
                 boolean isRecordStats = true;
-                CacheBuilder<Object, Object> devicesCacheBuilder = CacheBuilder.newBuilder().maximumSize(maxSize);
+                CacheBuilder<Object, Object> deviceCacheBuilder = CacheBuilder.newBuilder().maximumSize(maxSize);
                 if (isRecordStats) {
-                    devicesCacheBuilder.recordStats();
+                    deviceCacheBuilder.recordStats();
                 }
-                return devicesCacheBuilder.build(deviceCacheLoader);
+                return deviceCacheBuilder.build(deviceCacheLoader);
             }
 
             @Override
@@ -65,7 +65,7 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
                 List<ApplicationPlatform> retrieved = applicationPlatformsDao
                         .getApplicationPlatform(new ApplicationPlatform[] { createApplicationPlatformPrototype(id) });
                 if (retrieved.size() == 1) {
-                    return createDevicesCache(retrieved.get(0));
+                    return createDeviceCache(retrieved.get(0));
                 }
                 return null;
             }
@@ -87,7 +87,7 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
                 if (retrieved.size() > 0) {
                     retrievedMap = new HashMap<>();
                     for (ApplicationPlatform ap : retrieved) {
-                        retrievedMap.put(ap.getId(), createDevicesCache(ap));
+                        retrievedMap.put(ap.getId(), createDeviceCache(ap));
                     }
                 }
                 return retrievedMap;
