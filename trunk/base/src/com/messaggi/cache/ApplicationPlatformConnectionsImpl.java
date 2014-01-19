@@ -11,16 +11,17 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.external.MessagingServiceConnection;
 
 public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformConnections
 {
     private static final ApplicationPlatformDAO applicationPlatformsDao;
 
-    private static final CacheLoader<Integer, LoadingCache<ConnectionKey, Object>> applicationPlatformCacheLoader;
+    private static final CacheLoader<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> applicationPlatformCacheLoader;
 
-    private static final CacheLoader<ConnectionKey, Object> connectionCacheLoader;
+    private static final CacheLoader<ConnectionKey, MessagingServiceConnection> connectionCacheLoader;
 
-    private LoadingCache<Integer, LoadingCache<ConnectionKey, Object>> cache;
+    private LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> cache;
 
     static {
         applicationPlatformsDao = new ApplicationPlatformDAO();
@@ -33,11 +34,12 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
 
-    private static CacheLoader<Integer, LoadingCache<ConnectionKey, Object>> createApplicationPlatformCacheLoader()
+    private static CacheLoader<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> createApplicationPlatformCacheLoader()
     {
-        CacheLoader<Integer, LoadingCache<ConnectionKey, Object>> cacheLoader = new CacheLoader<Integer, LoadingCache<ConnectionKey, Object>>()
+        CacheLoader<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> cacheLoader = new CacheLoader<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>>()
         {
-            private LoadingCache<ConnectionKey, Object> createConnectionCache(ApplicationPlatform ap) throws Exception
+            private LoadingCache<ConnectionKey, MessagingServiceConnection> createConnectionCache(ApplicationPlatform ap)
+                throws Exception
             {
                 //TODO: get the maximum size for this application platforms' connection cache from the domain object.
                 int maxSize = 100;
@@ -47,7 +49,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
                 if (isRecordStats) {
                     connectionCacheBuilder.recordStats();
                 }
-                LoadingCache<ConnectionKey, Object> connectionCache = connectionCacheBuilder
+                LoadingCache<ConnectionKey, MessagingServiceConnection> connectionCache = connectionCacheBuilder
                         .build(connectionCacheLoader);
                 //TODO: get the number of connections to spin up automatically for this 
                 //application platform from the domain object.
@@ -59,7 +61,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
             }
 
             @Override
-            public LoadingCache<ConnectionKey, Object> load(Integer id) throws Exception
+            public LoadingCache<ConnectionKey, MessagingServiceConnection> load(Integer id) throws Exception
             {
                 // What this should do is load the application platform.  This application platform could have 
                 // configuration options in attribute columns (these aren't there today but I might add them so 
@@ -73,7 +75,8 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
             }
 
             @Override
-            public Map<Integer, LoadingCache<ConnectionKey, Object>> loadAll(Iterable<? extends Integer> ids)
+            public Map<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> loadAll(
+                    Iterable<? extends Integer> ids)
                 throws Exception
             {
                 List<ApplicationPlatform> prototypes = new ArrayList<>();
@@ -85,7 +88,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
                 // that applications can have connection caching specific to their needs). 
                 List<ApplicationPlatform> retrieved = applicationPlatformsDao.getApplicationPlatform(prototypes
                         .toArray(new ApplicationPlatform[prototypes.size()]));
-                Map<Integer, LoadingCache<ConnectionKey, Object>> retrievedMap = null;
+                Map<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> retrievedMap = null;
                 if (retrieved.size() > 0) {
                     retrievedMap = new HashMap<>();
                     for (ApplicationPlatform ap : retrieved) {
@@ -98,20 +101,21 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         return cacheLoader;
     }
 
-    private static CacheLoader<ConnectionKey, Object> createConnectionCacheLoader()
+    private static CacheLoader<ConnectionKey, MessagingServiceConnection> createConnectionCacheLoader()
     {
-        CacheLoader<ConnectionKey, Object> cacheLoader = new CacheLoader<ConnectionKey, Object>()
+        CacheLoader<ConnectionKey, MessagingServiceConnection> cacheLoader = new CacheLoader<ConnectionKey, MessagingServiceConnection>()
         {
             @Override
-            public Object load(ConnectionKey key) throws Exception
+            public MessagingServiceConnection load(ConnectionKey key) throws Exception
             {
                 return createConnection(key);
             }
 
             @Override
-            public Map<ConnectionKey, Object> loadAll(Iterable<? extends ConnectionKey> keys) throws Exception
+            public Map<ConnectionKey, MessagingServiceConnection> loadAll(Iterable<? extends ConnectionKey> keys)
+                throws Exception
             {
-                Map<ConnectionKey, Object> createdConnectionMap = new HashMap<>();
+                Map<ConnectionKey, MessagingServiceConnection> createdConnectionMap = new HashMap<>();
                 for (ConnectionKey key : keys) {
                     createdConnectionMap.put(key, createConnection(key));
                 }
@@ -128,7 +132,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         return prototype;
     }
 
-    private static Object createConnection(ConnectionKey key)
+    private static MessagingServiceConnection createConnection(ConnectionKey key)
     {
         return null;
     }
@@ -143,18 +147,20 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
     // Compute the connection id based on the size of the connection cache and the from device code
     // and to device code.  This must be stable so that it always returns the same external 
     // service connection for each request.
-    private Integer computeConnectionId(long connectionCacheSize, String from, String to)
+    private int computeConnectionId(long connectionCacheSize, String from, String to)
     {
-        return 1;
+        int hashCode = (from + to).hashCode();
+        return (int) (hashCode % connectionCacheSize);
     }
 
     //TODO: The cache values will be connection interfaces that will be implemented by the apple 
     // and android connection implementation objects.
     @Override
-    public Object getConnection(Integer applicationPlatformId, String fromDeviceCode, String toDeviceCode)
+    public MessagingServiceConnection getConnection(Integer applicationPlatformId, String fromDeviceCode,
+            String toDeviceCode)
         throws ExecutionException
     {
-        LoadingCache<ConnectionKey, Object> connectionCache = cache.get(applicationPlatformId);
+        LoadingCache<ConnectionKey, MessagingServiceConnection> connectionCache = cache.get(applicationPlatformId);
         Integer connectionId = computeConnectionId(connectionCache.size(), fromDeviceCode, toDeviceCode);
         // Calling getIfPresent will never cause values to be loaded.
         return connectionCache.getIfPresent(new ConnectionKey(applicationPlatformId, connectionId));

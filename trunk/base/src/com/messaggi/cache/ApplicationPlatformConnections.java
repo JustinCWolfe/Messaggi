@@ -2,6 +2,8 @@ package com.messaggi.cache;
 
 import java.util.concurrent.ExecutionException;
 
+import com.messaggi.external.MessagingServiceConnection;
+
 /**
  * Cache of messaging service connections per application platform. This is a
  * multi-level cache where the first level is for application platforms and the
@@ -48,7 +50,7 @@ public interface ApplicationPlatformConnections
      */
     //TODO: The cache values will be connection interfaces that will be implemented by the apple 
     // and android connection implementation objects.
-    Object getConnection(Integer applicationPlatformId, String fromDeviceCode, String toDeviceCode)
+    MessagingServiceConnection getConnection(Integer applicationPlatformId, String fromDeviceCode, String toDeviceCode)
         throws ExecutionException;
 
     void initialize(CacheInitializationParameters initParams);
