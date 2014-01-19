@@ -2,11 +2,20 @@ package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 
-public class WindowsConnection extends MessagingServiceConnection
+public class WindowsConnection implements MessagingServiceConnection
 {
-    public WindowsConnection(ApplicationPlatform applicationPlatform)
+    private ApplicationPlatform applicationPlatform;
+
+    @Override
+    public ApplicationPlatform getApplicationPlatform()
     {
-        super(applicationPlatform);
+        return applicationPlatform;
+    }
+
+    @Override
+    public void setApplicationPlatform(ApplicationPlatform applicationPlatform)
+    {
+        this.applicationPlatform = applicationPlatform;
     }
 
     @Override

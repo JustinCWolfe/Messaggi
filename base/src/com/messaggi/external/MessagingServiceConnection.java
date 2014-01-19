@@ -2,39 +2,38 @@ package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 
-public abstract class MessagingServiceConnection
+public interface MessagingServiceConnection
 {
     public static class ConnectionFactory
     {
-        public static MessagingServiceConnection create(ApplicationPlatform ap)
+        public static MessagingServiceConnection create(ApplicationPlatform applicationPlatform)
         {
-            switch (ap.getPlatform()) {
+            MessagingServiceConnection messagingConnection = null;
+            switch (applicationPlatform.getPlatform()) {
                 case AMAZON:
-                    return new AmazonConnection(ap);
+                    messagingConnection = new AmazonConnection();
+                    break;
                 case ANDROID:
-                    return new AmazonConnection(ap);
+                    messagingConnection = new AndroidConnection();
+                    break;
                 case IOS:
-                    return new AmazonConnection(ap);
+                    messagingConnection = new AppleConnection();
+                    break;
                 case WINDOWS:
-                    return new AmazonConnection(ap);
+                    messagingConnection = new WindowsConnection();
+                    break;
                 default:
                     throw new UnsupportedOperationException();
             }
+            messagingConnection.setApplicationPlatform(applicationPlatform);
+            return messagingConnection;
         }
     }
 
-    private ApplicationPlatform applicationPlatform;
+    void setApplicationPlatform(ApplicationPlatform applicationPlatform);
 
-    public ApplicationPlatform getApplicationPlatform()
-    {
-        return this.applicationPlatform;
-    }
+    ApplicationPlatform getApplicationPlatform();
 
-    public MessagingServiceConnection(ApplicationPlatform applicationPlatform)
-    {
-        this.applicationPlatform = applicationPlatform;
-    }
-
-    public abstract void connect();
+    void connect();
 }
 
