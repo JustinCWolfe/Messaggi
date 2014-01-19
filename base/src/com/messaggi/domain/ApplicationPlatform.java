@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlTransient;
 public class ApplicationPlatform
 {
     public enum Platform {
-        IOS("IOS"), ANDROID("ANDROID"), WINDOWS("WINDOWS");
+        AMAZON("AMAZON"), ANDROID("ANDROID"), IOS("IOS"), WINDOWS("WINDOWS");
         
         private final String value;
         
