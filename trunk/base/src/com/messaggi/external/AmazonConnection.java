@@ -2,11 +2,20 @@ package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 
-public class AmazonConnection extends MessagingServiceConnection
+public class AmazonConnection implements MessagingServiceConnection
 {
-    public AmazonConnection(ApplicationPlatform applicationPlatform)
+    private ApplicationPlatform applicationPlatform;
+
+    @Override
+    public ApplicationPlatform getApplicationPlatform()
     {
-        super(applicationPlatform);
+        return applicationPlatform;
+    }
+
+    @Override
+    public void setApplicationPlatform(ApplicationPlatform applicationPlatform)
+    {
+        this.applicationPlatform = applicationPlatform;
     }
 
     @Override

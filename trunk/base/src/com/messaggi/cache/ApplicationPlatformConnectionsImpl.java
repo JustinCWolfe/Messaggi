@@ -132,9 +132,11 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         return prototype;
     }
 
-    private static MessagingServiceConnection createConnection(ConnectionKey key)
+    private static MessagingServiceConnection createConnection(ConnectionKey key) throws Exception
     {
-        return null;
+        ApplicationPlatform applicationPlatform = ApplicationPlatforms.Instance.getInstance().get(
+                key.applicationPlatformId);
+        return MessagingServiceConnection.ConnectionFactory.create(applicationPlatform);
     }
     
     @Override
