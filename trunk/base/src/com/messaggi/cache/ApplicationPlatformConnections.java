@@ -15,7 +15,7 @@ public interface ApplicationPlatformConnections
 {
     public static class Instance
     {
-        private static final String CACHE_IMPL_CLASS_JNDI_NAME = "java:/comp/env/ApplicationPlatformConnectionsImpl";
+        private static final String CACHE_IMPL_CLASS_JNDI_NAME = "java:/comp/env/ApplicationPlatformConnectionsCacheImpl";
 
         private static final Object lock = new Object();
 

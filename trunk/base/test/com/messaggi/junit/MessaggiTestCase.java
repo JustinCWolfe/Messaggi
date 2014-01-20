@@ -109,7 +109,7 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         ic.bind("java:/comp/env/ApplicationPlatformDevicesCacheImpl",
                 "com.messaggi.cache.ApplicationPlatformDevicesImpl");
         ic.bind("java:/comp/env/ApplicationPlatformConnectionsCacheImpl",
-                "com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl");
+                "com.messaggi.cache.ApplicationPlatformConnectionsImpl");
     }
 
     public static void startTomcat() throws Exception
