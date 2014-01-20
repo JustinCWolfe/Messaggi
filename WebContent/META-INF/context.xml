@@ -25,7 +25,7 @@
 	<Environment 
 		name="ApplicationPlatformConnectionsCacheImpl" 
 		description="Implementation class name for ApplicationPlatformConnections cache." 
-		value="com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl" 
+		value="com.messaggi.cache.ApplicationPlatformConnectionsImpl" 
 		type="java.lang.String" 
 		override="false"/>
 

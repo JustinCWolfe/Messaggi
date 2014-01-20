@@ -45,7 +45,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
     private static Device d6;
 
-    private LoadingCache<Integer, LoadingCache<String, Device>> cache;
+    private LoadingCache<Integer, LoadingCache<DeviceKey, Device>> cache;
 
     private static void setUpDevices() throws Exception
     {
@@ -109,11 +109,11 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
     private void createCacheReference() throws Exception
     {
         Field cacheField = getCacheField(ApplicationPlatformDevicesImpl.class);
-        cache = (LoadingCache<Integer, LoadingCache<String, Device>>) cacheField
+        cache = (LoadingCache<Integer, LoadingCache<DeviceKey, Device>>) cacheField
                 .get(ApplicationPlatformDevices.Instance.getInstance());
     }
 
-    private LoadingCache<String, Device> getDeviceCacheReferenceForApplicationPlatform(Integer id) throws Exception
+    private LoadingCache<DeviceKey, Device> getDeviceCacheReferenceForApplicationPlatform(Integer id) throws Exception
     {
         return cache.get(id);
     }
@@ -131,7 +131,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map = cache.asMap();
             assertEquals(0, map.size());
 
             long lastLoadTime = 0;
@@ -165,7 +165,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map = cache.asMap();
             assertEquals(0, map.size());
 
             long lastLoadTime = 0;
@@ -199,7 +199,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map = cache.asMap();
             assertEquals(1, map.size());
             assertTrue(map.containsKey(appPlat1.getId()));
 
@@ -217,10 +217,11 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(1, stats.requestCount());
             assertTrue(stats.totalLoadTime() > lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             assertEquals(0, deviceCache.size());
 
-            ConcurrentMap<String, Device> deviceMap = deviceCache.asMap();
+            ConcurrentMap<DeviceKey, Device> deviceMap = deviceCache.asMap();
             assertEquals(0, deviceMap.size());
 
             long deviceLastLoadTime = 0;
@@ -242,11 +243,11 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         fail("The call above should have thrown and InvalidCacheLoadException");
     }
 
-    private long validateDeviceCache1(LoadingCache<String, Device> deviceCache1, DeviceKey key1)
+    private long validateDeviceCache1(LoadingCache<DeviceKey, Device> deviceCache1, DeviceKey key1)
     {
         assertEquals(1, deviceCache1.size());
 
-        ConcurrentMap<String, Device> deviceMap1 = deviceCache1.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap1 = deviceCache1.asMap();
         assertEquals(1, deviceMap1.size());
         assertTrue(deviceMap1.containsKey(key1));
 
@@ -266,12 +267,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats1.totalLoadTime();
     }
 
-    private long validateDeviceCache2(LoadingCache<String, Device> deviceCache2, long deviceLastLoadTime,
+    private long validateDeviceCache2(LoadingCache<DeviceKey, Device> deviceCache2, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2)
     {
         assertEquals(2, deviceCache2.size());
 
-        ConcurrentMap<String, Device> deviceMap2 = deviceCache2.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap2 = deviceCache2.asMap();
         assertEquals(2, deviceMap2.size());
         assertTrue(deviceMap2.containsKey(key1));
         assertTrue(deviceMap2.containsKey(key2));
@@ -291,12 +292,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats2.totalLoadTime();
     }
 
-    private long validateDeviceCache3(LoadingCache<String, Device> deviceCache3, long deviceLastLoadTime,
+    private long validateDeviceCache3(LoadingCache<DeviceKey, Device> deviceCache3, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2)
     {
         assertEquals(2, deviceCache3.size());
 
-        ConcurrentMap<String, Device> deviceMap3 = deviceCache3.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap3 = deviceCache3.asMap();
         assertEquals(2, deviceMap3.size());
         assertTrue(deviceMap3.containsKey(key1));
         assertTrue(deviceMap3.containsKey(key2));
@@ -316,12 +317,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats3.totalLoadTime();
     }
 
-    private long validateDeviceCache3(LoadingCache<String, Device> deviceCache3, long deviceLastLoadTime,
+    private long validateDeviceCache3(LoadingCache<DeviceKey, Device> deviceCache3, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2, DeviceKey key3)
     {
         assertEquals(3, deviceCache3.size());
 
-        ConcurrentMap<String, Device> deviceMap3 = deviceCache3.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap3 = deviceCache3.asMap();
         assertEquals(3, deviceMap3.size());
         assertTrue(deviceMap3.containsKey(key1));
         assertTrue(deviceMap3.containsKey(key2));
@@ -342,12 +343,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats3.totalLoadTime();
     }
 
-    private long validateDeviceCache4(LoadingCache<String, Device> deviceCache4, long deviceLastLoadTime,
+    private long validateDeviceCache4(LoadingCache<DeviceKey, Device> deviceCache4, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2)
     {
         assertEquals(2, deviceCache4.size());
 
-        ConcurrentMap<String, Device> deviceMap4 = deviceCache4.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap4 = deviceCache4.asMap();
         assertEquals(2, deviceMap4.size());
         assertTrue(deviceMap4.containsKey(key1));
         assertTrue(deviceMap4.containsKey(key2));
@@ -367,12 +368,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats4.totalLoadTime();
     }
 
-    private long validateDeviceCache4(LoadingCache<String, Device> deviceCache4, long deviceLastLoadTime,
+    private long validateDeviceCache4(LoadingCache<DeviceKey, Device> deviceCache4, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2, DeviceKey key3, DeviceKey key4)
     {
         assertEquals(4, deviceCache4.size());
 
-        ConcurrentMap<String, Device> deviceMap4 = deviceCache4.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap4 = deviceCache4.asMap();
         assertEquals(4, deviceMap4.size());
         assertTrue(deviceMap4.containsKey(key1));
         assertTrue(deviceMap4.containsKey(key2));
@@ -394,12 +395,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats4.totalLoadTime();
     }
 
-    private long validateDeviceCache5(LoadingCache<String, Device> deviceCache5, long deviceLastLoadTime,
+    private long validateDeviceCache5(LoadingCache<DeviceKey, Device> deviceCache5, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2, DeviceKey key3, DeviceKey key4)
     {
         assertEquals(4, deviceCache5.size());
 
-        ConcurrentMap<String, Device> deviceMap5 = deviceCache5.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap5 = deviceCache5.asMap();
         assertEquals(4, deviceMap5.size());
         assertTrue(deviceMap5.containsKey(key1));
         assertTrue(deviceMap5.containsKey(key2));
@@ -421,12 +422,12 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         return deviceStats5.totalLoadTime();
     }
 
-    private long validateDeviceCache6(LoadingCache<String, Device> deviceCache6, long deviceLastLoadTime,
+    private long validateDeviceCache6(LoadingCache<DeviceKey, Device> deviceCache6, long deviceLastLoadTime,
             DeviceKey key1, DeviceKey key2, DeviceKey key3, DeviceKey key4)
     {
         assertEquals(4, deviceCache6.size());
 
-        ConcurrentMap<String, Device> deviceMap6 = deviceCache6.asMap();
+        ConcurrentMap<DeviceKey, Device> deviceMap6 = deviceCache6.asMap();
         assertEquals(4, deviceMap6.size());
         assertTrue(deviceMap6.containsKey(key1));
         assertTrue(deviceMap6.containsKey(key2));
@@ -462,7 +463,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(1, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map1 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map1 = cache.asMap();
         assertEquals(1, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
 
@@ -484,7 +485,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         DeviceKey d1Key = new DeviceKey(appPlat1.getId(), d1.getCode());
         DeviceKey d2Key = new DeviceKey(appPlat1.getId(), d2.getCode());
 
-        LoadingCache<String, Device> deviceCache1 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+        LoadingCache<DeviceKey, Device> deviceCache1 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
         hits++;
         requests++;
         long deviceLastLoadTime = validateDeviceCache1(deviceCache1, d1Key);
@@ -496,7 +497,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(1, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map2 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map2 = cache.asMap();
         assertEquals(1, map2.size());
         assertTrue(map2.containsKey(appPlat1.getId()));
 
@@ -513,7 +514,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(requests, stats2.requestCount());
         assertEquals(stats2.totalLoadTime(), lastLoadTime);
 
-        LoadingCache<String, Device> deviceCache2 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+        LoadingCache<DeviceKey, Device> deviceCache2 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache2(deviceCache2, deviceLastLoadTime, d1Key, d2Key);
@@ -527,7 +528,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map3 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map3 = cache.asMap();
             assertEquals(1, map3.size());
             assertTrue(map3.containsKey(appPlat1.getId()));
 
@@ -544,7 +545,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(requests, stats3.requestCount());
             assertEquals(stats3.totalLoadTime(), lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache3 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache3 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache3, deviceLastLoadTime, d1Key, d2Key);
@@ -559,7 +561,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(1, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map4 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map4 = cache.asMap();
         assertEquals(1, map4.size());
         assertTrue(map4.containsKey(appPlat1.getId()));
 
@@ -577,7 +579,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(stats4.totalLoadTime(), lastLoadTime);
         lastLoadTime = stats4.totalLoadTime();
 
-        LoadingCache<String, Device> deviceCache4 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+        LoadingCache<DeviceKey, Device> deviceCache4 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
         hits++;
         requests++;
         validateDeviceCache4(deviceCache4, deviceLastLoadTime, d1Key, d2Key);
@@ -588,7 +590,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map5 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map5 = cache.asMap();
         assertEquals(2, map5.size());
         assertTrue(map5.containsKey(appPlat1.getId()));
         assertTrue(map5.containsKey(appPlat2.getId()));
@@ -610,7 +612,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         DeviceKey d3Key = new DeviceKey(appPlat2.getId(), d3.getCode());
         DeviceKey d4Key = new DeviceKey(appPlat2.getId(), d4.getCode());
 
-        LoadingCache<String, Device> deviceCache5 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+        LoadingCache<DeviceKey, Device> deviceCache5 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache1(deviceCache5, d3Key);
@@ -622,7 +624,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map6 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map6 = cache.asMap();
         assertEquals(2, map6.size());
         assertTrue(map6.containsKey(appPlat1.getId()));
         assertTrue(map6.containsKey(appPlat2.getId()));
@@ -641,7 +643,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(stats6.totalLoadTime(), lastLoadTime);
         lastLoadTime = stats6.totalLoadTime();
 
-        LoadingCache<String, Device> deviceCache6 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+        LoadingCache<DeviceKey, Device> deviceCache6 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache2(deviceCache6, deviceLastLoadTime, d3Key, d4Key);
@@ -655,7 +657,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map7 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map7 = cache.asMap();
             assertEquals(2, map7.size());
             assertTrue(map7.containsKey(appPlat1.getId()));
             assertTrue(map7.containsKey(appPlat2.getId()));
@@ -674,7 +676,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats7.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats7.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache7 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache7 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache7, deviceLastLoadTime, d3Key, d4Key);
@@ -689,7 +692,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map8 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map8 = cache.asMap();
         assertEquals(2, map8.size());
         assertTrue(map8.containsKey(appPlat1.getId()));
         assertTrue(map8.containsKey(appPlat2.getId()));
@@ -708,7 +711,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(stats8.totalLoadTime(), lastLoadTime);
         lastLoadTime = stats8.totalLoadTime();
 
-        LoadingCache<String, Device> deviceCache8 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+        LoadingCache<DeviceKey, Device> deviceCache8 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache4(deviceCache8, deviceLastLoadTime, d3Key, d4Key);
@@ -719,7 +722,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map9 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map9 = cache.asMap();
         assertEquals(2, map9.size());
         assertTrue(map9.containsKey(appPlat2.getId()));
         assertTrue(map9.containsKey(appPlat3.getId()));
@@ -741,7 +744,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         DeviceKey d5Key = new DeviceKey(appPlat3.getId(), d5.getCode());
         DeviceKey d6Key = new DeviceKey(appPlat3.getId(), d6.getCode());
 
-        LoadingCache<String, Device> deviceCache9 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+        LoadingCache<DeviceKey, Device> deviceCache9 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache1(deviceCache9, d5Key);
@@ -753,7 +756,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map10 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map10 = cache.asMap();
         assertEquals(2, map10.size());
         assertTrue(map10.containsKey(appPlat2.getId()));
         assertTrue(map10.containsKey(appPlat3.getId()));
@@ -772,7 +775,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(stats10.totalLoadTime(), lastLoadTime);
         lastLoadTime = stats10.totalLoadTime();
 
-        LoadingCache<String, Device> deviceCache10 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+        LoadingCache<DeviceKey, Device> deviceCache10 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache2(deviceCache10, deviceLastLoadTime, d5Key, d6Key);
@@ -786,7 +789,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         } catch (InvalidCacheLoadException e) {
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map11 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map11 = cache.asMap();
             assertEquals(2, map11.size());
             assertTrue(map11.containsKey(appPlat2.getId()));
             assertTrue(map11.containsKey(appPlat3.getId()));
@@ -805,7 +808,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats11.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats11.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache11 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache11 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache11, deviceLastLoadTime, d5Key, d6Key);
@@ -820,7 +824,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map12 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map12 = cache.asMap();
         assertEquals(2, map12.size());
         assertTrue(map12.containsKey(appPlat2.getId()));
         assertTrue(map12.containsKey(appPlat3.getId()));
@@ -839,7 +843,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(stats12.totalLoadTime(), lastLoadTime);
         lastLoadTime = stats12.totalLoadTime();
 
-        LoadingCache<String, Device> deviceCache12 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+        LoadingCache<DeviceKey, Device> deviceCache12 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
         hits++;
         requests++;
         deviceLastLoadTime = validateDeviceCache4(deviceCache12, deviceLastLoadTime, d5Key, d6Key);
@@ -877,7 +881,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map1 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map1 = cache.asMap();
             assertEquals(1, map1.size());
             assertTrue(map1.containsKey(appPlat1.getId()));
 
@@ -901,7 +905,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             DeviceKey d3Key = new DeviceKey(appPlat1.getId(), d3.getCode());
             DeviceKey d4Key = new DeviceKey(appPlat1.getId(), d4.getCode());
 
-            LoadingCache<String, Device> deviceCache1 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache1 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             long deviceLastLoadTime = validateDeviceCache1(deviceCache1, d1Key);
@@ -913,7 +918,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map2 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map2 = cache.asMap();
             assertEquals(1, map2.size());
             assertTrue(map2.containsKey(appPlat1.getId()));
 
@@ -930,7 +935,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(requests, stats2.requestCount());
             assertEquals(stats2.totalLoadTime(), lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache2 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache2 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache2, deviceLastLoadTime, d1Key, d2Key);
@@ -942,7 +948,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map3 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map3 = cache.asMap();
             assertEquals(1, map3.size());
             assertTrue(map3.containsKey(appPlat1.getId()));
 
@@ -960,7 +966,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats3.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats3.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache3 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache3 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache3, deviceLastLoadTime, d1Key, d2Key, d3Key);
@@ -972,7 +979,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map4 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map4 = cache.asMap();
             assertEquals(1, map4.size());
             assertTrue(map4.containsKey(appPlat1.getId()));
 
@@ -990,7 +997,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats4.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats4.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache4 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache4 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache4(deviceCache4, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1004,7 +1012,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             } catch (InvalidCacheLoadException e) {
                 assertEquals(1, cache.size());
 
-                ConcurrentMap<Integer, LoadingCache<String, Device>> map5 = cache.asMap();
+                ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map5 = cache.asMap();
                 assertEquals(1, map5.size());
                 assertTrue(map5.containsKey(appPlat1.getId()));
 
@@ -1021,7 +1029,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 assertEquals(requests, stats5.requestCount());
                 assertEquals(stats5.totalLoadTime(), lastLoadTime);
 
-                LoadingCache<String, Device> deviceCache5 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                LoadingCache<DeviceKey, Device> deviceCache5 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
                         .getId());
                 hits++;
                 requests++;
@@ -1037,7 +1045,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(1, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map6 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map6 = cache.asMap();
             assertEquals(1, map6.size());
             assertTrue(map6.containsKey(appPlat1.getId()));
 
@@ -1055,7 +1063,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats6.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats6.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache6 = getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId());
+            LoadingCache<DeviceKey, Device> deviceCache6 = getDeviceCacheReferenceForApplicationPlatform(appPlat1
+                    .getId());
             hits++;
             requests++;
             validateDeviceCache6(deviceCache6, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1071,7 +1080,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map7 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map7 = cache.asMap();
             assertEquals(2, map7.size());
             assertTrue(map7.containsKey(appPlat1.getId()));
             assertTrue(map7.containsKey(appPlat2.getId()));
@@ -1090,7 +1099,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertTrue(stats7.totalLoadTime() > lastLoadTime);
             lastLoadTime = stats7.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache7 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache7 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache1(deviceCache7, d1Key);
@@ -1102,7 +1112,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map8 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map8 = cache.asMap();
             assertEquals(2, map8.size());
             assertTrue(map8.containsKey(appPlat1.getId()));
             assertTrue(map8.containsKey(appPlat2.getId()));
@@ -1120,7 +1130,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(requests, stats8.requestCount());
             assertEquals(stats8.totalLoadTime(), lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache8 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache8 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache8, deviceLastLoadTime, d1Key, d2Key);
@@ -1132,7 +1143,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map9 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map9 = cache.asMap();
             assertEquals(2, map9.size());
             assertTrue(map9.containsKey(appPlat1.getId()));
             assertTrue(map9.containsKey(appPlat2.getId()));
@@ -1151,7 +1162,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats9.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats9.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache9 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache9 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache9, deviceLastLoadTime, d1Key, d2Key, d3Key);
@@ -1163,7 +1175,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map10 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map10 = cache.asMap();
             assertEquals(2, map10.size());
             assertTrue(map10.containsKey(appPlat1.getId()));
             assertTrue(map10.containsKey(appPlat2.getId()));
@@ -1182,7 +1194,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats10.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats10.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache10 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache10 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache4(deviceCache10, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1196,7 +1209,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             } catch (InvalidCacheLoadException e) {
                 assertEquals(2, cache.size());
 
-                ConcurrentMap<Integer, LoadingCache<String, Device>> map11 = cache.asMap();
+                ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map11 = cache.asMap();
                 assertEquals(2, map11.size());
                 assertTrue(map11.containsKey(appPlat1.getId()));
                 assertTrue(map11.containsKey(appPlat2.getId()));
@@ -1214,7 +1227,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 assertEquals(requests, stats11.requestCount());
                 assertEquals(stats11.totalLoadTime(), lastLoadTime);
 
-                LoadingCache<String, Device> deviceCache11 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                LoadingCache<DeviceKey, Device> deviceCache11 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
                         .getId());
                 hits++;
                 requests++;
@@ -1230,7 +1243,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map12 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map12 = cache.asMap();
             assertEquals(2, map12.size());
             assertTrue(map12.containsKey(appPlat2.getId()));
 
@@ -1248,7 +1261,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats12.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats12.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache12 = getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId());
+            LoadingCache<DeviceKey, Device> deviceCache12 = getDeviceCacheReferenceForApplicationPlatform(appPlat2
+                    .getId());
             hits++;
             requests++;
             validateDeviceCache6(deviceCache12, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1264,7 +1278,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map13 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map13 = cache.asMap();
             assertEquals(2, map13.size());
             assertTrue(map13.containsKey(appPlat2.getId()));
             assertTrue(map13.containsKey(appPlat3.getId()));
@@ -1283,7 +1297,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertTrue(stats13.totalLoadTime() > lastLoadTime);
             lastLoadTime = stats13.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache13 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache13 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache1(deviceCache13, d1Key);
@@ -1295,7 +1310,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map14 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map14 = cache.asMap();
             assertEquals(2, map14.size());
             assertTrue(map14.containsKey(appPlat2.getId()));
             assertTrue(map14.containsKey(appPlat3.getId()));
@@ -1313,7 +1328,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(requests, stats14.requestCount());
             assertEquals(stats14.totalLoadTime(), lastLoadTime);
 
-            LoadingCache<String, Device> deviceCache14 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache14 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache2(deviceCache14, deviceLastLoadTime, d1Key, d2Key);
@@ -1325,7 +1341,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map15 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map15 = cache.asMap();
             assertEquals(2, map15.size());
             assertTrue(map15.containsKey(appPlat2.getId()));
             assertTrue(map15.containsKey(appPlat3.getId()));
@@ -1344,7 +1360,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats15.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats15.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache15 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache15 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache3(deviceCache15, deviceLastLoadTime, d1Key, d2Key, d3Key);
@@ -1356,7 +1373,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map16 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map16 = cache.asMap();
             assertEquals(2, map16.size());
             assertTrue(map16.containsKey(appPlat2.getId()));
             assertTrue(map16.containsKey(appPlat3.getId()));
@@ -1375,7 +1392,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats16.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats16.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache16 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache16 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             deviceLastLoadTime = validateDeviceCache4(deviceCache16, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1389,7 +1407,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             } catch (InvalidCacheLoadException e) {
                 assertEquals(2, cache.size());
 
-                ConcurrentMap<Integer, LoadingCache<String, Device>> map17 = cache.asMap();
+                ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map17 = cache.asMap();
                 assertEquals(2, map17.size());
                 assertTrue(map17.containsKey(appPlat2.getId()));
                 assertTrue(map17.containsKey(appPlat3.getId()));
@@ -1407,7 +1425,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
                 assertEquals(requests, stats17.requestCount());
                 assertEquals(stats17.totalLoadTime(), lastLoadTime);
 
-                LoadingCache<String, Device> deviceCache17 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                LoadingCache<DeviceKey, Device> deviceCache17 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
                         .getId());
                 hits++;
                 requests++;
@@ -1421,7 +1439,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
             assertEquals(2, cache.size());
 
-            ConcurrentMap<Integer, LoadingCache<String, Device>> map18 = cache.asMap();
+            ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map18 = cache.asMap();
             assertEquals(2, map18.size());
             assertTrue(map18.containsKey(appPlat2.getId()));
 
@@ -1439,7 +1457,8 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
             assertEquals(stats18.totalLoadTime(), lastLoadTime);
             lastLoadTime = stats18.totalLoadTime();
 
-            LoadingCache<String, Device> deviceCache18 = getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId());
+            LoadingCache<DeviceKey, Device> deviceCache18 = getDeviceCacheReferenceForApplicationPlatform(appPlat3
+                    .getId());
             hits++;
             requests++;
             validateDeviceCache6(deviceCache18, deviceLastLoadTime, d1Key, d2Key, d3Key, d4Key);
@@ -1461,7 +1480,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map1 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map1 = cache.asMap();
         assertEquals(2, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
         assertTrue(map1.containsKey(appPlat2.getId()));
@@ -1481,17 +1500,17 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertTrue(stats1.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats1.totalLoadTime();
 
-        List<LoadingCache<String, Device>> deviceCaches1 = new ArrayList<>();
+        List<LoadingCache<DeviceKey, Device>> deviceCaches1 = new ArrayList<>();
         deviceCaches1.add(getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId()));
         hits++;
         requests++;
         deviceCaches1.add(getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId()));
         hits++;
         requests++;
-        for (LoadingCache<String, Device> deviceCache : deviceCaches1) {
+        for (LoadingCache<DeviceKey, Device> deviceCache : deviceCaches1) {
             assertEquals(0, deviceCache.size());
 
-            ConcurrentMap<String, Device> deviceMap = deviceCache.asMap();
+            ConcurrentMap<DeviceKey, Device> deviceMap = deviceCache.asMap();
             assertEquals(0, deviceMap.size());
 
             long deviceLastLoadTime = 0;
@@ -1517,7 +1536,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map2 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map2 = cache.asMap();
         assertEquals(2, map2.size());
         assertTrue(map2.containsKey(appPlat1.getId()));
         assertTrue(map2.containsKey(appPlat2.getId()));
@@ -1535,17 +1554,17 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(requests, stats2.requestCount());
         assertEquals(stats2.totalLoadTime(), lastLoadTime);
         
-        List<LoadingCache<String, Device>> deviceCaches2 = new ArrayList<>();
+        List<LoadingCache<DeviceKey, Device>> deviceCaches2 = new ArrayList<>();
         deviceCaches2.add(getDeviceCacheReferenceForApplicationPlatform(appPlat1.getId()));
         hits++;
         requests++;
         deviceCaches2.add(getDeviceCacheReferenceForApplicationPlatform(appPlat2.getId()));
         hits++;
         requests++;
-        for (LoadingCache<String, Device> deviceCache : deviceCaches2) {
+        for (LoadingCache<DeviceKey, Device> deviceCache : deviceCaches2) {
 	        assertEquals(0, deviceCache.size());
 	
-	        ConcurrentMap<String, Device> deviceMap = deviceCache.asMap();
+            ConcurrentMap<DeviceKey, Device> deviceMap = deviceCache.asMap();
 	        assertEquals(0, deviceMap.size());
 	
             long deviceLastLoadTime = 0;
@@ -1570,7 +1589,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
 
         assertEquals(2, cache.size());
 
-        ConcurrentMap<Integer, LoadingCache<String, Device>> map3 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<DeviceKey, Device>> map3 = cache.asMap();
         assertEquals(2, map3.size());
         assertTrue(map3.containsKey(appPlat3.getId()));
         assertTrue(map3.containsKey(appPlat4.getId()));
@@ -1588,17 +1607,17 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(requests, stats3.requestCount());
         assertTrue(stats3.totalLoadTime() > lastLoadTime);
 
-        List<LoadingCache<String, Device>> deviceCaches3 = new ArrayList<>();
+        List<LoadingCache<DeviceKey, Device>> deviceCaches3 = new ArrayList<>();
         deviceCaches3.add(getDeviceCacheReferenceForApplicationPlatform(appPlat3.getId()));
         hits++;
         requests++;
         deviceCaches3.add(getDeviceCacheReferenceForApplicationPlatform(appPlat4.getId()));
         hits++;
         requests++;
-        for (LoadingCache<String, Device> deviceCache : deviceCaches2) {
+        for (LoadingCache<DeviceKey, Device> deviceCache : deviceCaches3) {
             assertEquals(0, deviceCache.size());
 
-            ConcurrentMap<String, Device> deviceMap = deviceCache.asMap();
+            ConcurrentMap<DeviceKey, Device> deviceMap = deviceCache.asMap();
             assertEquals(0, deviceMap.size());
 
             long deviceLastLoadTime = 0;

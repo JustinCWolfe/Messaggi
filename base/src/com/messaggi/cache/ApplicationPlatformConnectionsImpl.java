@@ -15,6 +15,8 @@ import com.messaggi.external.MessagingServiceConnection;
 
 public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformConnections
 {
+    static final int DEFAULT_NUMBER_OF_CONNECTIONS = 2;
+
     private static final ApplicationPlatformDAO applicationPlatformsDao;
 
     private static final CacheLoader<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> applicationPlatformCacheLoader;
@@ -53,7 +55,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
                         .build(connectionCacheLoader);
                 //TODO: get the number of connections to spin up automatically for this 
                 //application platform from the domain object.
-                int numberOfConnections = 2;
+                int numberOfConnections = DEFAULT_NUMBER_OF_CONNECTIONS;
                 for (int connectionIndex = 1; connectionIndex <= numberOfConnections; connectionIndex++) {
                     connectionCache.get(new ConnectionKey(ap.getId(), connectionIndex));
                 }
@@ -159,8 +161,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
     // and android connection implementation objects.
     @Override
     public MessagingServiceConnection getConnection(Integer applicationPlatformId, String fromDeviceCode,
-            String toDeviceCode)
-        throws ExecutionException
+            String toDeviceCode) throws ExecutionException
     {
         LoadingCache<ConnectionKey, MessagingServiceConnection> connectionCache = cache.get(applicationPlatformId);
         Integer connectionId = computeConnectionId(connectionCache.size(), fromDeviceCode, toDeviceCode);
