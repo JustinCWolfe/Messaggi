@@ -212,6 +212,7 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
                 return false;
             return true;
         }
+
     }
 }
 
