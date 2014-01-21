@@ -56,7 +56,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
                 //TODO: get the number of connections to spin up automatically for this 
                 //application platform from the domain object.
                 int numberOfConnections = DEFAULT_NUMBER_OF_CONNECTIONS;
-                for (int connectionIndex = 1; connectionIndex <= numberOfConnections; connectionIndex++) {
+                for (int connectionIndex = 0; connectionIndex < numberOfConnections; connectionIndex++) {
                     connectionCache.get(new ConnectionKey(ap.getId(), connectionIndex));
                 }
                 return connectionCache;
@@ -154,7 +154,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
     private int computeConnectionId(long connectionCacheSize, String from, String to)
     {
         int hashCode = (from + to).hashCode();
-        return (int) (hashCode % connectionCacheSize);
+        return (int) (Math.abs(hashCode) % connectionCacheSize);
     }
 
     //TODO: The cache values will be connection interfaces that will be implemented by the apple 
@@ -164,7 +164,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
             String toDeviceCode) throws ExecutionException
     {
         LoadingCache<ConnectionKey, MessagingServiceConnection> connectionCache = cache.get(applicationPlatformId);
-        Integer connectionId = computeConnectionId(connectionCache.size(), fromDeviceCode, toDeviceCode);
+        int connectionId = computeConnectionId(connectionCache.size(), fromDeviceCode, toDeviceCode);
         // Calling getIfPresent will never cause values to be loaded.
         return connectionCache.getIfPresent(new ConnectionKey(applicationPlatformId, connectionId));
     }
@@ -178,7 +178,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         }
         cache = builder.build(applicationPlatformCacheLoader);
     }
-    
+
     public static class ConnectionKey
     {
         private final Integer applicationPlatformId;
@@ -208,7 +208,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
                 return true;
             if (obj == null)
                 return false;
-            if (getClass() != obj.getClass())
+            if (!(obj instanceof ConnectionKey))
                 return false;
             ConnectionKey other = (ConnectionKey) obj;
             if (applicationPlatformId == null) {

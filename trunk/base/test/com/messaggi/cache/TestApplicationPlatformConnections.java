@@ -2,6 +2,7 @@ package com.messaggi.cache;
 
 import static com.messaggi.cache.ApplicationPlatformConnectionsImpl.DEFAULT_NUMBER_OF_CONNECTIONS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,13 +55,80 @@ public class TestApplicationPlatformConnections extends TestApplicationPlatformB
         appPlats.add(appPlat1);
         appPlats.add(appPlat2);
         appPlats.add(appPlat3);
+
+        int hits = 0;
+        int requests = 0;
+        int numberOfFromToPairs = 1000;
+
         for (int appPlatIndex = 0; appPlatIndex < appPlats.size(); appPlatIndex++) {
             ApplicationPlatform appPlat = appPlats.get(appPlatIndex);
-            for (int sendReceiveIndex = 0; sendReceiveIndex < 1000; sendReceiveIndex++) {
-                String from = "sender" + sendReceiveIndex;
-                String to = "receiver" + sendReceiveIndex;
-                ApplicationPlatformConnections.Instance.getInstance().getConnection(appPlat.getId(), from, to);
+            for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
+                String from = RandomStringUtils.random(10 + sendReceiveIndex);
+                String to = RandomStringUtils.random(10 + sendReceiveIndex);
+                MessagingServiceConnection conn = ApplicationPlatformConnections.Instance.getInstance().getConnection(
+                        appPlat.getId(), from, to);
+                assertNotNull(conn);
+                assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
             }
+            hits += (numberOfFromToPairs - 1);
+            requests += numberOfFromToPairs;
+        }
+
+        assertEquals(3, cache.size());
+
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = cache.asMap();
+        assertEquals(3, map1.size());
+        assertTrue(map1.containsKey(appPlat1.getId()));
+        assertTrue(map1.containsKey(appPlat2.getId()));
+        assertTrue(map1.containsKey(appPlat3.getId()));
+
+        long lastLoadTime = 0;
+        CacheStats stats1 = cache.stats();
+        assertEquals(0, stats1.evictionCount());
+        assertEquals(hits, stats1.hitCount());
+        assertEquals(hits / (double) requests, stats1.hitRate(), EPSILON);
+        assertEquals(3, stats1.loadCount());
+        assertEquals(0, stats1.loadExceptionCount());
+        assertEquals(0.0, stats1.loadExceptionRate(), EPSILON);
+        assertEquals(3, stats1.loadSuccessCount());
+        assertEquals(requests - hits, stats1.missCount());
+        assertEquals((requests - hits) / (double) requests, stats1.missRate(), EPSILON);
+        assertEquals(requests, stats1.requestCount());
+        assertTrue(stats1.totalLoadTime() > lastLoadTime);
+        lastLoadTime = stats1.totalLoadTime();
+
+        List<LoadingCache<ConnectionKey, MessagingServiceConnection>> connectionCaches1 = new ArrayList<>();
+        connectionCaches1.add(getConnectionCacheReferenceForApplicationPlatform(appPlat1.getId()));
+        hits++;
+        requests++;
+        connectionCaches1.add(getConnectionCacheReferenceForApplicationPlatform(appPlat2.getId()));
+        hits++;
+        requests++;
+        connectionCaches1.add(getConnectionCacheReferenceForApplicationPlatform(appPlat3.getId()));
+        hits++;
+        requests++;
+        for (LoadingCache<ConnectionKey, MessagingServiceConnection> connectionCache : connectionCaches1) {
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS, connectionCache.size());
+
+            ConcurrentMap<ConnectionKey, MessagingServiceConnection> connectionMap = connectionCache.asMap();
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS, connectionMap.size());
+
+            long connectionLastLoadTime = 0;
+            CacheStats connectionStats = connectionCache.stats();
+            assertEquals(0, connectionStats.evictionCount());
+            assertEquals(numberOfFromToPairs, connectionStats.hitCount());
+            assertEquals(numberOfFromToPairs / (double) (DEFAULT_NUMBER_OF_CONNECTIONS + numberOfFromToPairs),
+                    connectionStats.hitRate(), EPSILON);
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS, connectionStats.loadCount());
+            assertEquals(0, connectionStats.loadExceptionCount());
+            assertEquals(0.0, connectionStats.loadExceptionRate(), EPSILON);
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS, connectionStats.loadSuccessCount());
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS, connectionStats.missCount());
+            assertEquals(
+                    DEFAULT_NUMBER_OF_CONNECTIONS / (double) (DEFAULT_NUMBER_OF_CONNECTIONS + numberOfFromToPairs),
+                    connectionStats.missRate(), EPSILON);
+            assertEquals(DEFAULT_NUMBER_OF_CONNECTIONS + numberOfFromToPairs, connectionStats.requestCount());
+            assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
     }
 
