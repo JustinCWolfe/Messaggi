@@ -4,6 +4,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.collect.ImmutableMap;
+import com.messaggi.util.JNDIHelper;
 
 /**
  * Maps application platform tokens to application platform ids. Tokens are
@@ -25,7 +26,7 @@ public interface ApplicationPlatformTokens
             if (instance == null) {
                 synchronized (lock) {
 		            if (instance == null) {
-		                instance = CacheHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
+                        instance = JNDIHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
 		            }
                 }
             }

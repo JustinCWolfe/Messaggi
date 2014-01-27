@@ -29,6 +29,13 @@
 		type="java.lang.String" 
 		override="false"/>
 
+	<Environment 
+		name="SendMessageThreadPoolImpl" 
+		description="Implementation class name for SendMessage thread pool." 
+		value="com.messaggi.messaging.pool.SendMessageThreadPoolImpl" 
+		type="java.lang.String" 
+		override="false"/>
+		
 	<Resource 
 		name="jdbc/Messaggi" 
 		auth="Container" 

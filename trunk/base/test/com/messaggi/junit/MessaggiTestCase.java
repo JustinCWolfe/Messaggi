@@ -15,6 +15,7 @@ import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Tomcat;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.messaggi.dao.persist.PersistManager;
@@ -157,6 +158,7 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         setupTestingContext();
     }
 
+    @AfterClass
     public static void suiteTearDown() throws Exception
     {
         stopTomcatEmbedded();

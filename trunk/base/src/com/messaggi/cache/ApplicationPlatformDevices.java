@@ -3,6 +3,7 @@ package com.messaggi.cache;
 import java.util.concurrent.ExecutionException;
 
 import com.messaggi.domain.Device;
+import com.messaggi.util.JNDIHelper;
 
 /**
  * Cache of devices per application platform. This is a multi-level cache where
@@ -25,7 +26,7 @@ public interface ApplicationPlatformDevices
             if (instance == null) {
                 synchronized (lock) {
                     if (instance == null) {
-                        instance = CacheHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
+                        instance = JNDIHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
                     }
                 }
             }
