@@ -358,5 +358,79 @@ public class TestApplicationPlatformConnections extends TestApplicationPlatformB
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
     }
+
+    @Test
+    public void testInitialize() throws Exception
+    {
+        validateCacheInitialState(cache);
+
+        List<ApplicationPlatform> appPlats = new ArrayList<>();
+        appPlats.add(appPlat1);
+        appPlats.add(appPlat2);
+        appPlats.add(appPlat3);
+
+        int hits = 0;
+        int requests = 0;
+        int numberOfFromToPairs = 1000;
+
+        for (int appPlatIndex = 0; appPlatIndex < appPlats.size(); appPlatIndex++) {
+            ApplicationPlatform appPlat = appPlats.get(appPlatIndex);
+            for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
+                String from = RandomStringUtils.random(10 + sendReceiveIndex);
+                String to = RandomStringUtils.random(10 + sendReceiveIndex);
+                MessagingServiceConnection conn = ApplicationPlatformConnections.Instance.getInstance().getConnection(
+                        appPlat.getId(), from, to);
+                assertNotNull(conn);
+                assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
+            }
+            hits += (numberOfFromToPairs - 1);
+            requests += numberOfFromToPairs;
+        }
+
+        assertEquals(3, cache.size());
+
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = cache.asMap();
+        assertEquals(3, map1.size());
+        assertTrue(map1.containsKey(appPlat1.getId()));
+        assertTrue(map1.containsKey(appPlat2.getId()));
+        assertTrue(map1.containsKey(appPlat3.getId()));
+
+        long lastLoadTime = 0;
+        CacheStats stats1 = cache.stats();
+        assertEquals(0, stats1.evictionCount());
+        assertEquals(hits, stats1.hitCount());
+        assertEquals(hits / (double) requests, stats1.hitRate(), EPSILON);
+        assertEquals(3, stats1.loadCount());
+        assertEquals(0, stats1.loadExceptionCount());
+        assertEquals(0.0, stats1.loadExceptionRate(), EPSILON);
+        assertEquals(3, stats1.loadSuccessCount());
+        assertEquals(requests - hits, stats1.missCount());
+        assertEquals((requests - hits) / (double) requests, stats1.missRate(), EPSILON);
+        assertEquals(requests, stats1.requestCount());
+        assertTrue(stats1.totalLoadTime() > lastLoadTime);
+        lastLoadTime = stats1.totalLoadTime();
+
+        CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
+        ApplicationPlatformConnections.Instance.getInstance().initialize(cip);
+        createCacheReference();
+
+        assertEquals(0, cache.size());
+
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map2 = cache.asMap();
+        assertEquals(0, map2.size());
+
+        CacheStats stats2 = cache.stats();
+        assertEquals(0, stats2.evictionCount());
+        assertEquals(0, stats2.hitCount());
+        assertEquals(1.0, stats2.hitRate(), EPSILON);
+        assertEquals(0, stats2.loadCount());
+        assertEquals(0, stats2.loadExceptionCount());
+        assertEquals(0, stats2.loadExceptionRate(), EPSILON);
+        assertEquals(0, stats2.loadSuccessCount());
+        assertEquals(0, stats2.missCount());
+        assertEquals(0.0, stats2.missRate(), EPSILON);
+        assertEquals(0, stats2.requestCount());
+        assertTrue(stats2.totalLoadTime() == 0);
+    }
 }
 

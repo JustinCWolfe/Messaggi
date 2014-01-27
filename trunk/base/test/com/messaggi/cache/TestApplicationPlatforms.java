@@ -401,5 +401,57 @@ public class TestApplicationPlatforms extends TestApplicationPlatformBase
         assertEquals(10, stats5.requestCount());
         assertEquals(lastLoadTime, stats5.totalLoadTime());
     }
+
+    @Test
+    public void testInitialize() throws Exception
+    {
+        validateCacheInitialState(cache);
+
+        ApplicationPlatform appPlat11 = ApplicationPlatforms.Instance.getInstance().get(appPlat1.getId());
+        assertEquals(appPlat1.getId(), appPlat11.getId());
+
+        assertEquals(1, cache.size());
+
+        ConcurrentMap<Integer, ApplicationPlatform> map1 = cache.asMap();
+        assertEquals(1, map1.size());
+        assertTrue(map1.containsKey(appPlat1.getId()));
+
+        long lastLoadTime = 0;
+        CacheStats stats1 = cache.stats();
+        assertEquals(0, stats1.evictionCount());
+        assertEquals(0, stats1.hitCount());
+        assertEquals(0, stats1.hitRate(), EPSILON);
+        assertEquals(1, stats1.loadCount());
+        assertEquals(0, stats1.loadExceptionCount());
+        assertEquals(0, stats1.loadExceptionRate(), EPSILON);
+        assertEquals(1, stats1.loadSuccessCount());
+        assertEquals(1, stats1.missCount());
+        assertEquals(1.0, stats1.missRate(), EPSILON);
+        assertEquals(1, stats1.requestCount());
+        assertTrue(stats1.totalLoadTime() > lastLoadTime);
+        lastLoadTime = stats1.totalLoadTime();
+
+        CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
+        ApplicationPlatforms.Instance.getInstance().initialize(cip);
+        createCacheReference();
+
+        assertEquals(0, cache.size());
+
+        ConcurrentMap<Integer, ApplicationPlatform> map2 = cache.asMap();
+        assertEquals(0, map2.size());
+
+        CacheStats stats2 = cache.stats();
+        assertEquals(0, stats2.evictionCount());
+        assertEquals(0, stats2.hitCount());
+        assertEquals(1.0, stats2.hitRate(), EPSILON);
+        assertEquals(0, stats2.loadCount());
+        assertEquals(0, stats2.loadExceptionCount());
+        assertEquals(0, stats2.loadExceptionRate(), EPSILON);
+        assertEquals(0, stats2.loadSuccessCount());
+        assertEquals(0, stats2.missCount());
+        assertEquals(0.0, stats2.missRate(), EPSILON);
+        assertEquals(0, stats2.requestCount());
+        assertTrue(stats2.totalLoadTime() == 0);
+    }
 }
 
