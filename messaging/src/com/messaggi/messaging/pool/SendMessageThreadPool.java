@@ -1,5 +1,8 @@
 package com.messaggi.messaging.pool;
 
+import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.domain.Device;
+import com.messaggi.messaging.messages.Message;
 import com.messaggi.util.JNDIHelper;
 
 public interface SendMessageThreadPool
@@ -24,5 +27,9 @@ public interface SendMessageThreadPool
             return instance;
         }
     }
+
+    void sendMessage(ApplicationPlatform appPlat, Device from, Device to, Message msg) throws Exception;
+
+    void shutdownAndAwaitTermination() throws Exception;
 }
 
