@@ -78,7 +78,6 @@ public class TestApplicationPlatformBase extends MessaggiTestCase
         TestDataHelper.deleteUser(user1);
     }
     
-    @SuppressWarnings("unchecked")
     protected static Field getCacheField(Class<?> cacheImplClass) throws Exception
     {
         Field cacheField = cacheImplClass.getDeclaredField("cache");

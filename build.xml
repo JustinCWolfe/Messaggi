@@ -103,7 +103,7 @@
   </target>
 
   <target name="build-war" depends="deploy,deploy-3rdParty" unless="isMinimalBuild">
-    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" update="true">
+    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" compress="true">
       <webinf dir="WebContent/WEB-INF">
           <include name="*"/>
           <include name="**/*"/>
@@ -112,9 +112,8 @@
       <metainf dir="WebContent/META-INF">
           <include name="*"/>
           <include name="**/*"/>
+          <exclude name="MANIFEST.MF"/>
       </metainf>
-      <classes dir="admin/src"/>
-      <classes dir="web/src"/>
     </war>
   </target>
 
