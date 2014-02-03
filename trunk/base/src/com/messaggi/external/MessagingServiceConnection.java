@@ -2,6 +2,7 @@ package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.messages.SendMessageResponse;
 
 public interface MessagingServiceConnection
 {
@@ -37,6 +38,6 @@ public interface MessagingServiceConnection
 
     void connect();
 
-    boolean sendMessage(SendMessageRequest request);
+    SendMessageResponse sendMessage(SendMessageRequest request);
 }
 
