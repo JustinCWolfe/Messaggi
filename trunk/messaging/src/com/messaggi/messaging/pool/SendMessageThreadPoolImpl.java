@@ -11,6 +11,7 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.Message;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.messaging.task.SendMessageTask;
 
 public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadFactory
 {
@@ -40,8 +41,7 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
     {
         MessagingServiceConnection msgConnection = ApplicationPlatformConnections.Instance.getInstance().getConnection(
                 appPlat.getId(), from.getCode(), to.getCode());
-        msgConnection.setSendMessageRequest(new SendMessageRequest(from, to, msg));
-        pool.execute(msgConnection);
+        pool.execute(new SendMessageTask(msgConnection, new SendMessageRequest(from, to, msg)));
     }
 
     @Override

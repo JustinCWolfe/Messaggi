@@ -1,4 +1,4 @@
-package com.messaggi.messaging;
+package com.messaggi.messaging.messages;
 
 import com.messaggi.messages.Message;
 
