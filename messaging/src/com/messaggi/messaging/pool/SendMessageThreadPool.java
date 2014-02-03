@@ -2,7 +2,7 @@ package com.messaggi.messaging.pool;
 
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
-import com.messaggi.messaging.messages.Message;
+import com.messaggi.messages.Message;
 import com.messaggi.util.JNDIHelper;
 
 public interface SendMessageThreadPool

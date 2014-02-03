@@ -5,12 +5,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import com.messaggi.cache.ApplicationPlatformConnections;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
-import com.messaggi.messaging.messages.Message;
+import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messages.Message;
+import com.messaggi.messages.SendMessageRequest;
 
 public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadFactory
 {
+    static final int DEFAULT_NUMBER_OF_THREADS = 10;
+
     private static final String POOL_THREAD_NAME = "SendMessageThread";
 
     private static final int SECONDS_TO_WAIT_FOR_RUNNING_THREADS = 60;
@@ -19,7 +24,7 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
 
     private SendMessageThreadPoolImpl()
     {
-        pool = Executors.newCachedThreadPool(this);
+        pool = Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS, this);
     }
 
     @Override
@@ -33,7 +38,10 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
     @Override
     public void sendMessage(ApplicationPlatform appPlat, Device from, Device to, Message msg) throws Exception
     {
-
+        MessagingServiceConnection msgConnection = ApplicationPlatformConnections.Instance.getInstance().getConnection(
+                appPlat.getId(), from.getCode(), to.getCode());
+        msgConnection.setSendMessageRequest(new SendMessageRequest(from, to, msg));
+        pool.execute(msgConnection);
     }
 
     @Override
