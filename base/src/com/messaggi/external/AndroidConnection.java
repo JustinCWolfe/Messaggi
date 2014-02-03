@@ -2,6 +2,7 @@ package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.messages.SendMessageResponse;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
@@ -26,9 +27,9 @@ public class AndroidConnection implements MessagingServiceConnection
     }
 
     @Override
-    public boolean sendMessage(SendMessageRequest request)
+    public SendMessageResponse sendMessage(SendMessageRequest request)
     {
-        return false;
+        return new SendMessageResponse();
     }
 }
 
