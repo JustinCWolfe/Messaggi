@@ -3,7 +3,7 @@ package com.messaggi.external;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.messages.SendMessageRequest;
 
-public interface MessagingServiceConnection extends Runnable
+public interface MessagingServiceConnection
 {
     public static class ConnectionFactory
     {
@@ -36,10 +36,7 @@ public interface MessagingServiceConnection extends Runnable
     ApplicationPlatform getApplicationPlatform();
 
     void connect();
-    
-    void setSendMessageRequest(SendMessageRequest request);
 
-    @Override
-    void run();
+    boolean sendMessage(SendMessageRequest request);
 }
 

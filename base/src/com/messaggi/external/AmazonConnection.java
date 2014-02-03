@@ -7,8 +7,6 @@ public class AmazonConnection implements MessagingServiceConnection
 {
     private ApplicationPlatform applicationPlatform;
 
-    private SendMessageRequest request;
-
     @Override
     public ApplicationPlatform getApplicationPlatform()
     {
@@ -28,15 +26,9 @@ public class AmazonConnection implements MessagingServiceConnection
     }
 
     @Override
-    public void setSendMessageRequest(SendMessageRequest request)
+    public boolean sendMessage(SendMessageRequest request)
     {
-        this.request = request;
-    }
-
-    @Override
-    public void run()
-    {
-
+        return false;
     }
 }
 
