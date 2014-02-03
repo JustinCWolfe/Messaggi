@@ -1,10 +1,13 @@
 package com.messaggi.external;
 
 import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.messages.SendMessageRequest;
 
 public class WindowsConnection implements MessagingServiceConnection
 {
     private ApplicationPlatform applicationPlatform;
+
+    private SendMessageRequest request;
 
     @Override
     public ApplicationPlatform getApplicationPlatform()
@@ -20,6 +23,18 @@ public class WindowsConnection implements MessagingServiceConnection
 
     @Override
     public void connect()
+    {
+
+    }
+
+    @Override
+    public void setSendMessageRequest(SendMessageRequest request)
+    {
+        this.request = request;
+    }
+
+    @Override
+    public void run()
     {
 
     }
