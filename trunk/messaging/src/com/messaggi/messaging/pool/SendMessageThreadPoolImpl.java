@@ -15,8 +15,6 @@ import com.messaggi.messaging.task.SendMessageTask;
 
 public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadFactory
 {
-    static final int DEFAULT_NUMBER_OF_THREADS = 10;
-
     private static final String POOL_THREAD_NAME = "SendMessageThread";
 
     private static final int SECONDS_TO_WAIT_FOR_RUNNING_THREADS = 60;
@@ -25,7 +23,7 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
 
     private SendMessageThreadPoolImpl()
     {
-        pool = Executors.newFixedThreadPool(DEFAULT_NUMBER_OF_THREADS, this);
+        pool = Executors.newCachedThreadPool(this);
     }
 
     @Override

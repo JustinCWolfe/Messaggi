@@ -21,7 +21,7 @@ public class WindowsConnection implements MessagingServiceConnection
     }
 
     @Override
-    public void connect()
+    public void connect() throws Exception
     {
 
     }
