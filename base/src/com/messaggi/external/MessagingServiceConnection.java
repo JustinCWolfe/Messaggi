@@ -36,7 +36,7 @@ public interface MessagingServiceConnection
 
     ApplicationPlatform getApplicationPlatform();
 
-    void connect();
+    void connect() throws Exception;
 
     SendMessageResponse sendMessage(SendMessageRequest request);
 }

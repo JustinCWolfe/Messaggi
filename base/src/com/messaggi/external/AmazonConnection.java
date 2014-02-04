@@ -21,7 +21,7 @@ public class AmazonConnection implements MessagingServiceConnection
     }
 
     @Override
-    public void connect()
+    public void connect() throws Exception
     {
 
     }

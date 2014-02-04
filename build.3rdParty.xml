@@ -55,6 +55,11 @@
         <include name="guava-15.0.jar"/>
     </fileset>
 
+    <fileset id="smack.lib" dir="${lib}/smack-3.3.1">
+        <include name="smack.jar"/>
+        <include name="smackx.jar"/>
+    </fileset>
+
     <!-- 3rd Party jars that are only used for testing -->
     <path id="3rdParty.unit.test.support">
         <fileset refid="junit.lib"/>
