@@ -23,6 +23,13 @@
 		override="false"/>
 		
 	<Environment 
+		name="MessagingServiceConnectionFactoryImpl" 
+		description="Implementation class name for MessagingServiceConnectionFactory." 
+		value="com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl" 
+		type="java.lang.String" 
+		override="false"/>
+		
+	<Environment 
 		name="ApplicationPlatformConnectionsCacheImpl" 
 		description="Implementation class name for ApplicationPlatformConnections cache." 
 		value="com.messaggi.cache.ApplicationPlatformConnectionsImpl" 

@@ -12,6 +12,7 @@ import com.google.common.cache.LoadingCache;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.external.MessagingServiceConnectionFactory;
 
 public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformConnections
 {
@@ -138,7 +139,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
     {
         ApplicationPlatform applicationPlatform = ApplicationPlatforms.Instance.getInstance().get(
                 key.applicationPlatformId);
-        return MessagingServiceConnection.ConnectionFactory.create(applicationPlatform);
+        return MessagingServiceConnectionFactory.Instance.getInstance().create(applicationPlatform);
     }
     
     @Override

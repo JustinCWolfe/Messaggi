@@ -15,6 +15,7 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.ApplicationPlatform.Platform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.external.MessagingServiceConnectionFactory;
 import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.messages.SendMessageRequest;
 
@@ -44,7 +45,7 @@ public class TestAndroidConnection extends MessaggiTestCase
     public static void setUpBeforeClass() throws Exception
     {
         APP_PLAT.setPlatform(Platform.ANDROID);
-        androidConnection = MessagingServiceConnectionFactory.create(APP_PLAT);
+        androidConnection = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
         assertSame(APP_PLAT, androidConnection.getApplicationPlatform());
     }
 
