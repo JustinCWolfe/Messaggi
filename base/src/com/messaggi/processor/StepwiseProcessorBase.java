@@ -2,8 +2,8 @@ package com.messaggi.processor;
 
 import java.util.Observer;
 
-import com.messaggi.StepBase;
-import com.messaggi.StepBase.Result;
+import com.messaggi.util.StepBase;
+import com.messaggi.util.StepBase.Result;
 
 public abstract class StepwiseProcessorBase<T, U> implements Observer
 {

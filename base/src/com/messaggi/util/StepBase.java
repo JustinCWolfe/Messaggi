@@ -1,4 +1,4 @@
-package com.messaggi;
+package com.messaggi.util;
 
 import java.util.Observable;
 
