@@ -5,14 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import com.messaggi.cache.ApplicationPlatformConnections;
-import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.domain.Device;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messages.Message;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messaging.task.SendMessageTask;
-
 public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadFactory
 {
     private static final String POOL_THREAD_NAME = "SendMessageThread";
@@ -34,13 +26,13 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
         return thread;
     }
 
-    @Override
-    public void sendMessage(ApplicationPlatform appPlat, Device from, Device to, Message msg) throws Exception
-    {
-        MessagingServiceConnection msgConnection = ApplicationPlatformConnections.Instance.getInstance().getConnection(
-                appPlat.getId(), from.getCode(), to.getCode());
-        pool.execute(new SendMessageTask(msgConnection, new SendMessageRequest(from, to, msg)));
-    }
+    //@Override
+    //public void sendMessage(ApplicationPlatform appPlat, Device from, Device to, Message msg) throws Exception
+    //{
+    //    MessagingServiceConnection msgConnection = ApplicationPlatformConnections.Instance.getInstance().getConnection(
+    //            appPlat.getId(), from.getCode(), to.getCode());
+    //    pool.execute(new SendMessageTask(msgConnection, new SendMessageRequest(from, to, msg)));
+    //}
 
     @Override
     public void shutdownAndAwaitTermination() throws Exception

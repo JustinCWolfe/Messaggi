@@ -1,4 +1,4 @@
-package com.messaggi.external;
+package com.messaggi.messaging.external;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -14,6 +14,7 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.util.StringUtils;
 
 import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 

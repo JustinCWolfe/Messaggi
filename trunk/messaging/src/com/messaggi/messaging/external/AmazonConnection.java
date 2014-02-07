@@ -1,6 +1,7 @@
-package com.messaggi.external;
+package com.messaggi.messaging.external;
 
 import com.messaggi.domain.ApplicationPlatform;
+import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 
