@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.glassfish.jersey.client.ClientConfig;
 
@@ -21,6 +22,7 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.util.JAXBHelper;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
@@ -65,10 +67,20 @@ public class AndroidConnection implements MessagingServiceConnection
         // Note that for android HTTP, the application platform  is not required since we do not 
         // establish a stateful connection with the messaging service.
         Invocation.Builder invocationBuilder = SEND_MESSAGE_WEB_TARGET.request();
-        //invocationBuilder.header(AUTHORIZATION_HEADER_NAME,
-        //        String.format(AUTHORIZATION_HEADER_VALUE_FORMAT, applicationPlatform.getExternalServiceToken()));
+        String authentication = String.format(AUTHORIZATION_HEADER_VALUE_FORMAT,
+                applicationPlatform.getExternalServiceToken());
+        invocationBuilder.header(AUTHORIZATION_HEADER_NAME, authentication);
+
         Entity<AndroidSendMessageRequest> entity = Entity.entity(new AndroidSendMessageRequest(request),
                 MediaType.APPLICATION_JSON_TYPE);
+
+        // Add helpers to dump to json.
+        try {
+            System.out.println(JAXBHelper.objectToXML(new AndroidSendMessageRequest(request)));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
         Response response = invocationBuilder.post(entity);
         System.out.println(response.getStatus());
         //assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
@@ -86,10 +98,10 @@ public class AndroidConnection implements MessagingServiceConnection
         return smr;
     }
 
-    @XmlRootElement
-    private class AndroidSendMessageRequest
+    @XmlRootElement(name = "")
+    static class AndroidSendMessageRequest
     {
-        private final SendMessageRequest request;
+        private SendMessageRequest request;
 
         /**
          * A string array with the list of devices (registration IDs) receiving
@@ -109,11 +121,6 @@ public class AndroidConnection implements MessagingServiceConnection
             return recipients.toArray(new String[recipients.size()]);
         }
 
-        public void setRegistrationIds(String[] ids)
-        {
-
-        }
-
         /**
          * A string that maps a single user to multiple registration IDs
          * associated with that user. This allows a 3rd-party server to send a
@@ -131,11 +138,6 @@ public class AndroidConnection implements MessagingServiceConnection
             return null;
         }
 
-        public void setNotificationKey(String key)
-        {
-
-        }
-
         /**
          * A JSON object whose fields represents the key-value pairs of the
          * message's payload data. If present, the payload data it will be
@@ -149,15 +151,11 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        @XmlAttribute(name = "data")
+        //@XmlAttribute(name = "data")
+        @XmlTransient
         public Map<String, String> getData()
         {
             return request.messageMap;
-        }
-
-        public void setData(Map<String, String> data)
-        {
-
         }
 
         /**
@@ -173,11 +171,6 @@ public class AndroidConnection implements MessagingServiceConnection
             return null;
         }
 
-        public void setRetrictedPackageName(String name)
-        {
-
-        }
-
         /**
          * If included, allows developers to test their request without actually
          * sending a message. Optional. The default value is false, and must be
@@ -191,9 +184,8 @@ public class AndroidConnection implements MessagingServiceConnection
             return request.isDebug;
         }
 
-        public void isDryRun(boolean isDryRun)
+        public AndroidSendMessageRequest()
         {
-
         }
 
         public AndroidSendMessageRequest(SendMessageRequest request)

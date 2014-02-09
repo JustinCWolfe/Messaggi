@@ -17,6 +17,8 @@
       <path refid="base.module"/>
       <pathelement location="${build}"/>
       <fileset refid="log4j.lib"/>
+      <fileset refid="smack.lib"/>
+      <fileset refid="jersey.lib"/>
   </path>
 
   <path id="classpath.test">
