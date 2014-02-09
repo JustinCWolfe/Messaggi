@@ -19,7 +19,6 @@
       <fileset refid="commons-beanutils.lib"/>
       <fileset refid="tomcat.lib"/>
       <fileset refid="jersey.lib"/>
-      <fileset refid="smack.lib"/>
       <fileset refid="log4j.lib"/>
   </path>
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertSame;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.messaggi.TestDataHelper.ApplicationPlatformAndroidTesting;
 import com.messaggi.TestDataHelper.Device1;
 import com.messaggi.TestDataHelper.Device2;
 import com.messaggi.TestDataHelper.Device3;
@@ -12,7 +13,6 @@ import com.messaggi.TestDataHelper.Device4;
 import com.messaggi.TestDataHelper.Device5;
 import com.messaggi.TestDataHelper.Device6;
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.domain.ApplicationPlatform.Platform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
@@ -25,7 +25,7 @@ public class TestAndroidConnection extends MessaggiTestCase
 
     private static final String MESSAGE2_TEXT = "Some other message text";
 
-    private static final ApplicationPlatform APP_PLAT = new ApplicationPlatform();
+    private static final ApplicationPlatform APP_PLAT = ApplicationPlatformAndroidTesting.getDomainObject();
 
     private static MessagingServiceConnection androidConnection;
 
@@ -44,7 +44,6 @@ public class TestAndroidConnection extends MessaggiTestCase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-        APP_PLAT.setPlatform(Platform.ANDROID);
         androidConnection = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
         assertSame(APP_PLAT, androidConnection.getApplicationPlatform());
     }
@@ -67,7 +66,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         //    ...
         //  },
         //}
-        Device[] to = new Device[] { D2, D3 };
+        Device[] to = { D2, D3 };
         SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT);
         androidConnection.sendMessage(smr);
     }

@@ -2,7 +2,6 @@ package com.messaggi.web.service;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 public interface User
@@ -21,7 +20,6 @@ public interface User
     @XmlRootElement
     class UserRequest
     {
-        @XmlElement(name = "user")
         private com.messaggi.domain.User user;
 
         public com.messaggi.domain.User getUser()
@@ -48,7 +46,6 @@ public interface User
     @XmlRootElement
     class UserResponse
     {
-        @XmlElement(name = "user")
         private com.messaggi.domain.User user;
 
         public com.messaggi.domain.User getUser()
