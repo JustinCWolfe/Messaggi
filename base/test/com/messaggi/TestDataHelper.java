@@ -134,7 +134,7 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.randomUUID();
 
-        public static final String EXTERNAL_SERVICE_TOKEN = "AIzaSyBqpb6EoOn9KEupNRwKUvnL12jC3yWFod8";
+        public static final String EXTERNAL_SERVICE_TOKEN = "AIzaSyABLUu-7vdQFjCZFlf_isKuuq4c2T1lNLA";
 
         public static final Platform PLATFORM = Platform.ANDROID;
 
