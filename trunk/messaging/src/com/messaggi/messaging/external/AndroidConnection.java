@@ -20,6 +20,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.util.JAXBHelper;
@@ -62,7 +63,7 @@ public class AndroidConnection implements MessagingServiceConnection
     }
 
     @Override
-    public SendMessageResponse sendMessage(SendMessageRequest request)
+    public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
         // Note that for android HTTP, the application platform  is not required since we do not 
         // establish a stateful connection with the messaging service.
@@ -80,21 +81,11 @@ public class AndroidConnection implements MessagingServiceConnection
             }
         }
         Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest , MediaType.APPLICATION_JSON_TYPE);
-
         Response response = invocationBuilder.post(entity);
-        System.out.println(response.getStatus());
-
-        //When the message is processed successfully, the HTTP response has a 200 status and the body contains more information about the status of the message (including possible errors). When the request is rejected, the HTTP response contains a non-200 status code (such as 400, 401, or 503).
-        //The following table summarizes the statuses that the HTTP response header might contain. Click the troubleshoot link for advice on how to deal with each type of error.
-        //Response    Description
-        //200 Message was processed successfully. The response body will contain more details about the message status, but its format will depend whether the request was JSON or plain text. SeeInterpreting a success response for more details.
-        //400 Only applies for JSON requests. Indicates that the request could not be parsed as JSON, or it contained invalid fields (for instance, passing a string where a number was expected). The exact failure reason is described in the response and the problem should be addressed before the request can be retried.
-        //401 There was an error authenticating the sender account. Troubleshoot
-        //5xx Errors in the 500-599 range (such as 500 or 503) indicate that there wa an internal error in the GCM server while trying to process the request, or that the server is temporarily unavailable (for example, because of timeouts). Sender must retry later, honoring any Retry-Afterheader included in the response. Application servers must implement exponential back-off.Troubleshoot
-        //assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
-        //assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
-
-        return new SendMessageResponse(response);
+        if (Response.Status.OK.getStatusCode() != response.getStatusInfo().getStatusCode()) {
+            throw new AndroidSendMessageException(response);
+        }
+        return new AndroidSendMessageResponse(response);
     }
 
     @XmlRootElement(name = "")
@@ -190,6 +181,36 @@ public class AndroidConnection implements MessagingServiceConnection
         public AndroidSendMessageRequest(SendMessageRequest request)
         {
             this.request = request;
+        }
+    }
+    
+    @XmlRootElement
+    static class AndroidSendMessageResponse extends SendMessageResponse
+    {
+	    public final Response response;
+	
+        //multicast_id    Unique ID (number) identifying the multicast message.
+        //success Number of messages that were processed without an error.
+        //failure Number of messages that could not be processed.
+        //canonical_ids   Number of results that contain a canonical registration ID. See Advanced Topics for more discussion of this topic.
+        //results Array of objects representing the status of the messages processed. The objects are listed in the same order as the request (i.e., for each registration ID in the request, its result is listed in the same index in the response) and they can have these fields: message_id: String representing the message when it was successfully processed. registration_id: If set, means that GCM processed the message but it has another canonical registration ID for that device, so sender should replace the IDs on future requests (otherwise they might be rejected). This field is never set if there is an error in the request. error: String describing an error that occurred while processing the message for that recipient. The possible values are the same as documented in the above table, plus "Unavailable" (meaning GCM servers were busy and could not process the message for that particular recipient, so it could be retried). 
+
+        public AndroidSendMessageResponse(Response response)
+	    {
+	        this.response = response;
+	    }
+    }
+
+    static class AndroidSendMessageException extends SendMessageException
+    {
+        private static final long serialVersionUID = 8343199742537841201L;
+        
+        public final Response response;
+
+        public AndroidSendMessageException(Response response)
+        {
+            super();
+            this.response = response;
         }
     }
 }

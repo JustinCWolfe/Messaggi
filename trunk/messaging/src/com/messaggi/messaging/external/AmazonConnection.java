@@ -2,6 +2,7 @@ package com.messaggi.messaging.external;
 
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 
@@ -28,7 +29,7 @@ public class AmazonConnection implements MessagingServiceConnection
     }
 
     @Override
-    public SendMessageResponse sendMessage(SendMessageRequest request)
+    public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
         return new SendMessageResponse();
     }

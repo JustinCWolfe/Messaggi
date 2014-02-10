@@ -15,6 +15,7 @@ import org.jivesoftware.smack.util.StringUtils;
 
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 
@@ -121,7 +122,7 @@ public class AndroidConnectionXMPP implements MessagingServiceConnection
     }
 
     @Override
-    public SendMessageResponse sendMessage(SendMessageRequest request)
+    public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
         Packet gcmRequest = new GcmPacketExtension("").toPacket();
         //Packet gcmRequest = new GcmPacketExtension(jsonRequest).toPacket();

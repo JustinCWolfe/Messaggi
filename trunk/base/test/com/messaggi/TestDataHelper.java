@@ -585,8 +585,9 @@ public class TestDataHelper
 
     public static String getRegistrationIDForAPIKey(String androidAPIKey, Context context)
     {
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        return gcm.register(androidAPIKey);
+        //GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+        //return gcm.register(androidAPIKey);
+        return null;
     }
 }
 
