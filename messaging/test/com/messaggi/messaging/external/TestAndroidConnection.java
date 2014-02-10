@@ -1,6 +1,7 @@
 package com.messaggi.messaging.external;
 
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +19,9 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
 import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.messages.SendMessageResponse;
 
 public class TestAndroidConnection extends MessaggiTestCase
 {
@@ -63,32 +66,51 @@ public class TestAndroidConnection extends MessaggiTestCase
         ApplicationPlatform invalidAPIKeyAppPlat = ApplicationPlatform1.getDomainObject();
         MessagingServiceConnection connection = MessagingServiceConnectionFactory.Instance.getInstance().create(
                 invalidAPIKeyAppPlat);
-        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
-        connection.sendMessage(smr);
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
+        try {
+            connection.sendMessage(request);
+            fail("should not get here");
+        } catch (SendMessageException e) {
+            // get the response out of the exception
+            //SendMessageResponse response = 
+            return;
+        }
+        fail("should not get here");
     }
 
     @Test
     public void testSendMessage_InvalidRegistrationIDKey() throws Exception
     {
         Device[] to = { D2 };
-        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
-        androidConnection.sendMessage(smr);
+        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_TEXT, false);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (SendMessageException e) {
+            // get the response out of the exception
+            //SendMessageResponse response = 
+            return;
+        }
+        fail("should not get here");
     }
 
     @Test
     public void testSendMessage_SingleRegistrationID() throws Exception
     {
         Device[] to = { D2 };
-        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
-        androidConnection.sendMessage(smr);
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
+        SendMessageResponse response = androidConnection.sendMessage(request);
+        // add validation
     }
 
     @Test
     public void testSendMessage_MultipleRegistrationIDs() throws Exception
     {
         Device[] to = { D2, D3, D4, D5, D6 };
-        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
-        androidConnection.sendMessage(smr);
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
+        SendMessageResponse response = androidConnection.sendMessage(request);
+        // add validation
     }
 }
 
