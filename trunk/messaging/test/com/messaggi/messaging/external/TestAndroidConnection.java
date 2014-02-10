@@ -18,6 +18,7 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
 import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.util.JAXBHelper;
 
 public class TestAndroidConnection extends MessaggiTestCase
 {
@@ -56,7 +57,19 @@ public class TestAndroidConnection extends MessaggiTestCase
     }
 
     @Test
-    public void testSendMessage()
+    public void testSendMessage_InvalidAPIKey() throws Exception
+    {
+
+    }
+
+    @Test
+    public void testSendMessage_InvalidRegistrationIDKey() throws Exception
+    {
+
+    }
+
+    @Test
+    public void testSendMessage() throws Exception
     {
         //Content-Type:application/json
         //Authorization:key=AIzaSyB-1uEai2WiUapxCs2Q0GZYzPu7Udno5aA
@@ -67,8 +80,15 @@ public class TestAndroidConnection extends MessaggiTestCase
         //  },
         //}
         Device[] to = { D2, D3 };
-        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT);
+        SendMessageRequest smr = new SendMessageRequest(D1, to, MESSAGE1_TEXT, true);
+        System.out.println(JAXBHelper.objectToXML(smr));
         androidConnection.sendMessage(smr);
+    }
+
+    @Test
+    public void testSendMessage_MultipleRegistrationIDs() throws Exception
+    {
+
     }
 }
 

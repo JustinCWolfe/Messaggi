@@ -11,7 +11,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,11 +22,10 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.util.JAXBHelper;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
-    private static final String AUTHORIZATION_HEADER_NAME = "Authorization:";
+    private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
 
     private static final String AUTHORIZATION_HEADER_VALUE_FORMAT = "key=%s";
 
@@ -74,18 +73,8 @@ public class AndroidConnection implements MessagingServiceConnection
         Entity<AndroidSendMessageRequest> entity = Entity.entity(new AndroidSendMessageRequest(request),
                 MediaType.APPLICATION_JSON_TYPE);
 
-        // Add helpers to dump to json.
-        try {
-            System.out.println(JAXBHelper.objectToXML(new AndroidSendMessageRequest(request)));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
         Response response = invocationBuilder.post(entity);
         System.out.println(response.getStatus());
-        //assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
-        //assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
-        SendMessageResponse smr = response.readEntity(SendMessageResponse.class);
 
         //When the message is processed successfully, the HTTP response has a 200 status and the body contains more information about the status of the message (including possible errors). When the request is rejected, the HTTP response contains a non-200 status code (such as 400, 401, or 503).
         //The following table summarizes the statuses that the HTTP response header might contain. Click the troubleshoot link for advice on how to deal with each type of error.
@@ -94,8 +83,10 @@ public class AndroidConnection implements MessagingServiceConnection
         //400 Only applies for JSON requests. Indicates that the request could not be parsed as JSON, or it contained invalid fields (for instance, passing a string where a number was expected). The exact failure reason is described in the response and the problem should be addressed before the request can be retried.
         //401 There was an error authenticating the sender account. Troubleshoot
         //5xx Errors in the 500-599 range (such as 500 or 503) indicate that there wa an internal error in the GCM server while trying to process the request, or that the server is temporarily unavailable (for example, because of timeouts). Sender must retry later, honoring any Retry-Afterheader included in the response. Application servers must implement exponential back-off.Troubleshoot
+        //assertEquals(Response.Status.OK.getFamily(), response.getStatusInfo().getFamily());
+        //assertEquals(Response.Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
 
-        return smr;
+        return new SendMessageResponse(response);
     }
 
     @XmlRootElement(name = "")
@@ -111,7 +102,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        @XmlAttribute(name = "registration_ids")
+        @XmlElement(name = "registration_ids")
         public String[] getRegistrationIds()
         {
             List<String> recipients = new ArrayList<>();
@@ -132,7 +123,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        @XmlAttribute(name = "notification_key")
+        @XmlElement(name = "notification_key")
         public String getNotificationKey()
         {
             return null;
@@ -151,7 +142,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        //@XmlAttribute(name = "data")
+        //@XmlElement(name = "data")
         @XmlTransient
         public Map<String, String> getData()
         {
@@ -165,7 +156,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        @XmlAttribute(name = "restricted_package_name")
+        @XmlElement(name = "restricted_package_name")
         public String getRestrictedPackageName()
         {
             return null;
@@ -178,7 +169,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        @XmlAttribute(name = "dry_run")
+        @XmlElement(name = "dry_run")
         public boolean getDryRun()
         {
             return request.isDebug;

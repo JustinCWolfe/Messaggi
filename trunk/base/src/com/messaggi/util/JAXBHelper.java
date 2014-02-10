@@ -7,13 +7,19 @@ import javax.xml.bind.Marshaller;
 
 public class JAXBHelper
 {
-    public static <T> String objectToXML(T instance) throws Exception
+    private static <T> Marshaller getJAXBMarshaller(T instance) throws Exception
     {
         JAXBContext context = JAXBContext.newInstance(instance.getClass());
-        Marshaller m = context.createMarshaller();
+        Marshaller marshaller = context.createMarshaller();
         //for pretty-print XML in JAXB
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        m.setProperty(Marshaller.JAXB_ENCODING, "UTF-16");
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-16");
+        return marshaller;
+    }
+
+    public static <T> String objectToXML(T instance) throws Exception
+    {
+        Marshaller marshaller = getJAXBMarshaller(instance);
 
         // Write to System.out for debugging
         // m.marshal(emp, System.out);
@@ -22,18 +28,14 @@ public class JAXBHelper
         //m.marshal(instance, new File(FILE_NAME));
 
         try (StringWriter sw = new StringWriter()) {
-            m.marshal(instance, sw);
+            marshaller.marshal(instance, sw);
             return sw.toString();
         }
     }
 
     public static <T> String objectToXML(T[] instances) throws Exception
     {
-        JAXBContext context = JAXBContext.newInstance(instances[0].getClass());
-        Marshaller m = context.createMarshaller();
-        //for pretty-print XML in JAXB
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        m.setProperty(Marshaller.JAXB_ENCODING, "UTF-16");
+        Marshaller marshaller = getJAXBMarshaller(instances[0]);
 
         // Write to System.out for debugging
         // m.marshal(emp, System.out);
@@ -43,9 +45,9 @@ public class JAXBHelper
 
         try (StringWriter sw = new StringWriter()) {
             for (T instance : instances) {
-                m.marshal(instance, sw);
+                marshaller.marshal(instance, sw);
                 // Set JAXB_FRAGMENT to true so subsequent objects will be serialized without the XML header.
-                m.setProperty(Marshaller.JAXB_FRAGMENT, true);
+                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             }
             return sw.toString();
         }
