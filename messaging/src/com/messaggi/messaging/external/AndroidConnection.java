@@ -22,6 +22,7 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.util.JAXBHelper;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
@@ -69,9 +70,16 @@ public class AndroidConnection implements MessagingServiceConnection
         String authentication = String.format(AUTHORIZATION_HEADER_VALUE_FORMAT,
                 applicationPlatform.getExternalServiceToken());
         invocationBuilder.header(AUTHORIZATION_HEADER_NAME, authentication);
-
-        Entity<AndroidSendMessageRequest> entity = Entity.entity(new AndroidSendMessageRequest(request),
-                MediaType.APPLICATION_JSON_TYPE);
+        
+        AndroidSendMessageRequest androidRequest = new AndroidSendMessageRequest(request);
+        if (request.isDebug) {
+            try {
+                System.out.println(JAXBHelper.objectToXML(androidRequest));
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+        }
+        Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest , MediaType.APPLICATION_JSON_TYPE);
 
         Response response = invocationBuilder.post(entity);
         System.out.println(response.getStatus());
