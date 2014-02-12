@@ -25,8 +25,8 @@
       <path refid="base.test.module"/>
       <pathelement location="${build-test}"/>
       <path refid="classpath"/>
-      <fileset refid="junit.lib"/>
       <fileset refid="hamcrest.lib"/>
+      <fileset refid="junit.lib"/>
   </path>
 
   <path id="classpath.run.test">

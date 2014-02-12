@@ -80,18 +80,31 @@ public class AndroidConnection implements MessagingServiceConnection
                 System.err.println(e);
             }
         }
+
+        //TODO: implement automatic retry using exponential back-off.
+        // Errors in the 500-599 range (such as 500 or 503) indicate that there wa an internal error 
+        // in the GCM server while trying to process the request, or that the server is temporarily 
+        // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
+        // Retry-After header included in the response. Application servers must implement exponential back-off.
+
         Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest , MediaType.APPLICATION_JSON_TYPE);
         Response response = invocationBuilder.post(entity);
-        if (Response.Status.OK.getStatusCode() != response.getStatusInfo().getStatusCode()) {
-            throw new AndroidSendMessageException(response);
+        if (Response.Status.OK.getStatusCode() == response.getStatusInfo().getStatusCode()) {
+            AndroidSendMessageResponse androidResponse = response.readEntity(AndroidSendMessageResponse.class);
+            androidResponse.response = response;
+            if (androidResponse.failedMessageCount > 0) {
+                throw new AndroidSendMessageException(androidRequest, androidResponse);
+            }
+            return androidResponse;
         }
-        return new AndroidSendMessageResponse(response);
+        throw new AndroidSendMessageException(androidRequest, new AndroidSendMessageResponse(response));
     }
 
     @XmlRootElement(name = "")
     static class AndroidSendMessageRequest
     {
-        private SendMessageRequest request;
+        @XmlTransient
+        public final SendMessageRequest request;
 
         /**
          * A string array with the list of devices (registration IDs) receiving
@@ -102,14 +115,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * @return
          */
         @XmlElement(name = "registration_ids")
-        public String[] getRegistrationIds()
-        {
-            List<String> recipients = new ArrayList<>();
-            for (Device toDevice : request.to) {
-                recipients.add(toDevice.getCode());
-            }
-            return recipients.toArray(new String[recipients.size()]);
-        }
+        public String[] registrationIds;
 
         /**
          * A string that maps a single user to multiple registration IDs
@@ -123,10 +129,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * @return
          */
         @XmlElement(name = "notification_key")
-        public String getNotificationKey()
-        {
-            return null;
-        }
+        public String notificationKey;
 
         /**
          * A JSON object whose fields represents the key-value pairs of the
@@ -141,12 +144,8 @@ public class AndroidConnection implements MessagingServiceConnection
          * 
          * @return
          */
-        //@XmlElement(name = "data")
-        @XmlTransient
-        public Map<String, String> getData()
-        {
-            return request.messageMap;
-        }
+        @XmlElement(name = "data")
+        public Map<String, String> data;
 
         /**
          * A string containing the package name of your application. When set,
@@ -156,10 +155,7 @@ public class AndroidConnection implements MessagingServiceConnection
          * @return
          */
         @XmlElement(name = "restricted_package_name")
-        public String getRestrictedPackageName()
-        {
-            return null;
-        }
+        public String restrictedPackageName;
 
         /**
          * If included, allows developers to test their request without actually
@@ -169,47 +165,119 @@ public class AndroidConnection implements MessagingServiceConnection
          * @return
          */
         @XmlElement(name = "dry_run")
-        public boolean getDryRun()
-        {
-            return request.isDebug;
-        }
+        public boolean dryRun;
 
         public AndroidSendMessageRequest()
         {
+            this(null);
         }
 
         public AndroidSendMessageRequest(SendMessageRequest request)
         {
             this.request = request;
+            if (request != null) {
+                List<String> recipients = new ArrayList<>();
+                for (Device toDevice : request.to) {
+                    recipients.add(toDevice.getCode());
+                }
+                registrationIds = recipients.toArray(new String[recipients.size()]);
+                data = request.messageMap;
+                dryRun = request.isDebug;
+            }
         }
     }
     
     @XmlRootElement
     static class AndroidSendMessageResponse extends SendMessageResponse
     {
-	    public final Response response;
-	
-        //multicast_id    Unique ID (number) identifying the multicast message.
-        //success Number of messages that were processed without an error.
-        //failure Number of messages that could not be processed.
-        //canonical_ids   Number of results that contain a canonical registration ID. See Advanced Topics for more discussion of this topic.
-        //results Array of objects representing the status of the messages processed. The objects are listed in the same order as the request (i.e., for each registration ID in the request, its result is listed in the same index in the response) and they can have these fields: message_id: String representing the message when it was successfully processed. registration_id: If set, means that GCM processed the message but it has another canonical registration ID for that device, so sender should replace the IDs on future requests (otherwise they might be rejected). This field is never set if there is an error in the request. error: String describing an error that occurred while processing the message for that recipient. The possible values are the same as documented in the above table, plus "Unavailable" (meaning GCM servers were busy and could not process the message for that particular recipient, so it could be retried). 
+        public Response response;
+
+        /**
+         * Unique ID (number) identifying the multicast message.
+         */
+        @XmlElement(name = "multicast_id")
+        public long multicastId;
+
+        /**
+         * Number of messages that were processed without an error.
+         */
+        @XmlElement(name = "success")
+        public long successfulMessageCount;
+
+        /**
+         * Number of messages that could not be processed.
+         */
+        @XmlElement(name = "failure")
+        public long failedMessageCount;
+
+        /**
+         * Number of results that contain a canonical registration ID. See
+         * Advanced Topics for more discussion of this topic.
+         */
+        @XmlElement(name = "canonical_ids")
+        public long canonicalRegistrationIdCount;
+        
+        /**
+         * Array of objects representing the status of the messages processed.
+         * The objects are listed in the same order as the request (i.e., for
+         * each registration ID in the request, its result is listed in the same
+         * index in the response).
+         */
+        @XmlElement(name = "results")
+        public AndroidResult[] results;
+
+        public AndroidSendMessageResponse()
+        {
+        }
 
         public AndroidSendMessageResponse(Response response)
 	    {
 	        this.response = response;
 	    }
+
+        @XmlRootElement
+        static class AndroidResult
+        {
+            /**
+             * String representing the message when it was successfully
+             * processed.
+             */
+            @XmlElement(name = "message_id")
+            public String messageId;
+
+            /**
+             * If set, means that GCM processed the message but it has another
+             * canonical registration ID for that device, so sender should
+             * replace the IDs on future requests (otherwise they might be
+             * rejected). This field is never set if there is an error in the
+             * request.
+             */
+            @XmlElement(name = "registration_id")
+            public long registrationId;
+
+            /**
+             * String describing an error that occurred while processing the
+             * message for that recipient. The possible values are the same as
+             * documented in the above table, plus "Unavailable" (meaning GCM
+             * servers were busy and could not process the message for that
+             * particular recipient, so it could be retried).
+             */
+            @XmlElement(name = "error")
+            public String error;
+        }
     }
 
     static class AndroidSendMessageException extends SendMessageException
     {
         private static final long serialVersionUID = 8343199742537841201L;
         
-        public final Response response;
+        public final AndroidSendMessageRequest request;
+        public final AndroidSendMessageResponse response;
 
-        public AndroidSendMessageException(Response response)
+        public AndroidSendMessageException(AndroidSendMessageRequest request, AndroidSendMessageResponse response)
         {
             super();
+            this.request = request;
             this.response = response;
         }
     }
