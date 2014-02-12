@@ -1,5 +1,6 @@
 package com.messaggi;
 
+import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +10,7 @@ import java.sql.Types;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.UUID;
 
 import com.messaggi.dao.persist.PersistManager;
@@ -22,6 +24,22 @@ import com.messaggi.domain.User;
 
 public class TestDataHelper
 {
+    private static Properties UNIT_TEST_PROPERTIES;
+
+    private static final Properties getUnitTestProperties()
+    {
+        if (UNIT_TEST_PROPERTIES  == null) 
+        {
+            UNIT_TEST_PROPERTIES = new Properties();
+            try {
+                UNIT_TEST_PROPERTIES.load(new FileInputStream("unittest.properties"));
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+        }
+        return UNIT_TEST_PROPERTIES;
+    }
+
     public static class Application1
     {
         public static final String NAME = "Unit Test Application 1";
@@ -134,7 +152,8 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.randomUUID();
 
-        public static final String EXTERNAL_SERVICE_TOKEN = "AIzaSyABLUu-7vdQFjCZFlf_isKuuq4c2T1lNLA";
+        public static final String EXTERNAL_SERVICE_TOKEN = getUnitTestProperties().getProperty(
+                "messaggi.android.server.appkey");
 
         public static final Platform PLATFORM = Platform.ANDROID;
 
@@ -299,6 +318,30 @@ public class TestDataHelper
     }
 
     public static class Device6
+    {
+        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class DeviceAndroidTesting1
+    {
+        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class DeviceAndroidTesting2
     {
         public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
 
@@ -581,13 +624,6 @@ public class TestDataHelper
                 stmt.execute();
             }
         }
-    }
-
-    public static String getRegistrationIDForAPIKey(String androidAPIKey, Context context)
-    {
-        //GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        //return gcm.register(androidAPIKey);
-        return null;
     }
 }
 

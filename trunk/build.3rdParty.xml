@@ -18,6 +18,7 @@
 
     <fileset id="hamcrest.lib" dir="${lib}/org.hamcrest_1.3.0">
         <include name="hamcrest-core-1.3.jar"/>
+        <include name="hamcrest-library-1.3.jar"/>
     </fileset>
 
     <fileset id="tomcat.lib" dir="${lib}/apache-tomcat-7.0.42">
@@ -62,8 +63,8 @@
 
     <!-- 3rd Party jars that are only used for testing -->
     <path id="3rdParty.unit.test.support">
-        <fileset refid="junit.lib"/>
         <fileset refid="hamcrest.lib"/>
+        <fileset refid="junit.lib"/>
         <fileset refid="tomcat-ee-plus.lib"/>
     </path>
 

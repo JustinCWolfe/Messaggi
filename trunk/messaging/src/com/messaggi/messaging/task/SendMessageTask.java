@@ -18,7 +18,7 @@ public class SendMessageTask implements Runnable
     @Override
     public void run()
     {
-        msgConnection.sendMessage(request);
+        //msgConnection.sendMessage(request);
     }
 }
 
