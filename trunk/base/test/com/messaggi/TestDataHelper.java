@@ -331,7 +331,8 @@ public class TestDataHelper
 
     public static class DeviceAndroidTesting1
     {
-        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
+        public static final String CODE = getUnitTestProperties()
+                .getProperty("messaggi.android.client.registrationId1");
 
         public static Device getDomainObject()
         {
@@ -343,7 +344,21 @@ public class TestDataHelper
 
     public static class DeviceAndroidTesting2
     {
-        public static final String CODE = "UNIT_TEST_WINDOWS_DEVICE2";
+        public static final String CODE = getUnitTestProperties()
+                .getProperty("messaggi.android.client.registrationId2");
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
+    public static class DeviceAndroidTesting3
+    {
+        public static final String CODE = getUnitTestProperties()
+                .getProperty("messaggi.android.client.registrationId3");
 
         public static Device getDomainObject()
         {
