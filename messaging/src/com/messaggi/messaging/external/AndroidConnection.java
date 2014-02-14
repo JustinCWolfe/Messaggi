@@ -82,7 +82,7 @@ public class AndroidConnection implements MessagingServiceConnection
         }
 
         //TODO: implement automatic retry using exponential back-off.
-        // Errors in the 500-599 range (such as 500 or 503) indicate that there wa an internal error 
+        // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
         // in the GCM server while trying to process the request, or that the server is temporarily 
         // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
         // Retry-After header included in the response. Application servers must implement exponential back-off.

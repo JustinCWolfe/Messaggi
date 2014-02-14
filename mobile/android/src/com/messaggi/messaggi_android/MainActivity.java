@@ -59,6 +59,9 @@ public class MainActivity extends Activity
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
+            Log.i(TAG, "RegistrationID: " + regid);
+            // Use this to unregister a previously registered device.
+            //unregisterInBackground();
             if (regid.isEmpty()) {
                 registerInBackground();
             }
@@ -130,6 +133,46 @@ public class MainActivity extends Activity
          }
     }
 
+    private void unregisterInBackground()
+    {
+        new AsyncTask<String, Void, String>()
+        {
+            @Override
+            protected String doInBackground(String... params)
+            {
+                StringBuilder messages = new StringBuilder();
+                if (gcm == null) {
+                    gcm = GoogleCloudMessaging.getInstance(context);
+                }
+                int pauseMilliseconds = 200;
+                int unregisterAttempts = 0;
+                while (true) {
+                    try {
+                        unregisterAttempts++;
+                        gcm.unregister();
+                        break;
+                    } catch (IOException ex) {
+                        String msg = "Error :" + ex.getMessage();
+                        Log.i(TAG, "########################################");
+                        Log.i(TAG, msg);
+                        messages.append(msg);
+                        try {
+                            Thread.sleep(pauseMilliseconds * unregisterAttempts);
+                        } catch (InterruptedException e) {
+
+                        }
+                    }
+                }
+                return messages.toString();
+            }
+            @Override
+            protected void onPostExecute(String msg)
+            {
+                mDisplay.append(msg + "\n");
+            }
+        }.execute(null, null, null);
+    }
+
     private void registerInBackground() 
     {
         new AsyncTask<String, Void, String>()
@@ -155,7 +198,6 @@ public class MainActivity extends Activity
 
                     // Persist the regID - no need to register again.
                     storeRegistrationId(context, regid);
-
                 } catch (IOException ex) {
                   msg = "Error :" + ex.getMessage();
                 }
