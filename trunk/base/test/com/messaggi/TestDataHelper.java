@@ -368,6 +368,19 @@ public class TestDataHelper
         }
     }
 
+    public static class DeviceAndroidTesting4
+    {
+        public static final String CODE = getUnitTestProperties().getProperty(
+                "messaggi.android.client.unregisteredDeviceRegistrationId");
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
     public static class User1
     {
         public static final String NAME = "Unit Test User 1";
