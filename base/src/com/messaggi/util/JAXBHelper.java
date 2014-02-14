@@ -17,6 +17,18 @@ public class JAXBHelper
         return marshaller;
     }
 
+    public static <T> String objectToJSON(T instance) throws Exception
+    {
+        /*
+         * ObjectMapper om = new ObjectMapper();
+         * mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS,
+         * false); if (pretty) { return
+         * mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj); }
+         * return mapper.writeValueAsString(obj);
+         */
+        return null;
+    }
+
     public static <T> String objectToXML(T instance) throws Exception
     {
         Marshaller marshaller = getJAXBMarshaller(instance);
