@@ -29,11 +29,10 @@
         <include name="*.jar"/>
     </fileset>
 
-    <fileset id="jersey.lib" dir="${lib}/jaxrs-ri-2.3.1">
+    <fileset id="jersey.lib" dir="${lib}/jaxrs-ri-2.5.1">
       <include name="api/*.jar"/>
       <include name="ext/*.jar"/>
       <include name="lib/*.jar"/>
-      <include name="media/*.jar"/>
     </fileset>
 
     <fileset id="commons-logging.lib" dir="${lib}/commons-logging-1.1.3">

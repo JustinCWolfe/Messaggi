@@ -76,6 +76,7 @@ public class AndroidConnection implements MessagingServiceConnection
         if (request.isDebug) {
             try {
                 System.out.println(JAXBHelper.objectToXML(androidRequest));
+                System.out.println(JAXBHelper.objectToJSON(androidRequest));
             } catch (Exception e) {
                 System.err.println(e);
             }
