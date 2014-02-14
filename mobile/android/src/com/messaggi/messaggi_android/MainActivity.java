@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -51,6 +52,10 @@ public class MainActivity extends Activity
         setContentView(R.layout.activity_main);
         mDisplay = (TextView) findViewById(R.id.normal);
         context = getApplicationContext();
+
+        String deviceId = getDeviceUUID(context);
+        Log.i(TAG + " device id: ", deviceId);
+
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
@@ -175,6 +180,13 @@ public class MainActivity extends Activity
         // Your implementation here.
     }
 
+    private void sendMessage() throws IOException
+    {
+        String regId = getRegistrationId(this);
+        Bundle data = new Bundle();
+        gcm.send(SENDER_ID + "@gcm.googleapis.com", regId, data);
+    }
+
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
@@ -193,5 +205,18 @@ public class MainActivity extends Activity
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+    }
+
+    public String getDeviceUUID(Context context)
+    {
+        return Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+        // This doesn't work in the emulator.
+        /*
+         * TelephonyManager manager = (TelephonyManager)
+         * context.getSystemService(Context.TELEPHONY_SERVICE); if
+         * (manager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+         * //Tablet return Secure.getString(getContentResolver(),
+         * Secure.ANDROID_ID); } else { //Mobile return manager.getDeviceId(); }
+         */
     }
 }
