@@ -20,6 +20,7 @@
       <fileset refid="tomcat.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="log4j.lib"/>
+      <fileset refid="jackson.lib"/>
   </path>
 
   <path id="classpath.test">

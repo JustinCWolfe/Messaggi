@@ -23,7 +23,6 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.util.JAXBHelper;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
@@ -67,20 +66,10 @@ public class AndroidConnection implements MessagingServiceConnection
     {
         // Note that for android HTTP, the application platform  is not required since we do not 
         // establish a stateful connection with the messaging service.
-        Invocation.Builder invocationBuilder = SEND_MESSAGE_WEB_TARGET.request();
+        Invocation.Builder invocationBuilder = SEND_MESSAGE_WEB_TARGET.request(MediaType.APPLICATION_JSON_TYPE);
         String authentication = String.format(AUTHORIZATION_HEADER_VALUE_FORMAT,
                 applicationPlatform.getExternalServiceToken());
         invocationBuilder.header(AUTHORIZATION_HEADER_NAME, authentication);
-        
-        AndroidSendMessageRequest androidRequest = new AndroidSendMessageRequest(request);
-        if (request.isDebug) {
-            try {
-                System.out.println(JAXBHelper.objectToXML(androidRequest));
-                System.out.println(JAXBHelper.objectToJSON(androidRequest));
-            } catch (Exception e) {
-                System.err.println(e);
-            }
-        }
 
         //TODO: implement automatic retry using exponential back-off.
         // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
@@ -88,7 +77,8 @@ public class AndroidConnection implements MessagingServiceConnection
         // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
         // Retry-After header included in the response. Application servers must implement exponential back-off.
 
-        Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest , MediaType.APPLICATION_JSON_TYPE);
+        AndroidSendMessageRequest androidRequest = new AndroidSendMessageRequest(request);
+        Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest, MediaType.APPLICATION_JSON_TYPE);
         Response response = invocationBuilder.post(entity);
         if (Response.Status.OK.getStatusCode() == response.getStatusInfo().getStatusCode()) {
             AndroidSendMessageResponse androidResponse = response.readEntity(AndroidSendMessageResponse.class);

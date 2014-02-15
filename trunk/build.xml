@@ -85,10 +85,12 @@
     <copy todir="${messaggi.web.lib}" overwrite="true" flatten="true">
       <fileset refid="log4j.lib"/>
       <fileset refid="jersey.lib"/>
-      <fileset refid="hamcrest.lib"/>
+      <fileset refid="jackson.lib"/>
       <fileset refid="commons-beanutils.lib"/>
       <fileset refid="commons-logging.lib"/>
+      <fileset refid="commons-lang3.lib"/>
       <fileset refid="guava.lib"/>
+      <fileset refid="smack.lib"/>
     </copy>
     <copy todir="${messaggi.web}" overwrite="true" flatten="true">
       <fileset dir=".">
