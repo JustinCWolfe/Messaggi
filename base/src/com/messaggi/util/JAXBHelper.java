@@ -5,8 +5,12 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class JAXBHelper
 {
+    public static boolean prettyXML = true;
+
     private static <T> Marshaller getJAXBMarshaller(T instance) throws Exception
     {
         JAXBContext context = JAXBContext.newInstance(instance.getClass());
@@ -19,14 +23,11 @@ public class JAXBHelper
 
     public static <T> String objectToJSON(T instance) throws Exception
     {
-        /*
-         * ObjectMapper om = new ObjectMapper();
-         * mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS,
-         * false); if (pretty) { return
-         * mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj); }
-         * return mapper.writeValueAsString(obj);
-         */
-        return null;
+        ObjectMapper mapper = new ObjectMapper();
+        if (prettyXML) {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(instance);
+        }
+        return mapper.writeValueAsString(instance);
     }
 
     public static <T> String objectToXML(T instance) throws Exception
