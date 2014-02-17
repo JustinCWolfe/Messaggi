@@ -10,7 +10,6 @@ import org.junit.Test;
 
 public class TestAndroidMessagingWorkflow
 {
-
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
@@ -32,10 +31,33 @@ public class TestAndroidMessagingWorkflow
     }
 
     @Test
-    public void test()
+    public void testSendMessage_AndroidInternalServerErrorException_ExponentialBackOff() throws Exception
     {
-        fail("Not yet implemented");
+        // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
+        // in the GCM server while trying to process the request, or that the server is temporarily 
+        // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
+        // Retry-After header included in the response. Application servers must implement exponential back-off.
+        fail("figure out how to test the exponential back-off stuff - will need to mock the gcm service for this");
     }
 
+    @Test
+    public void testSendMessage_AndroidTimeoutException_ExponentialBackOff() throws Exception
+    {
+        // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
+        // in the GCM server while trying to process the request, or that the server is temporarily 
+        // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
+        // Retry-After header included in the response. Application servers must implement exponential back-off.
+        fail("figure out how to test the exponential back-off stuff - will need to mock the gcm service for this");
+    }
+
+    @Test
+    public void testSendMessage_AndroidUnknownException_ExponentialBackOff() throws Exception
+    {
+        // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
+        // in the GCM server while trying to process the request, or that the server is temporarily 
+        // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
+        // Retry-After header included in the response. Application servers must implement exponential back-off.
+        fail("figure out how to test the exponential back-off stuff - will need to mock the gcm service for this");
+    }
 }
 

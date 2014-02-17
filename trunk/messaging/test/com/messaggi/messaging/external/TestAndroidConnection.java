@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.ws.rs.core.Response;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
@@ -38,6 +39,17 @@ import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidAuthenticationErrorException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidCanonicalIdException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInternalServerErrorException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInvalidDataKeyException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInvalidRegistrationIdException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMessageTooBigException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMissingRegistrationIdException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMulticastException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidTimeoutException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnknownException;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnregisteredDeviceException;
 
 public class TestAndroidConnection extends MessaggiTestCase
 {
@@ -100,7 +112,31 @@ public class TestAndroidConnection extends MessaggiTestCase
     }
 
     @Test
-    public void testSendMessage_InvalidAPIKey() throws Exception
+    public void testSendMessage_AndroidMulticastException() throws Exception
+    {
+        Device[] to = { D2, D3, D4, D5, D6 };
+        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidMulticastException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(5L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidUnknownException() throws Exception
     {
         Device[] to = { D2 };
         ApplicationPlatform invalidAPIKeyAppPlat = ApplicationPlatform1.getDomainObject();
@@ -110,7 +146,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         try {
             connection.sendMessage(request);
             fail("should not get here");
-        } catch (AndroidInvalidAPIKeyException e) {
+        } catch (AndroidUnknownException e) {
             AndroidSendMessageResponse androidResponse = e.response;
             assertEquals(Response.Status.UNAUTHORIZED.getFamily(), androidResponse.response.getStatusInfo().getFamily());
             assertEquals(Response.Status.UNAUTHORIZED.getReasonPhrase(), androidResponse.response.getStatusInfo()
@@ -123,34 +159,30 @@ public class TestAndroidConnection extends MessaggiTestCase
     }
 
     @Test
-    public void testSendMessage_InvalidRegistrationIDKey_Single() throws Exception
+    public void testSendMessage_AndroidAuthenticationErrorException() throws Exception
     {
         Device[] to = { D2 };
-        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        ApplicationPlatform invalidAPIKeyAppPlat = ApplicationPlatform1.getDomainObject();
+        MessagingServiceConnection connection = MessagingServiceConnectionFactory.Instance.getInstance().create(
+                invalidAPIKeyAppPlat);
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
-        } catch (AndroidSendMessageException e) {
+        } catch (AndroidAuthenticationErrorException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
-            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+            assertEquals(Response.Status.UNAUTHORIZED.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.UNAUTHORIZED.getReasonPhrase(), androidResponse.response.getStatusInfo()
                     .getReasonPhrase());
-            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
-            assertThat(1L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
-            assertThat(-1L, equalTo(androidResponse.multicastId));
-            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
-            assertThat("InvalidRegistration", equalTo(androidResponse.results[0].error));
-            assertThat(androidResponse.results[0].messageId, nullValue());
-            assertThat(0L, equalTo(androidResponse.results[0].registrationId));
+            assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), androidResponse.response.getStatusInfo()
+                    .getStatusCode());
             return;
         }
         fail("should not get here");
     }
 
     @Test
-    public void testSendMessage_InvalidRegistrationIDKey_Multiple() throws Exception
+    public void testSendMessage_AndroidInternalServerErrorException() throws Exception
     {
         Device[] to = { D2, D3, D4, D5, D6 };
         // Don't run in debug mode because in debug mode the registration ids aren't checked.
@@ -158,7 +190,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         try {
             androidConnection.sendMessage(request);
             fail("should not get here");
-        } catch (AndroidSendMessageException e) {
+        } catch (AndroidInternalServerErrorException e) {
             AndroidSendMessageResponse androidResponse = e.response;
             assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
             assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
@@ -168,18 +200,199 @@ public class TestAndroidConnection extends MessaggiTestCase
             assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
             assertThat(-1L, equalTo(androidResponse.multicastId));
             assertThat(0L, equalTo(androidResponse.successfulMessageCount));
-            for (int toIndex = 0; toIndex < to.length; toIndex++) {
-                assertThat("InvalidRegistration", equalTo(androidResponse.results[toIndex].error));
-                assertThat(androidResponse.results[toIndex].messageId, nullValue());
-                assertThat(0L, equalTo(androidResponse.results[toIndex].registrationId));
-            }
             return;
         }
         fail("should not get here");
     }
 
     @Test
-    public void testSendMessage_ValidRegistrationID_Single() throws Exception
+    public void testSendMessage_AndroidTimeoutException() throws Exception
+    {
+        Device[] to = { D2, D3, D4, D5, D6 };
+        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidTimeoutException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(5L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidMissingRegistrationIdException() throws Exception
+    {
+        Device[] to = { D2 };
+        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidMissingRegistrationIdException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(1L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.MISSING_REGISTRATION_ID,
+                    equalTo(androidResponse.results[0].getGCMErrorMessage()));
+            assertThat(androidResponse.results[0].messageId, nullValue());
+            assertThat("", equalTo(androidResponse.results[0].registrationId));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidUnregisteredDeviceException() throws Exception
+    {
+        Device[] to = { UNREGISTERED_D4 };
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidUnregisteredDeviceException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(1L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.UNREGISTERED_DEVICE,
+                    equalTo(androidResponse.results[0].getGCMErrorMessage()));
+            assertThat(androidResponse.results[0].messageId, nullValue());
+            assertThat("", equalTo(androidResponse.results[0].registrationId));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidInvalidRegistrationIdException() throws Exception
+    {
+        Device[] to = { D2 };
+        // Don't run in debug mode because in debug mode the registration ids aren't checked.
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidInvalidRegistrationIdException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(1L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.INVALID_REGISTRATION_ID,
+                    equalTo(androidResponse.results[0].getGCMErrorMessage()));
+            assertThat(androidResponse.results[0].messageId, nullValue());
+            assertThat("", equalTo(androidResponse.results[0].registrationId));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidMessageTooBigException() throws Exception
+    {
+        Map<String, String> invalidMessageMap = new HashMap<>(MESSAGE_MAP);
+        invalidMessageMap.put(MESSAGE4_KEY_TOO_BIG, MESSAGE4_VALUE_TOO_BIG);
+        Device[] to = { VALID_D1 };
+        SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessageMap, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidMessageTooBigException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(1L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.MESSAGE_TOO_BIG,
+                    equalTo(androidResponse.results[0].getGCMErrorMessage()));
+            assertThat(androidResponse.results[0].messageId, nullValue());
+            assertThat("", equalTo(androidResponse.results[0].registrationId));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidInvalidDataKeyException() throws Exception
+    {
+        Map<String, String> invalidMessageMap = new HashMap<>(MESSAGE_MAP);
+        invalidMessageMap.put(MESSAGE3_KEY_INVALID_WORD, MESSAGE3_VALUE_INVALID_WORD);
+        Device[] to = { VALID_D1 };
+        SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessageMap, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidInvalidDataKeyException e) {
+            AndroidSendMessageResponse androidResponse = e.response;
+            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
+            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
+                    .getReasonPhrase());
+            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+            assertThat(1L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.INVALID_DATA_KEY,
+                    equalTo(androidResponse.results[0].getGCMErrorMessage()));
+            assertThat(androidResponse.results[0].messageId, nullValue());
+            assertThat("", equalTo(androidResponse.results[0].registrationId));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_AndroidCanonicalIdException() throws Exception
+    {
+        Device[] to = { VALID_D1 };
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
+        try {
+            androidConnection.sendMessage(request);
+            fail("should not get here");
+        } catch (AndroidCanonicalIdException e) {
+            SendMessageResponse response = androidConnection.sendMessage(request);
+            assertTrue(response instanceof AndroidSendMessageResponse);
+            AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
+            assertThat(0L, equalTo(androidResponse.failedMessageCount));
+            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(-1L, equalTo(androidResponse.multicastId));
+            assertThat(1L, equalTo(androidResponse.successfulMessageCount));
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_ValidRegistrationId() throws Exception
     {
         Device[] to = { VALID_D1 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
@@ -193,89 +406,13 @@ public class TestAndroidConnection extends MessaggiTestCase
     }
 
     @Test
-    public void testSendMessage_UnregisteredID() throws Exception
-    {
-        Device[] to = { UNREGISTERED_D4 };
-        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
-        try {
-            androidConnection.sendMessage(request);
-            fail("should not get here");
-        } catch (AndroidSendMessageException e) {
-            AndroidSendMessageResponse androidResponse = e.response;
-            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
-            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
-                    .getReasonPhrase());
-            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
-            assertThat(1L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
-            assertThat(-1L, equalTo(androidResponse.multicastId));
-            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
-            assertThat("NotRegistered", equalTo(androidResponse.results[0].error));
-            assertThat(androidResponse.results[0].messageId, nullValue());
-            assertThat(0L, equalTo(androidResponse.results[0].registrationId));
-            return;
-        }
-        fail("should not get here");
-    }
-
-    @Test
-    public void testSendMessage_ValidRegistrationIDWithInvalidWordInMessageKey() throws Exception
-    {
-        Map<String, String> invalidMessageMap = new HashMap<>(MESSAGE_MAP);
-        invalidMessageMap.put(MESSAGE3_KEY_INVALID_WORD, MESSAGE3_VALUE_INVALID_WORD);
-        Device[] to = { VALID_D1 };
-        SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessageMap, true);
-        try {
-            androidConnection.sendMessage(request);
-            fail("should not get here");
-        } catch (AndroidSendMessageException e) {
-            AndroidSendMessageResponse androidResponse = e.response;
-            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
-            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
-                    .getReasonPhrase());
-            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
-            assertThat(1L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
-            assertThat(-1L, equalTo(androidResponse.multicastId));
-            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
-            assertThat("InvalidDataKey", equalTo(androidResponse.results[0].error));
-            assertThat(androidResponse.results[0].messageId, nullValue());
-            assertThat(0L, equalTo(androidResponse.results[0].registrationId));
-            return;
-        }
-        fail("should not get here");
-    }
-
-    @Test
-    public void testSendMessage_ValidRegistrationIDWithMessageThatIsTooBig() throws Exception
-    {
-        Map<String, String> invalidMessageMap = new HashMap<>(MESSAGE_MAP);
-        invalidMessageMap.put(MESSAGE4_KEY_TOO_BIG, MESSAGE4_VALUE_TOO_BIG);
-        Device[] to = { VALID_D1 };
-        SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessageMap, true);
-        try {
-            androidConnection.sendMessage(request);
-            fail("should not get here");
-        } catch (AndroidSendMessageException e) {
-            AndroidSendMessageResponse androidResponse = e.response;
-            assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
-            assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
-                    .getReasonPhrase());
-            assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
-            assertThat(1L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
-            assertThat(-1L, equalTo(androidResponse.multicastId));
-            assertThat(0L, equalTo(androidResponse.successfulMessageCount));
-            assertThat("MessageTooBig", equalTo(androidResponse.results[0].error));
-            assertThat(androidResponse.results[0].messageId, nullValue());
-            assertThat(0L, equalTo(androidResponse.results[0].registrationId));
-            return;
-        }
-        fail("should not get here");
-    }
-
-    @Test
-    public void testSendMessage_ValidRegistrationID_Multiple() throws Exception
+    @Ignore
+    /**
+     * This should throw an AndroidMulticastException until I support multicast
+     * 
+     * @throws Exception
+     */
+    public void testSendMessage_ValidRegistrationId_Multiple() throws Exception
     {
         Device[] to = { VALID_D1, VALID_D2, VALID_D3 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP, true);
@@ -289,6 +426,12 @@ public class TestAndroidConnection extends MessaggiTestCase
     }
 
     @Test
+    @Ignore
+    /**
+     * This should throw an AndroidMulticastException until I support multicast
+     * 
+     * @throws Exception
+     */
     public void testSendMessage_MixOfValidAndInvalidRegistrationIDs() throws Exception
     {
         Device[] to = { D2, D3, D4, D5, D6, VALID_D1, VALID_D2, VALID_D3 };
@@ -309,40 +452,19 @@ public class TestAndroidConnection extends MessaggiTestCase
             for (int toIndex = 0; toIndex < to.length; toIndex++) {
                 // The first 5 are invalid registrations, the next 3 are valid.
                 if (toIndex < 5) {
-                    assertThat("InvalidRegistration", equalTo(androidResponse.results[toIndex].error));
+                    assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.INVALID_REGISTRATION_ID,
+                            equalTo(androidResponse.results[toIndex].getGCMErrorMessage()));
                     assertThat(androidResponse.results[toIndex].messageId, nullValue());
-                    assertThat(0L, equalTo(androidResponse.results[toIndex].registrationId));
+                    assertThat("", equalTo(androidResponse.results[toIndex].registrationId));
                 } else {
                     assertThat(androidResponse.results[toIndex].error, nullValue());
                     assertThat("fake_message_id", equalTo(androidResponse.results[toIndex].messageId));
-                    assertThat(0L, equalTo(androidResponse.results[toIndex].registrationId));
+                    assertThat("", equalTo(androidResponse.results[toIndex].registrationId));
                 }
             }
             return;
         }
         fail("should not get here");
-    }
-
-    @Test
-    public void testSendMessage_ValidRegistrationIDWithDifferentCanonicalId_Single() throws Exception
-    {
-        fail("figure out how to test the canonical stuff");
-    }
-
-    @Test
-    public void testSendMessage_ValidRegistrationIDWithDifferentCanonicalId_Multiple() throws Exception
-    {
-        fail("figure out how to test the canonical stuff");
-    }
-
-    @Test
-    public void testSendMessage_ExponentialBackOff() throws Exception
-    {
-        // Errors in the 500-599 range (such as 500 or 503) indicate that there was an internal error 
-        // in the GCM server while trying to process the request, or that the server is temporarily 
-        // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
-        // Retry-After header included in the response. Application servers must implement exponential back-off.
-        fail("figure out how to test the exponential back-off stuff");
     }
 }
 
