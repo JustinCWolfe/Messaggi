@@ -23,6 +23,13 @@
 		override="false"/>
 		
 	<Environment 
+		name="ApplicationPlatformConnectionsCacheImpl" 
+		description="Implementation class name for ApplicationPlatformConnections cache." 
+		value="com.messaggi.cache.ApplicationPlatformConnectionsImpl" 
+		type="java.lang.String" 
+		override="false"/>
+		
+	<Environment 
 		name="MessagingServiceConnectionFactoryImpl" 
 		description="Implementation class name for MessagingServiceConnectionFactory." 
 		value="com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl" 
@@ -30,9 +37,9 @@
 		override="false"/>
 		
 	<Environment 
-		name="ApplicationPlatformConnectionsCacheImpl" 
-		description="Implementation class name for ApplicationPlatformConnections cache." 
-		value="com.messaggi.cache.ApplicationPlatformConnectionsImpl" 
+		name="MessagingWorkflowFactoryImpl" 
+		description="Implementation class name for MessagingWorkflowFactory." 
+		value="com.messaggi.messaging.workflow.MessagingWorkflowFactoryImpl" 
 		type="java.lang.String" 
 		override="false"/>
 

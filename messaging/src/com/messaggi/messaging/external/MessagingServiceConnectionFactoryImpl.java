@@ -11,17 +11,11 @@ public class MessagingServiceConnectionFactoryImpl implements MessagingServiceCo
     {
         MessagingServiceConnection messagingConnection = null;
         switch (applicationPlatform.getPlatform()) {
-            case AMAZON:
-                messagingConnection = new AmazonConnection();
-                break;
             case ANDROID:
                 messagingConnection = new AndroidConnection();
                 break;
             case IOS:
                 messagingConnection = new AppleConnection();
-                break;
-            case WINDOWS:
-                messagingConnection = new WindowsConnection();
                 break;
             default:
                 throw new UnsupportedOperationException();
