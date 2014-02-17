@@ -23,6 +23,8 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.messaging.external.exception.AndroidExceptionFactory;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMulticastException;
 
 public class AndroidConnection implements MessagingServiceConnection
 {
@@ -64,6 +66,11 @@ public class AndroidConnection implements MessagingServiceConnection
     @Override
     public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
+        AndroidSendMessageRequest androidRequest = new AndroidSendMessageRequest(request);
+        if (androidRequest.request.to.length > 1) {
+            throw new AndroidMulticastException(androidRequest, null);
+        }
+
         // Note that for android HTTP, the application platform  is not required since we do not 
         // establish a stateful connection with the messaging service.
         Invocation.Builder invocationBuilder = SEND_MESSAGE_WEB_TARGET.request(MediaType.APPLICATION_JSON_TYPE);
@@ -77,22 +84,23 @@ public class AndroidConnection implements MessagingServiceConnection
         // unavailable (for example, because of timeouts). Sender must retry later, honoring any 
         // Retry-After header included in the response. Application servers must implement exponential back-off.
 
-        AndroidSendMessageRequest androidRequest = new AndroidSendMessageRequest(request);
         Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest, MediaType.APPLICATION_JSON_TYPE);
         Response response = invocationBuilder.post(entity);
+        // Create generic android response based on the jaxb response.
+        AndroidSendMessageResponse androidResponse = new AndroidSendMessageResponse(response);
         if (Response.Status.OK.getStatusCode() == response.getStatusInfo().getStatusCode()) {
-            AndroidSendMessageResponse androidResponse = response.readEntity(AndroidSendMessageResponse.class);
+            // Create specific android response by parsing the result json entity returned by the GCM service.
+            androidResponse = response.readEntity(AndroidSendMessageResponse.class);
             androidResponse.response = response;
-            if (androidResponse.failedMessageCount > 0) {
-                throw new AndroidSendMessageException(androidRequest, androidResponse);
+            if (androidResponse.failedMessageCount == 0 && androidResponse.canonicalRegistrationIdCount == 0) {
+                return androidResponse;
             }
-            return androidResponse;
         }
-        throw new AndroidSendMessageException(androidRequest, new AndroidSendMessageResponse(response));
+        throw AndroidExceptionFactory.createSendMessageException(androidRequest, androidResponse);
     }
 
     @XmlRootElement(name = "")
-    static class AndroidSendMessageRequest
+    public static class AndroidSendMessageRequest
     {
         @XmlTransient
         public final SendMessageRequest request;
@@ -179,7 +187,7 @@ public class AndroidConnection implements MessagingServiceConnection
     }
     
     @XmlRootElement
-    static class AndroidSendMessageResponse extends SendMessageResponse
+    public static class AndroidSendMessageResponse extends SendMessageResponse
     {
         public Response response;
 
@@ -227,8 +235,26 @@ public class AndroidConnection implements MessagingServiceConnection
 	    }
 
         @XmlRootElement
-        static class AndroidResult
+        public static class AndroidResult
         {
+            public enum GCMErrorMessage {
+                INTERNAL_SERVER_ERROR("InternalServerError"), UNAVAILABLE("Unavailable"), INVALID_DATA_KEY(
+                        "InvalidDataKey"), MESSAGE_TOO_BIG("MessageTooBig"), UNREGISTERED_DEVICE("NotRegistered"), INVALID_REGISTRATION_ID(
+                        "InvalidRegistration"), MISSING_REGISTRATION_ID("MissingRegistration");
+
+                private final String value;
+
+                public String getValue()
+                {
+                    return value;
+                }
+
+                private GCMErrorMessage(String value)
+                {
+                    this.value = value;
+                }
+            }
+
             /**
              * String representing the message when it was successfully
              * processed.
@@ -244,7 +270,7 @@ public class AndroidConnection implements MessagingServiceConnection
              * request.
              */
             @XmlElement(name = "registration_id")
-            public long registrationId;
+            public String registrationId;
 
             /**
              * String describing an error that occurred while processing the
@@ -255,21 +281,12 @@ public class AndroidConnection implements MessagingServiceConnection
              */
             @XmlElement(name = "error")
             public String error;
-        }
-    }
 
-    static class AndroidSendMessageException extends SendMessageException
-    {
-        private static final long serialVersionUID = 8343199742537841201L;
-        
-        public final AndroidSendMessageRequest request;
-        public final AndroidSendMessageResponse response;
-
-        public AndroidSendMessageException(AndroidSendMessageRequest request, AndroidSendMessageResponse response)
-        {
-            super();
-            this.request = request;
-            this.response = response;
+            @XmlTransient
+            public GCMErrorMessage getGCMErrorMessage()
+            {
+                return GCMErrorMessage.valueOf(error);
+            }
         }
     }
 }

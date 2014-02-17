@@ -115,6 +115,10 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         // Implementation class name for messaging service connection factory.
         ic.bind("java:/comp/env/MessagingServiceConnectionFactoryImpl",
                 "com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl");
+
+        // Implementation class name for messaging workflow factory.
+        ic.bind("java:/comp/env/MessagingWorkflowFactoryImpl",
+                "com.messaggi.messaging.workflow.MessagingWorkflowFactoryImpl");
     }
 
     public static void startTomcat() throws Exception

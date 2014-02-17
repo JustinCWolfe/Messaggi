@@ -36,8 +36,8 @@ import com.messaggi.external.MessagingServiceConnectionFactory;
 import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageException;
 import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.exception.AndroidSendMessageException;
 
 public class TestAndroidConnection extends MessaggiTestCase
 {
@@ -110,7 +110,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         try {
             connection.sendMessage(request);
             fail("should not get here");
-        } catch (AndroidSendMessageException e) {
+        } catch (AndroidInvalidAPIKeyException e) {
             AndroidSendMessageResponse androidResponse = e.response;
             assertEquals(Response.Status.UNAUTHORIZED.getFamily(), androidResponse.response.getStatusInfo().getFamily());
             assertEquals(Response.Status.UNAUTHORIZED.getReasonPhrase(), androidResponse.response.getStatusInfo()
