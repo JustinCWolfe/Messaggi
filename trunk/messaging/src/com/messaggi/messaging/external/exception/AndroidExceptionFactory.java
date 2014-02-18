@@ -47,7 +47,7 @@ public class AndroidExceptionFactory
                 return new AndroidUnregisteredDeviceException(androidRequest, androidResponse);
             } else if (responseHasGCMErrorMessage(androidResponse, GCMErrorMessage.MISSING_REGISTRATION_ID)) {
                 return new AndroidMissingRegistrationIdException(androidRequest, androidResponse);
-            } else {
+            } else if (androidResponse.canonicalRegistrationIdCount > 0) {
                 return new AndroidCanonicalIdException(androidRequest, androidResponse);
             }
         }

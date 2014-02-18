@@ -77,6 +77,9 @@ public class MockAndroidConnection extends AndroidConnection
             case NEW_CANONICAL_ID:
                 androidResponse = getEmptyAndroidSendMessageResponse();
                 androidResponse.canonicalRegistrationIdCount = 1;
+                androidResponse.failedMessageCount = 0;
+                androidResponse.successfulMessageCount = 1;
+                androidResponse.results[0].messageId = RandomStringUtils.random(8);
                 androidResponse.results[0].registrationId = RandomStringUtils.random(64);
                 builder = Response.ok(androidResponse, MediaType.APPLICATION_JSON_TYPE);
                 break;
