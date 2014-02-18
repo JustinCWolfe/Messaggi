@@ -6,6 +6,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+
 
 public class JAXBHelper
 {
@@ -23,7 +25,10 @@ public class JAXBHelper
 
     public static <T> String objectToJSON(T instance) throws Exception
     {
+        // Use jaxb annotations when serializing (by default it uses jackson annotations).
+        JaxbAnnotationModule module = new JaxbAnnotationModule();
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(module);
         if (prettyXML) {
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(instance);
         }
