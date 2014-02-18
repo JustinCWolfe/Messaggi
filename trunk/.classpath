@@ -55,5 +55,6 @@
 	<classpathentry kind="lib" path="lib/jaxrs-ri-2.3.1/media/org.eclipse.persistence.asm-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-ri-2.3.1/media/org.eclipse.persistence.core-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxrs-ri-2.3.1/media/org.eclipse.persistence.moxy-2.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-2.2.3/jackson-module-jaxb-annotations-2.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
