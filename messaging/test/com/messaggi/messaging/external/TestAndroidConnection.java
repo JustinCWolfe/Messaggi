@@ -1,8 +1,10 @@
 package com.messaggi.messaging.external;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
@@ -12,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
@@ -122,16 +125,26 @@ public class TestAndroidConnection extends MessaggiTestCase
         assertThat(androidResponse.results, nullValue());
     }
 
-    private void validateOkWithErrorAndroidResponse(AndroidSendMessageResponse androidResponse,
-            GCMErrorMessage gcmErrorMessage)
+    private void validateOkAndroidResponse(AndroidSendMessageResponse androidResponse)
     {
         assertEquals(Response.Status.OK.getFamily(), androidResponse.response.getStatusInfo().getFamily());
         assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo().getReasonPhrase());
         assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
+    }
+
+    private void validateOkWithFailedMessageAndroidResponse(AndroidSendMessageResponse androidResponse)
+    {
+        validateOkAndroidResponse(androidResponse);
         assertThat(1L, equalTo(androidResponse.failedMessageCount));
         assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
         assertThat(androidResponse.multicastId, greaterThan(0L));
         assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+    }
+
+    private void validateOkWithFailedMessageAndErrorAndroidResponse(AndroidSendMessageResponse androidResponse,
+            GCMErrorMessage gcmErrorMessage)
+    {
+        validateOkWithFailedMessageAndroidResponse(androidResponse);
         assertThat(gcmErrorMessage, equalTo(androidResponse.results[0].getGCMErrorMessage()));
     }
 
@@ -217,7 +230,7 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidInternalServerErrorException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.INTERNAL_SERVER_ERROR);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.INTERNAL_SERVER_ERROR);
             return;
         }
         fail("should not get here");
@@ -261,7 +274,7 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidTimeoutException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.UNAVAILABLE);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.UNAVAILABLE);
             return;
         }
         fail("should not get here");
@@ -302,7 +315,7 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidMissingRegistrationIdException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.MISSING_REGISTRATION_ID);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.MISSING_REGISTRATION_ID);
             return;
         }
         fail("should not get here");
@@ -342,7 +355,10 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidUnregisteredDeviceException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.UNREGISTERED_DEVICE);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.UNREGISTERED_DEVICE);
+            List<String> unregisteredDeviceIds = e.getUnregisteredDeviceIds();
+            assertThat(1, equalTo(unregisteredDeviceIds.size()));
+            assertThat(UNREGISTERED_D4.getCode(), equalTo(unregisteredDeviceIds.get(0)));
             return;
         }
         fail("should not get here");
@@ -358,7 +374,10 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidInvalidRegistrationIdException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.INVALID_REGISTRATION_ID);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.INVALID_REGISTRATION_ID);
+            List<String> invalidRegistrationIds = e.getInvalidRegistrationIds();
+            assertThat(1, equalTo(invalidRegistrationIds.size()));
+            assertThat(D2.getCode(), equalTo(invalidRegistrationIds.get(0)));
             return;
         }
         fail("should not get here");
@@ -376,7 +395,7 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidMessageTooBigException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.MESSAGE_TOO_BIG);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.MESSAGE_TOO_BIG);
             return;
         }
         fail("should not get here");
@@ -396,7 +415,7 @@ public class TestAndroidConnection extends MessaggiTestCase
             fail("should not get here");
         } catch (AndroidInvalidDataKeyException e) {
             AndroidSendMessageResponse androidResponse = e.response;
-            validateOkWithErrorAndroidResponse(androidResponse, GCMErrorMessage.INVALID_DATA_KEY);
+            validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.INVALID_DATA_KEY);
             return;
         }
         fail("should not get here");
@@ -408,16 +427,25 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { VALID_D1 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
-            androidConnection.sendMessage(request);
+            MockAndroidConnection mockAndroidConnection = new MockAndroidConnection(ResponseType.NEW_CANONICAL_ID);
+            mockAndroidConnection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidCanonicalIdException e) {
-            SendMessageResponse response = androidConnection.sendMessage(request);
-            assertTrue(response instanceof AndroidSendMessageResponse);
-            AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
+            AndroidSendMessageResponse androidResponse = e.response;
+            validateOkAndroidResponse(androidResponse);
             assertThat(0L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(1L, equalTo(androidResponse.canonicalRegistrationIdCount));
             assertThat(androidResponse.multicastId, greaterThan(0L));
             assertThat(1L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(androidResponse.results[0].error, nullValue());
+            assertThat(androidResponse.results[0].messageId, notNullValue());
+            assertThat(androidResponse.results[0].registrationId, notNullValue());
+            Map<String, String> originalToCanonicalRegistrationIdMap = e.getOriginalToCanonicalRegistrationIdMap();
+            assertThat(1, equalTo(originalToCanonicalRegistrationIdMap.size()));
+            assertThat(originalToCanonicalRegistrationIdMap.keySet(), contains(VALID_D1.getCode()));
+            assertThat(VALID_D1.getCode(), not(equalTo(originalToCanonicalRegistrationIdMap.get(VALID_D1.getCode()))));
+            assertThat(androidResponse.results[0].registrationId,
+                    equalTo(originalToCanonicalRegistrationIdMap.get(VALID_D1.getCode())));
             return;
         }
         fail("should not get here");
