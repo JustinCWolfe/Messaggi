@@ -18,6 +18,7 @@
       <fileset refid="jre7.lib"/>
       <fileset refid="commons-beanutils.lib"/>
       <fileset refid="tomcat.lib"/>
+      <fileset refid="guava.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="log4j.lib"/>
       <fileset refid="jackson.lib"/>
@@ -34,6 +35,7 @@
 
   <path id="classpath.run.test">
       <fileset refid="ant-junit.lib"/>   
+      <path refid="messaging.module"/>
       <path refid="classpath.test"/>
   </path>
 
@@ -79,10 +81,11 @@
   </target>
 
   <target name="run-tests" depends="compile,compile-test" description="run junit tests" >
-    <junit fork="true">
+    <junit fork="true" dir="../">
         <classpath refid="classpath.run.test"/>
         <batchtest>
            <fileset dir="${test}">
+             <include name="**/cache/Test*" />
              <include name="**/dao/Test*" />
              <include name="**/service/Test*" />
            </fileset>

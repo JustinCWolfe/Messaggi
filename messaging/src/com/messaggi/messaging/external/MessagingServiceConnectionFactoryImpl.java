@@ -17,6 +17,9 @@ public class MessagingServiceConnectionFactoryImpl implements MessagingServiceCo
             case IOS:
                 messagingConnection = new AppleConnection();
                 break;
+            case WINDOWS:
+                messagingConnection = new WindowsConnection();
+                break;
             default:
                 throw new UnsupportedOperationException();
         }

@@ -1,6 +1,6 @@
 <project name="ModuleBuild" >
 
-    <!-- Define the OpenTradingFramework root directory as the location of this build file -->
+    <!-- Define the Messaggi root directory as the location of this build file -->
     <dirname property="root" file="${ant.file.ModuleBuild}" />
 
     <import file="build.3rdParty.xml"/>

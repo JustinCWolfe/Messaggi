@@ -4,11 +4,13 @@
 
   <!-- set global properties for this build -->
   <property name="project" value="messaggi"/>
+  <property name="eclipse.project" value="Messaggi"/>
   <property environment="ENV"/>
   <property file="deploy.properties" />
   <property file="build.properties" />
   <property name="j2ee.bin" value="${ENV.CATALINA_HOME}${file.separator}bin"/>
   <property name="j2ee.webapps" value="${ENV.CATALINA_HOME}${file.separator}webapps"/>
+  <property name="j2ee.wtpwebapps" value="${ENV.CATALINA_HOME}${file.separator}wtpwebapps"/>
   <property name="j2ee.lib" value="${ENV.CATALINA_HOME}${file.separator}lib"/>
   <property name="j2ee.conf" value="${ENV.CATALINA_HOME}${file.separator}conf"/>
 
@@ -16,6 +18,16 @@
   </target>
 
   <target name="clean" description="clean up" >
+    <!-- Delete all jars in messaggi WEB-INF/lib -->
+    <delete> 
+      <fileset dir="${messaggi.web.lib}" includes="*.jar"/>
+    </delete>
+    <!-- Delete all jars in tomcat lib -->
+    <delete> 
+      <fileset dir="${j2ee.lib}" includes="*.jar"/>
+    </delete>
+    <!-- Delete the Messaggi directory in the tomcat wtpwebapps directory -->
+    <delete dir="${j2ee.wtpwebapps}/${eclipse.project}" /> 
     <subant target="clean">
       <filelist dir=".">       
         <file name="base/build.xml"/>
@@ -97,6 +109,10 @@
         <include name="log4j.properties"/>
       </fileset>
     </copy>
+    <!-- Copy tomcat jars from project lib to tomcat lib -->
+    <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
+      <fileset refid="tomcat.lib"/>
+    </copy>
     <!--  This must be deployed to CATALINA_HOME/lib in order for DBCP's classloader to find it.
           http://tomcat.apache.org/tomcat-6.0-doc/jndi-datasource-examples-howto.html -->
     <copy todir="${j2ee.lib}" overwrite="true" flatten="true">
@@ -105,13 +121,13 @@
   </target>
 
   <target name="build-war" depends="deploy,deploy-3rdParty" unless="isMinimalBuild">
-    <war destfile="${application}.war" webxml="WebContent/WEB-INF/web.xml" compress="true">
-      <webinf dir="WebContent/WEB-INF">
+    <war destfile="${application}.war" webxml="${messaggi.web}/web.xml" compress="true">
+      <webinf dir="${messaggi.web}">
           <include name="*"/>
           <include name="**/*"/>
           <exclude name="web.xml"/>
       </webinf>
-      <metainf dir="WebContent/META-INF">
+      <metainf dir="${messaggi.meta}">
           <include name="*"/>
           <include name="**/*"/>
           <exclude name="MANIFEST.MF"/>
