@@ -21,7 +21,7 @@ import com.messaggi.cache.ApplicationPlatformConnectionsImpl.ConnectionKey;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
 
-public class TestApplicationPlatformConnections extends TestApplicationPlatformBase
+public class TestApplicationPlatformConnections extends ApplicationPlatformCacheTestCase
 {
     private LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> cache;
 

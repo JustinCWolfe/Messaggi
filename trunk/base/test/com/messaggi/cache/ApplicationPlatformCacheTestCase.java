@@ -23,9 +23,9 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.User;
 import com.messaggi.junit.MessaggiTestCase;
 
-public class TestApplicationPlatformBase extends MessaggiTestCase
+public class ApplicationPlatformCacheTestCase extends MessaggiTestCase
 {
-    protected static final double EPSILON = 1e-5;
+    protected static final double EPSILON = 1E-13;
 
     protected static Application app1;
 
@@ -77,14 +77,14 @@ public class TestApplicationPlatformBase extends MessaggiTestCase
         TestDataHelper.deleteApplication(app2);
         TestDataHelper.deleteUser(user1);
     }
-    
+
     protected static Field getCacheField(Class<?> cacheImplClass) throws Exception
     {
         Field cacheField = cacheImplClass.getDeclaredField("cache");
         cacheField.setAccessible(true);
         return cacheField;
     }
-    
+
     protected static void validateCacheInitialState(LoadingCache<?, ?> cache)
     {
         assertEquals(0, cache.size());

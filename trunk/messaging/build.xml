@@ -16,17 +16,22 @@
   <path id="classpath">
       <path refid="base.module"/>
       <pathelement location="${build}"/>
+      <fileset refid="jre7.lib"/>
+      <fileset refid="tomcat.lib"/>
       <fileset refid="log4j.lib"/>
       <fileset refid="smack.lib"/>
       <fileset refid="jersey.lib"/>
+      <fileset refid="jackson.lib"/>
   </path>
 
   <path id="classpath.test">
       <path refid="base.test.module"/>
       <pathelement location="${build-test}"/>
       <path refid="classpath"/>
+      <fileset refid="commons-lang3.lib"/>
       <fileset refid="hamcrest.lib"/>
       <fileset refid="junit.lib"/>
+      <fileset refid="jtds.lib"/>
   </path>
 
   <path id="classpath.run.test">
@@ -75,7 +80,7 @@
   </target>
 
   <target name="run-tests" depends="compile,compile-test" description="run junit tests" >
-    <junit fork="true">
+    <junit fork="true" dir="../">
         <classpath refid="classpath.run.test"/>
         <batchtest>
            <fileset dir="${test}">

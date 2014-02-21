@@ -17,7 +17,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.messaggi.domain.ApplicationPlatform;
 
-public class TestApplicationPlatforms extends TestApplicationPlatformBase
+public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
 {
     private LoadingCache<Integer, ApplicationPlatform> cache;
 
@@ -174,13 +174,13 @@ public class TestApplicationPlatforms extends TestApplicationPlatformBase
         CacheStats stats3 = cache.stats();
         assertEquals(0, stats3.evictionCount());
         assertEquals(1, stats3.hitCount());
-        assertEquals(.333333, stats3.hitRate(), EPSILON);
+        assertEquals(.3333333333333333, stats3.hitRate(), EPSILON);
         assertEquals(2, stats3.loadCount());
         assertEquals(0, stats3.loadExceptionCount());
         assertEquals(0, stats3.loadExceptionRate(), EPSILON);
         assertEquals(2, stats3.loadSuccessCount());
         assertEquals(2, stats3.missCount());
-        assertEquals(.666666, stats3.missRate(), EPSILON);
+        assertEquals(.6666666666666666, stats3.missRate(), EPSILON);
         assertEquals(3, stats3.requestCount());
         assertTrue(stats3.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats3.totalLoadTime();
@@ -250,13 +250,13 @@ public class TestApplicationPlatforms extends TestApplicationPlatformBase
         CacheStats stats6 = cache.stats();
         assertEquals(2, stats6.evictionCount());
         assertEquals(2, stats6.hitCount());
-        assertEquals(.333333, stats6.hitRate(), EPSILON);
+        assertEquals(.3333333333333333, stats6.hitRate(), EPSILON);
         assertEquals(4, stats6.loadCount());
         assertEquals(0, stats6.loadExceptionCount());
         assertEquals(0, stats6.loadExceptionRate(), EPSILON);
         assertEquals(4, stats6.loadSuccessCount());
         assertEquals(4, stats6.missCount());
-        assertEquals(.666666, stats6.missRate(), EPSILON);
+        assertEquals(.6666666666666666, stats6.missRate(), EPSILON);
         assertEquals(6, stats6.requestCount());
         assertEquals(lastLoadTime, stats6.totalLoadTime());
     }

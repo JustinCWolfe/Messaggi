@@ -31,7 +31,7 @@ import com.messaggi.cache.ApplicationPlatformDevicesImpl.DeviceKey;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 
-public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
+public class TestApplicationPlatformDevices extends ApplicationPlatformCacheTestCase
 {
     private static Device d1;
 
@@ -75,7 +75,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
-        TestApplicationPlatformBase.setUpBeforeClass();
+        ApplicationPlatformCacheTestCase.setUpBeforeClass();
         setUpDevices();
     }
 
@@ -93,7 +93,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
     public static void tearDownAfterClass() throws Exception
     {
         tearDownDevices();
-        TestApplicationPlatformBase.tearDownAfterClass();
+        ApplicationPlatformCacheTestCase.tearDownAfterClass();
     }
 
     @Override
@@ -308,7 +308,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(0, deviceStats3.hitRate(), EPSILON);
         assertEquals(3, deviceStats3.loadCount());
         assertEquals(1, deviceStats3.loadExceptionCount());
-        assertEquals(.33333, deviceStats3.loadExceptionRate(), EPSILON);
+        assertEquals(.3333333333333333, deviceStats3.loadExceptionRate(), EPSILON);
         assertEquals(2, deviceStats3.loadSuccessCount());
         assertEquals(3, deviceStats3.missCount());
         assertEquals(1.0, deviceStats3.missRate(), EPSILON);
@@ -359,7 +359,7 @@ public class TestApplicationPlatformDevices extends TestApplicationPlatformBase
         assertEquals(.25, deviceStats4.hitRate(), EPSILON);
         assertEquals(3, deviceStats4.loadCount());
         assertEquals(1, deviceStats4.loadExceptionCount());
-        assertEquals(.333333, deviceStats4.loadExceptionRate(), EPSILON);
+        assertEquals(.3333333333333333, deviceStats4.loadExceptionRate(), EPSILON);
         assertEquals(2, deviceStats4.loadSuccessCount());
         assertEquals(3, deviceStats4.missCount());
         assertEquals(.75, deviceStats4.missRate(), EPSILON);
