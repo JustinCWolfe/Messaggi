@@ -167,6 +167,25 @@ public class TestDataHelper
         }
     }
 
+    public static class ApplicationPlatformAppleTesting
+    {
+        public static final UUID TOKEN = UUID.randomUUID();
+
+        public static final String EXTERNAL_SERVICE_TOKEN = getUnitTestProperties().getProperty(
+                "messaggi.android.server.appkey");
+
+        public static final Platform PLATFORM = Platform.IOS;
+
+        public static ApplicationPlatform getDomainObject()
+        {
+            ApplicationPlatform ap = new ApplicationPlatform();
+            ap.setPlatform(PLATFORM);
+            ap.setToken(TOKEN);
+            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
+            return ap;
+        }
+    }
+
     public static class ApplicationPlatformMsgLog1
     {
         public static final Date DATE = new GregorianCalendar(2009, GregorianCalendar.AUGUST, 28, 2, 56, 50).getTime();

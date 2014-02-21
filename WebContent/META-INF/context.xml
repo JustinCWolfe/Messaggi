@@ -73,6 +73,6 @@
 		username="jcw_dev" 
 		password="jwolfema2226" 
 		driverClassName="net.sourceforge.jtds.jdbc.Driver" 
-                url="jdbc:jtds:sqlserver://JCW-LP2/Messaggi;instance=SQL2008" 
+                url="jdbc:jtds:sqlserver://JWOLFE2/Messaggi;instance=SQL2008" 
         /> 
 </Context>

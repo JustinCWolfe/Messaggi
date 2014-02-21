@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -146,6 +147,13 @@ public class TestAndroidConnection extends MessaggiTestCase
     {
         validateOkWithFailedMessageAndroidResponse(androidResponse);
         assertThat(gcmErrorMessage, equalTo(androidResponse.results[0].getGCMErrorMessage()));
+    }
+
+    @Test
+    public void testMessagingServiceConnectionFactory() throws Exception
+    {
+        MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
+        assertThat(APP_PLAT, sameInstance(conn.getApplicationPlatform()));
     }
 
     @Test
