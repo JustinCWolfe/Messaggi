@@ -308,7 +308,7 @@ public class TestApplicationPlatformDevices extends ApplicationPlatformCacheTest
         assertEquals(0, deviceStats3.hitRate(), EPSILON);
         assertEquals(3, deviceStats3.loadCount());
         assertEquals(1, deviceStats3.loadExceptionCount());
-        assertEquals(.3333333333333333, deviceStats3.loadExceptionRate(), EPSILON);
+        assertEquals(.333333333333, deviceStats3.loadExceptionRate(), EPSILON);
         assertEquals(2, deviceStats3.loadSuccessCount());
         assertEquals(3, deviceStats3.missCount());
         assertEquals(1.0, deviceStats3.missRate(), EPSILON);
@@ -359,7 +359,7 @@ public class TestApplicationPlatformDevices extends ApplicationPlatformCacheTest
         assertEquals(.25, deviceStats4.hitRate(), EPSILON);
         assertEquals(3, deviceStats4.loadCount());
         assertEquals(1, deviceStats4.loadExceptionCount());
-        assertEquals(.3333333333333333, deviceStats4.loadExceptionRate(), EPSILON);
+        assertEquals(.333333333333, deviceStats4.loadExceptionRate(), EPSILON);
         assertEquals(2, deviceStats4.loadSuccessCount());
         assertEquals(3, deviceStats4.missCount());
         assertEquals(.75, deviceStats4.missRate(), EPSILON);

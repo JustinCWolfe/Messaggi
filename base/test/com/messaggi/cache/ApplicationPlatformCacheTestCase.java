@@ -25,7 +25,7 @@ import com.messaggi.junit.MessaggiTestCase;
 
 public class ApplicationPlatformCacheTestCase extends MessaggiTestCase
 {
-    protected static final double EPSILON = 1E-13;
+    protected static final double EPSILON = 1E-12;
 
     protected static Application app1;
 
