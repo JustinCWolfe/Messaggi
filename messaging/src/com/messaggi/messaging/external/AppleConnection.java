@@ -1,15 +1,12 @@
 package com.messaggi.messaging.external;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
@@ -51,6 +48,13 @@ public class AppleConnection implements MessagingServiceConnection
 
     }
 
+    /**
+     * Note: To establish a TLS session with APNs, an Entrust Secure CA root
+     * certificate must be installed on the provider’s server. If the server is
+     * running OS X, this root certificate is already in the keychain. On other
+     * systems, the certificate might not be available. You can download this
+     * certificate from the Entrust SSL Certificates website.
+     */
     @Override
     public void connect() throws Exception
     {
@@ -80,30 +84,8 @@ public class AppleConnection implements MessagingServiceConnection
         @XmlTransient
         public final SendMessageRequest request;
 
-        /**
-         * A string array with the list of devices (registration IDs) receiving
-         * the message. It must contain at least 1 and at most 1000 registration
-         * IDs. Note that a regID represents a particular Apple application
-         * running on a particular device.
-         * 
-         * @return
-         */
-        @XmlElement(name = "registration_ids")
-        public String[] registrationIds;
-
-        /**
-         * A string that maps a single user to multiple registration IDs
-         * associated with that user. This allows a 3rd-party server to send a
-         * single message to multiple app instances (typically on multiple
-         * devices) owned by a single user. A 3rd-party server can use
-         * notification_key as the target for a message instead of an individual
-         * registration ID (or array of registration IDs). The maximum number of
-         * members allowed for a notification_key is 10.
-         * 
-         * @return
-         */
-        @XmlElement(name = "notification_key")
-        public String notificationKey;
+        @XmlTransient
+        public byte[] notificationFormat;
 
         /**
          * The payload contains information about how the system should alert
@@ -113,40 +95,122 @@ public class AppleConnection implements MessagingServiceConnection
          * limit. For each notification, compose a JSON dictionary object (as
          * defined by RFC 4627). This dictionary must contain another dictionary
          * identified by the key aps. The aps dictionary contains one or more
-         * properties that specify the following actions: • An alert message to
-         * display to the user • A number to badge the application icon with • A
-         * sound to play
-         * 
-         * @return
+         * properties that specify the following actions: 1. An alert message to
+         * display to the user; 2. A number to badge the application icon with;
+         * 3. A sound to play
          */
-        @XmlElement(name = "data")
-        public Map<String, String> data;
+        @XmlElement(name = "aps")
+        public AppleSendMessagePayload payload;
 
         @XmlRootElement(name = "")
         public static class AppleSendMessagePayload
         {
+            /**
+             * If this property is included, the system displays a standard
+             * alert. You may specify a string as the value of alert or a
+             * dictionary as its value. If you specify a string, it becomes the
+             * message text of an alert with two buttons: Close and View. If the
+             * user taps View, the application is launched. Alternatively, you
+             * can specify a dictionary as the value of alert.
+             */
+            @XmlTransient
+            public String alertString;
 
+            @XmlTransient
+            public Alert alertDictionary;
+
+            /**
+             * Note: If you want the device to display the message text as-is in
+             * an alert that has both the Close and View buttons, then specify a
+             * string as the direct value of alert. Don’t specify a dictionary
+             * as the value of alert if the dictionary only has the body
+             * property.
+             */
+            @XmlElement(name = "alert")
+            public String getAlert()
+            {
+                // If the alertDictionary is not null, manually marshal it 
+                // and return it as alert string.  Otherwise return the alertString.
+                return (alertDictionary != null) ? null : alertString;
+            }
+
+            /**
+             * The number to display as the badge of the application icon. If
+             * this property is absent, the badge is not changed. To remove the
+             * badge, set the value of this property to 0.
+             */
+            @XmlElement(name = "badge")
+            public int badge;
+
+            /**
+             * The name of a sound file in the application bundle. The sound in
+             * this file is played as an alert. If the sound file doesn’t exist
+             * or default is specified as the value, the default alert sound is
+             * played. The audio must be in one of the audio data formats that
+             * are compatible with system sounds; see“Preparing Custom Alert
+             * Sounds” for details.
+             */
+            @XmlElement(name = "sound")
+            public String sound;
+
+            /**
+             * Provide this key with a value of 1 to indicate that new content
+             * is available. This is used to support Newsstand apps and
+             * background content downloads.
+             */
+            @XmlElement(name = "content-available")
+            public int contentAvailable;
+            
+            @XmlRootElement(name = "")
+            public static class Alert
+            {
+                /**
+                 * The text of the alert message.
+                 */
+                @XmlElement(name = "body")
+                public String body;
+
+                /**
+                 * If a string is specified, the system displays an alert with
+                 * two buttons, whose behavior is described in Table 3-1. The
+                 * string is used as a key to get a localized string in the
+                 * current localization to use for the right button’s title
+                 * instead of “View”.
+                 */
+                @XmlElement(name = "action-loc-key")
+                public String actionLocKey;
+
+                /**
+                 * A key to an alert-message string in a Localizable.strings
+                 * file for the current localization (which is set by the user’s
+                 * language preference). The key string can be formatted with %@
+                 * and %n$@ specifiers to take the variables specified in
+                 * loc-args.
+                 */
+                @XmlElement(name = "loc-key")
+                public String locKey;
+
+                /**
+                 * Variable string values to appear in place of the format
+                 * specifiers in loc-key.
+                 */
+                @XmlElement(name = "loc-args")
+                public String[] locArgs;
+
+                /**
+                 * The filename of an image file in the application bundle; it
+                 * may include the extension or omit it. The image is used as
+                 * the launch image when users tap the action button or move the
+                 * action slider. If this property is not specified, the system
+                 * either uses the previous snapshot,uses the image identified
+                 * by theUILaunchImageFile key in the application’s Info.plist
+                 * file, or falls back to Default.png. This property was added
+                 * in iOS 4.0.
+                 */
+                @XmlElement(name = "launch-image")
+                public String launchImage;
+            }
         }
-
-        /**
-         * A string containing the package name of your application. When set,
-         * messages will only be sent to registration IDs that match the package
-         * name.
-         * 
-         * @return
-         */
-        @XmlElement(name = "restricted_package_name")
-        public String restrictedPackageName;
-
-        /**
-         * If included, allows developers to test their request without actually
-         * sending a message. Optional. The default value is false, and must be
-         * a JSON boolean.
-         * 
-         * @return
-         */
-        @XmlElement(name = "dry_run")
-        public boolean dryRun;
 
         public AppleSendMessageRequest()
         {
@@ -157,13 +221,26 @@ public class AppleConnection implements MessagingServiceConnection
         {
             this.request = request;
             if (request != null) {
-                List<String> recipients = new ArrayList<>();
-                for (Device toDevice : request.to) {
-                    recipients.add(toDevice.getCode());
-                }
-                registrationIds = recipients.toArray(new String[recipients.size()]);
-                data = request.messageMap;
-                dryRun = request.isDebug;
+                ByteArrayOutputStream notificationStream = new ByteArrayOutputStream();
+                // Command field (1 byte)
+                notificationStream.write(2);
+                // Frame length (4 bytes) - The size of the frame data.
+                // Frame data (variable length) - The frame contains the body, structured as a series of items.        
+                
+                // Device token item.
+                notificationStream.write(2);
+                
+                // Payload item.
+
+                // Notification identifier item.
+
+                // Expiration date item.
+
+                // Priority item.
+
+                // Item ID (1 byte) - The item identifier. For example, the item number of the payload is 2.
+                // Item data length (2 bytes) - The size of the item data.
+                // Item data (variable length) - The frame contains the body, structured as a series of items.
             }
         }
     }
