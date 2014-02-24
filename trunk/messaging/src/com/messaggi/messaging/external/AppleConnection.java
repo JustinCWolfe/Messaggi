@@ -1,7 +1,10 @@
 package com.messaggi.messaging.external;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
@@ -121,8 +124,19 @@ public class AppleConnection implements MessagingServiceConnection
     @XmlRootElement(name = "")
     public static class AppleSendMessageRequest
     {
+        private static final int SEND_MESSAGE_COMMAND = 2;
+
+        private static final int SEND_MESSAGE_IMMEDIATELY = 10;
+
         @XmlTransient
         public final SendMessageRequest request;
+
+        /**
+         * An arbitrary, opaque value that identifies this notification. This
+         * identifier is used for reporting errors to your server (4 bytes).
+         */
+        @XmlTransient
+        public final byte[] notificationId = new byte[4];;
 
         @XmlTransient
         public byte[] notificationFormat;
@@ -260,12 +274,15 @@ public class AppleConnection implements MessagingServiceConnection
         public AppleSendMessageRequest(SendMessageRequest request) throws SendMessageException
         {
             this.request = request;
+            ThreadLocalRandom.current().nextBytes(this.notificationId);
             if (request != null) {
                 ByteArrayOutputStream notificationStream = new ByteArrayOutputStream();
                 try {
                     // Command field (1 byte)
-                    notificationStream.write(2);
+                    notificationStream.write(SEND_MESSAGE_COMMAND);
+
                     // Frame length (4 bytes) - The size of the frame data.
+
                     // Frame data (variable length) - The frame contains the body, structured as a series of items.        
 
                     // Device token item (32 bytes).
@@ -275,10 +292,19 @@ public class AppleConnection implements MessagingServiceConnection
                     //notificationStream.write (request.to[0].getCode())
 
                     // Notification identifier item (4 bytes).
+                    notificationStream.write(this.notificationId);
 
-                    // Expiration date item (4 bytes).
+                    // Expiration date item (4 bytes).  
+                    // Message should be kept for 4 weeks to behave similarly to GCM.
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(this.request.requestDate);
+                    calendar.add(Calendar.WEEK_OF_MONTH, 4);
+                    try (DataOutputStream dos = new DataOutputStream(notificationStream);) {
+                        dos.writeLong(calendar.getTimeInMillis());
+                    }
 
                     // Priority item (1 byte).
+                    notificationStream.write(SEND_MESSAGE_IMMEDIATELY);
 
                     // Item ID (1 byte) - The item identifier. For example, the item number of the payload is 2.
                     // Item data length (2 bytes) - The size of the item data.
