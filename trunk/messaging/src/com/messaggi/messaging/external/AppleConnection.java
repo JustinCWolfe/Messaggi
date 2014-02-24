@@ -1,7 +1,9 @@
 package com.messaggi.messaging.external;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -11,6 +13,8 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
 
 public class AppleConnection implements MessagingServiceConnection
 {
@@ -71,11 +75,47 @@ public class AppleConnection implements MessagingServiceConnection
         sendProviderCertificatetoAPNs();
     }
 
+    protected Response sendMessageInternal(AppleSendMessageRequest appleRequest)
+    {
+        // Note that for android HTTP, the application platform  is not required since we do not 
+        // establish a stateful connection with the messaging service.
+        //Invocation.Builder invocationBuilder = SEND_MESSAGE_WEB_TARGET.request(MediaType.APPLICATION_JSON_TYPE);
+        //String authentication = String.format(AUTHORIZATION_HEADER_VALUE_FORMAT,
+        //        applicationPlatform.getExternalServiceToken());
+        //invocationBuilder.header(AUTHORIZATION_HEADER_NAME, authentication);
+        //Entity<AndroidSendMessageRequest> entity = Entity.entity(androidRequest, MediaType.APPLICATION_JSON_TYPE);
+        //return invocationBuilder.post(entity);
+        return null;
+    }
+
+    protected AndroidSendMessageResponse getEntityFromResponse(Response response)
+    {
+        return response.readEntity(AndroidSendMessageResponse.class);
+    }
+
+    protected SendMessageResponse processSendMessageResponse(AppleSendMessageRequest appleRequest, Response response)
+        throws SendMessageException
+    {
+        // Create generic apple response based on the jaxb response.
+        AndroidSendMessageResponse androidResponse = new AndroidSendMessageResponse(response);
+        if (Response.Status.OK.getStatusCode() == response.getStatusInfo().getStatusCode()) {
+            androidResponse = getEntityFromResponse(response);
+            androidResponse.response = response;
+            return androidResponse;
+        }
+        return androidResponse;
+        //throw AndroidExceptionFactory.createSendMessageException(appleRequest, androidResponse);
+    }
+
     @Override
     public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
-
-        return new SendMessageResponse();
+        AppleSendMessageRequest appleRequest = new AppleSendMessageRequest(request);
+        if (appleRequest.request.to.length > 1) {
+            throw new AppleMulticastException(appleRequest, null);
+        }
+        Response response = sendMessageInternal(appleRequest);
+        return processSendMessageResponse(appleRequest, response);
     }
 
     @XmlRootElement(name = "")
@@ -212,36 +252,56 @@ public class AppleConnection implements MessagingServiceConnection
             }
         }
 
-        public AppleSendMessageRequest()
+        public AppleSendMessageRequest() throws SendMessageException
         {
             this(null);
         }
 
-        public AppleSendMessageRequest(SendMessageRequest request)
+        public AppleSendMessageRequest(SendMessageRequest request) throws SendMessageException
         {
             this.request = request;
             if (request != null) {
                 ByteArrayOutputStream notificationStream = new ByteArrayOutputStream();
-                // Command field (1 byte)
-                notificationStream.write(2);
-                // Frame length (4 bytes) - The size of the frame data.
-                // Frame data (variable length) - The frame contains the body, structured as a series of items.        
-                
-                // Device token item.
-                notificationStream.write(2);
-                
-                // Payload item.
+                try {
+                    // Command field (1 byte)
+                    notificationStream.write(2);
+                    // Frame length (4 bytes) - The size of the frame data.
+                    // Frame data (variable length) - The frame contains the body, structured as a series of items.        
 
-                // Notification identifier item.
+                    // Device token item (32 bytes).
+                    notificationStream.write(request.to[0].getCodeAsBinary());
 
-                // Expiration date item.
+                    // Payload item.
+                    //notificationStream.write (request.to[0].getCode())
 
-                // Priority item.
+                    // Notification identifier item (4 bytes).
 
-                // Item ID (1 byte) - The item identifier. For example, the item number of the payload is 2.
-                // Item data length (2 bytes) - The size of the item data.
-                // Item data (variable length) - The frame contains the body, structured as a series of items.
+                    // Expiration date item (4 bytes).
+
+                    // Priority item (1 byte).
+
+                    // Item ID (1 byte) - The item identifier. For example, the item number of the payload is 2.
+                    // Item data length (2 bytes) - The size of the item data.
+                    // Item data (variable length) - The frame contains the body, structured as a series of items.
+                } catch (IOException e) {
+                    //TODO: wrap IOException in send message exception type.
+                }
             }
+        }
+    }
+
+    @XmlRootElement
+    public static class AppleSendMessageResponse extends SendMessageResponse
+    {
+        public Response response;
+
+        public AppleSendMessageResponse()
+        {
+        }
+
+        public AppleSendMessageResponse(Response response)
+        {
+            this.response = response;
         }
     }
 }
