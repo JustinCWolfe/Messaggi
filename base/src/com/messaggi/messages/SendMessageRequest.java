@@ -1,5 +1,6 @@
 package com.messaggi.messages;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ public class SendMessageRequest
     public final boolean isDebug;
 
     public final Device from;
+
+    public final Date requestDate;
 
     public final UUID requestId;
 
@@ -41,6 +44,7 @@ public class SendMessageRequest
         this.to = to;
         this.messageMap = messageMap;
         this.isDebug = isDebug;
+        this.requestDate = new Date();
         this.requestId = UUID.randomUUID();
     }
 }
