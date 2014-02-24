@@ -23,6 +23,12 @@ public class Device
         return code;
     }
 
+    @XmlTransient
+    public byte[] getCodeAsBinary()
+    {
+        return DomainHelper.encodeBase64Image(code);
+    }
+
     public void setCode(String code)
     {
         this.code = code;

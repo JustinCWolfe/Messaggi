@@ -1,6 +1,7 @@
 package com.messaggi.messages;
 
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.common.collect.ImmutableMap;
 import com.messaggi.domain.Device;
@@ -12,6 +13,8 @@ public class SendMessageRequest
     public final boolean isDebug;
 
     public final Device from;
+
+    public final UUID requestId;
 
     public final Device[] to;
 
@@ -38,6 +41,7 @@ public class SendMessageRequest
         this.to = to;
         this.messageMap = messageMap;
         this.isDebug = isDebug;
+        this.requestId = UUID.randomUUID();
     }
 }
 

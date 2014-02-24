@@ -169,9 +169,6 @@ public abstract class AndroidSendMessageException extends SendMessageException
 
     /**
      * Multicast messaging is not supported via HTTP GCM messaging.
-     * 
-     * @author jwolfe
-     * 
      */
     public static class AndroidMulticastException extends AndroidSendMessageException
     {
