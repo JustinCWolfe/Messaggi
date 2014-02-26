@@ -3,6 +3,7 @@ package com.messaggi.messaging.external;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -280,31 +281,9 @@ public class AppleConnection implements MessagingServiceConnection
                 try {
                     // Command field (1 byte)
                     notificationStream.write(SEND_MESSAGE_COMMAND);
-
                     // Frame length (4 bytes) - The size of the frame data.
-
                     // Frame data (variable length) - The frame contains the body, structured as a series of items.        
-
-                    // Device token item (32 bytes).
-                    notificationStream.write(request.to[0].getCodeAsBinary());
-
-                    // Payload item.
-                    //notificationStream.write (request.to[0].getCode())
-
-                    // Notification identifier item (4 bytes).
-                    notificationStream.write(this.notificationId);
-
-                    // Expiration date item (4 bytes).  
-                    // Message should be kept for 4 weeks to behave similarly to GCM.
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(this.request.requestDate);
-                    calendar.add(Calendar.WEEK_OF_MONTH, 4);
-                    try (DataOutputStream dos = new DataOutputStream(notificationStream);) {
-                        dos.writeLong(calendar.getTimeInMillis());
-                    }
-
-                    // Priority item (1 byte).
-                    notificationStream.write(SEND_MESSAGE_IMMEDIATELY);
+                    ByteArrayOutputStream frameDataStream = getFrameData();
 
                     // Item ID (1 byte) - The item identifier. For example, the item number of the payload is 2.
                     // Item data length (2 bytes) - The size of the item data.
@@ -312,6 +291,129 @@ public class AppleConnection implements MessagingServiceConnection
                 } catch (IOException e) {
                     //TODO: wrap IOException in send message exception type.
                 }
+            }
+        }
+
+        /**
+         * The device token in binary form, as was registered by the device.
+         */
+        private ByteArrayOutputStream getDeviceTokenItem() throws IOException
+        {
+            return new Item(1, 32, request.to[0].getCodeAsBinary()).getStreamForItem();
+        }
+
+        /**
+         * The JSON-formatted payload. The payload must not be null-terminated.
+         */
+        private ByteArrayOutputStream getPayloadItem() throws IOException
+        {
+            // Payload is variable length and is <= 256 bytes.
+            return new Item(2, 32, request.to[0].getCodeAsBinary()).getStreamForItem();
+        }
+
+        /**
+         * An arbitrary, opaque value that identifies this notification. This
+         * identifier is used for reporting errors to your server.
+         */
+        private ByteArrayOutputStream getNotificationIdentifierItem() throws IOException
+        {
+            // Notification identifier item (4 bytes).
+            //notificationStream.write(this.notificationId);
+            return new Item(3, 32, request.to[0].getCodeAsBinary()).getStreamForItem();
+        }
+
+        /**
+         * A UNIX epoch date expressed in seconds (UTC) that identifies when the
+         * notification is no longer valid and can be discarded. If this value
+         * is non-zero, APNs stores the notification tries to deliver the
+         * notification at least once. Specify zero to indicate that the
+         * notification expires immediately and that APNs should not store the
+         * notification at all.
+         */
+        private ByteArrayOutputStream getExpirationDateItem() throws IOException
+        {
+            // Expiration date item (4 bytes).  
+            // Message should be kept for 4 weeks to behave similarly to GCM.
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(this.request.requestDate);
+            calendar.add(Calendar.WEEK_OF_MONTH, 4);
+            try (DataOutputStream dos = new DataOutputStream(notificationStream);) {
+                dos.writeLong(calendar.getTimeInMillis());
+            }
+            return new Item(4, 32, request.to[0].getCodeAsBinary()).getStreamForItem();
+        }
+
+        /**
+         * The notification’s priority. Provide one of the following values: 10
+         * - The push message is sent immediately. The push notification must
+         * trigger an alert, sound, or badge on the device. It is an error to
+         * use this priority for a push that contains only the content-available
+         * key; 5 - The push message is sent at a time that conserves power on
+         * the device receiving it.
+         */
+        private ByteArrayOutputStream getPriorityItem() throws IOException
+        {
+            // Priority item (1 byte).
+            notificationStream.write(SEND_MESSAGE_IMMEDIATELY);
+            return new Item(5, 32, request.to[0].getCodeAsBinary()).getStreamForItem();
+        }
+
+        // Frame data (variable length) - The frame contains the body, structured as a series of items.        
+        private ByteArrayOutputStream getFrameData() throws IOException
+        {
+            ByteArrayOutputStream frameDataStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream deviceTokenItemStream = getDeviceTokenItem();
+            ByteArrayOutputStream payloadItemStream = getPayloadItem();
+            ByteArrayOutputStream notificationIdentifierItemStream = getNotificationIdentifierItem();
+            ByteArrayOutputStream expirationDateItemStream = getExpirationDateItem();
+            ByteArrayOutputStream priorityItemStream = getPriorityItem();
+            return frameDataStream;
+        }
+
+        private static class Item
+        {
+            private final int id;
+
+            private final int length;
+
+            private final byte[] data;
+
+            Item(int id, int length, byte[] data)
+            {
+                this.id = id;
+                this.length = data.length;
+                this.data = data;
+            }
+
+            ByteArrayOutputStream getStreamForItem() throws IOException
+            {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                // 1 byte
+                stream.write(id);
+                // 2 bytes
+                ByteBuffer.allocate(2).putInt(length).array();
+                // Variable length
+                stream.write(data);
+                return stream;
+            }
+        }
+
+        private static class Frame
+        {
+            private final Item[] items;
+
+            Frame(Item[] items)
+            {
+                this.items = items;
+            }
+
+            ByteArrayOutputStream getStreamForFrame() throws IOException
+            {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                for (Item item : items) {
+                    stream.write(item.getStreamForItem().toByteArray());
+                }
+                return stream;
             }
         }
     }
