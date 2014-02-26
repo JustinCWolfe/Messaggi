@@ -7,10 +7,10 @@ import java.util.Map;
 
 import com.google.common.base.Strings;
 import com.messaggi.messages.SendMessageException;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageRequest;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse.AndroidResult;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
+import com.messaggi.messaging.external.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult;
+import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 
 public abstract class AndroidSendMessageException extends SendMessageException
 {

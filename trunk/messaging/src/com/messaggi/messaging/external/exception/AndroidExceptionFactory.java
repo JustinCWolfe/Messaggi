@@ -2,10 +2,10 @@ package com.messaggi.messaging.external.exception;
 
 import javax.ws.rs.core.Response;
 
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageRequest;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse.AndroidResult;
-import com.messaggi.messaging.external.AndroidConnection.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
+import com.messaggi.messaging.external.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult;
+import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidAuthenticationErrorException;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidCanonicalIdException;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInternalServerErrorException;
