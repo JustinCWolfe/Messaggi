@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.messaggi.util.EncodeHelper;
+
 @XmlRootElement(name = "Device")
 public class Device
 {
@@ -26,7 +28,7 @@ public class Device
     @XmlTransient
     public byte[] getCodeAsBinary()
     {
-        return DomainHelper.encodeBase64Image(code);
+        return EncodeHelper.encodeBase64Image(code);
     }
 
     public void setCode(String code)

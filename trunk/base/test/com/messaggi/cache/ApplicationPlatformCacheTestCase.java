@@ -23,7 +23,7 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.User;
 import com.messaggi.junit.MessaggiTestCase;
 
-public class ApplicationPlatformCacheTestCase extends MessaggiTestCase
+public abstract class ApplicationPlatformCacheTestCase extends MessaggiTestCase
 {
     protected static final double EPSILON = 1E-12;
 

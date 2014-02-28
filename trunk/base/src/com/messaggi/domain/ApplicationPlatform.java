@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.messaggi.util.EncodeHelper;
+
 @XmlRootElement(name = "ApplicationPlatform")
 public class ApplicationPlatform
 {
@@ -109,12 +111,12 @@ public class ApplicationPlatform
     @XmlAttribute(name = "ExternalServiceToken")
     public byte[] getExternalServiceTokenAsBinary()
     {
-        return DomainHelper.encodeBase64Image(externalServiceToken);
+        return EncodeHelper.encodeBase64Image(externalServiceToken);
     }
 
     public void setExternalServiceTokenAsBinary(byte[] externalServiceToken)
     {
-        this.externalServiceToken = DomainHelper.decodeBase64Image(externalServiceToken);
+        this.externalServiceToken = EncodeHelper.decodeBase64Image(externalServiceToken);
     }
 
     @XmlTransient

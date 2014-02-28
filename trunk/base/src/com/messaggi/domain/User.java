@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.messaggi.util.EncodeHelper;
+
 @XmlRootElement(name = "User")
 public class User
 {
@@ -86,12 +88,12 @@ public class User
     @XmlAttribute(name = "PasswordHash")
     public byte[] getPasswordHashAsBinary()
     {
-        return DomainHelper.encodeBase64Image(passwordHash);
+        return EncodeHelper.encodeBase64Image(passwordHash);
     }
 
     public void setPasswordHashAsBinary(byte[] passwordHash)
     {
-        this.passwordHash = DomainHelper.decodeBase64Image(passwordHash);
+        this.passwordHash = EncodeHelper.decodeBase64Image(passwordHash);
     }
 
     @XmlAttribute(name = "PasswordSalt")

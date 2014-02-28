@@ -27,12 +27,7 @@ import org.junit.Test;
 import com.google.common.base.Strings;
 import com.messaggi.TestDataHelper.ApplicationPlatform1;
 import com.messaggi.TestDataHelper.ApplicationPlatformAndroidTesting;
-import com.messaggi.TestDataHelper.Device1;
 import com.messaggi.TestDataHelper.Device2;
-import com.messaggi.TestDataHelper.Device3;
-import com.messaggi.TestDataHelper.Device4;
-import com.messaggi.TestDataHelper.Device5;
-import com.messaggi.TestDataHelper.Device6;
 import com.messaggi.TestDataHelper.DeviceAndroidTesting1;
 import com.messaggi.TestDataHelper.DeviceAndroidTesting2;
 import com.messaggi.TestDataHelper.DeviceAndroidTesting3;
@@ -41,10 +36,8 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
-import com.messaggi.junit.MessaggiTestCase;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.messaging.external.AndroidSendMessageResponse;
 import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 import com.messaggi.messaging.external.MockAndroidConnection.ResponseType;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException;
@@ -60,7 +53,7 @@ import com.messaggi.messaging.external.exception.AndroidSendMessageException.And
 import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnknownException;
 import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnregisteredDeviceException;
 
-public class TestAndroidConnection extends MessaggiTestCase
+public class TestAndroidConnection extends ConnectionTestCase
 {
     private static final String MESSAGE1_KEY = "key1";
 
@@ -82,24 +75,6 @@ public class TestAndroidConnection extends MessaggiTestCase
 
     private static final String MESSAGE5_VALUE_TOO_BIG = Strings.repeat("0123456789", 500);
 
-    private static final Map<String, String> MESSAGE_MAP = new HashMap<>();
-
-    private static final ApplicationPlatform APP_PLAT = ApplicationPlatformAndroidTesting.getDomainObject();
-
-    private static MessagingServiceConnection androidConnection;
-
-    private static final Device D1 = Device1.getDomainObject();
-
-    private static final Device D2 = Device2.getDomainObject();
-
-    private static final Device D3 = Device3.getDomainObject();
-
-    private static final Device D4 = Device4.getDomainObject();
-
-    private static final Device D5 = Device5.getDomainObject();
-
-    private static final Device D6 = Device6.getDomainObject();
-
     private static final Device VALID_D1 = DeviceAndroidTesting1.getDomainObject();
 
     private static final Device VALID_D2 = DeviceAndroidTesting2.getDomainObject();
@@ -113,8 +88,9 @@ public class TestAndroidConnection extends MessaggiTestCase
     {
         MESSAGE_MAP.put(MESSAGE1_KEY, MESSAGE1_VALUE);
         MESSAGE_MAP.put(MESSAGE2_KEY, MESSAGE2_VALUE);
-        androidConnection = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
-        assertSame(APP_PLAT, androidConnection.getApplicationPlatform());
+        APP_PLAT = ApplicationPlatformAndroidTesting.getDomainObject();
+        connection = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
+        assertSame(APP_PLAT, connection.getApplicationPlatform());
     }
 
     private void validateUninitializedAndroidResponse(AndroidSendMessageResponse androidResponse)
@@ -160,7 +136,14 @@ public class TestAndroidConnection extends MessaggiTestCase
     public void testConnect() throws Exception
     {
         // The HTTP android connection has no connect implementation.
-        androidConnection.connect();
+        connection.connect();
+    }
+
+    @Test
+    public void testDisconnect() throws Exception
+    {
+        // The HTTP android connection has no disconnect implementation.
+        connection.disconnect();
     }
 
     @Test
@@ -169,7 +152,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { D2, D3, D4, D5, D6 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidMulticastException e) {
             assertThat(e.response, nullValue());
@@ -337,7 +320,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { D2Temp };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidMissingRegistrationIdException e) {
             AndroidSendMessageResponse androidResponse = e.response;
@@ -378,7 +361,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { D2 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidInvalidRegistrationIdException e) {
             AndroidSendMessageResponse androidResponse = e.response;
@@ -399,7 +382,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { VALID_D1 };
         SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessageMap);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidMessageTooBigException e) {
             AndroidSendMessageResponse androidResponse = e.response;
@@ -464,7 +447,7 @@ public class TestAndroidConnection extends MessaggiTestCase
     {
         Device[] to = { VALID_D1 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
-        SendMessageResponse response = androidConnection.sendMessage(request);
+        SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AndroidSendMessageResponse);
         AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
         assertThat(0L, equalTo(androidResponse.failedMessageCount));
@@ -487,7 +470,7 @@ public class TestAndroidConnection extends MessaggiTestCase
     {
         Device[] to = { VALID_D1, VALID_D2, VALID_D3 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
-        SendMessageResponse response = androidConnection.sendMessage(request);
+        SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AndroidSendMessageResponse);
         AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
         assertThat(0L, equalTo(androidResponse.failedMessageCount));
@@ -508,7 +491,7 @@ public class TestAndroidConnection extends MessaggiTestCase
         Device[] to = { D2, D3, D4, D5, D6, VALID_D1, VALID_D2, VALID_D3 };
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
-            androidConnection.sendMessage(request);
+            connection.sendMessage(request);
             fail("should not get here");
         } catch (AndroidSendMessageException e) {
             AndroidSendMessageResponse androidResponse = e.response;

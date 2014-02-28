@@ -29,6 +29,12 @@ public class WindowsConnection implements MessagingServiceConnection
     }
 
     @Override
+    public void disconnect() throws Exception
+    {
+
+    }
+
+    @Override
     public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
         return new SendMessageResponse();

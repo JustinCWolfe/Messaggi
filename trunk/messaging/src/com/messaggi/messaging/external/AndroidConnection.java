@@ -55,6 +55,17 @@ public class AndroidConnection implements MessagingServiceConnection
 
     }
 
+    /**
+     * Connections are only needed when using the asynchronous Cloud Connection
+     * Service (CCS) XMPP messaging service. Standard HTTP messaging is
+     * stateless so no connections need be disconnected.
+     */
+    @Override
+    public void disconnect() throws Exception
+    {
+
+    }
+
     protected Response sendMessageInternal(AndroidSendMessageRequest androidRequest)
     {
         // Note that for android HTTP, the application platform  is not required since we do not 

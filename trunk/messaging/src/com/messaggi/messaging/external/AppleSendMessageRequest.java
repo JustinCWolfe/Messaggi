@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.util.EncodeHelper;
+import com.messaggi.util.JAXBHelper;
 
 @XmlRootElement(name = "")
 public class AppleSendMessageRequest
@@ -67,11 +69,14 @@ public class AppleSendMessageRequest
          * of alert if the dictionary only has the body property.
          */
         @XmlElement(name = "alert")
-        public String getAlert()
+        public String getAlert() throws Exception
         {
-            // If the alertDictionary is not null, manually marshal it 
-            // and return it as alert string.  Otherwise return the alertString.
-            return (alertDictionary != null) ? null : alertString;
+            if (alertDictionary != null) {
+                String json = JAXBHelper.objectToJSON(alertDictionary);
+                return JAXBHelper.objectToJSON(alertDictionary);
+            } else {
+                return alertString;
+            }
         }
 
         /**
@@ -161,7 +166,7 @@ public class AppleSendMessageRequest
         ThreadLocalRandom.current().nextBytes(this.notificationId);
     }
 
-    public byte[] toByteArray() throws IOException
+    public byte[] toByteArray() throws Exception
     {
         return new Notification(this).toByteArray();
     }
@@ -212,10 +217,11 @@ public class AppleSendMessageRequest
          * The JSON-formatted payload. The payload must not be null-terminated.
          * Variable length and is <= 256 bytes.
          */
-        private Frame.Item getPayloadItem() throws IOException
+        private Frame.Item getPayloadItem() throws Exception
         {
-            //TODO: dump payload to binary.
-            return new Frame.Item(PAYLOAD_ITEM_INDEX, 32, appleRequest.request.to[0].getCodeAsBinary());
+            String payloadJSON = JAXBHelper.objectToJSON(appleRequest.payload);
+            byte[] payloadBytes = EncodeHelper.encodeBase64Image(payloadJSON);
+            return new Frame.Item(PAYLOAD_ITEM_INDEX, payloadBytes.length, payloadBytes);
         }
 
         /**
@@ -262,7 +268,7 @@ public class AppleSendMessageRequest
          * Frame data (variable length) - The frame contains the body,
          * structured as a series of items.
          */
-        private Frame getFrameData() throws IOException
+        private Frame getFrameData() throws Exception
         {
             Frame.Item deviceTokenItem = getDeviceTokenItem();
             Frame.Item payloadItem = getPayloadItem();
@@ -272,7 +278,7 @@ public class AppleSendMessageRequest
             return new Frame(deviceTokenItem, payloadItem, notificationIdentifierItem, expirationDateItem, priorityItem);
         }
 
-        byte[] toByteArray() throws IOException
+        byte[] toByteArray() throws Exception
         {
             ByteArrayOutputStream notificationStream = new ByteArrayOutputStream();
             // Command field (1 byte)
