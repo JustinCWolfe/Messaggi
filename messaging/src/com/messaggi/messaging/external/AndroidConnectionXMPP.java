@@ -122,6 +122,12 @@ public class AndroidConnectionXMPP implements MessagingServiceConnection
     }
 
     @Override
+    public void disconnect() throws Exception
+    {
+
+    }
+
+    @Override
     public SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException
     {
         Packet gcmRequest = new GcmPacketExtension("").toPacket();

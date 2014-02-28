@@ -1,9 +1,9 @@
-package com.messaggi.domain;
+package com.messaggi.util;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.codec.binary.StringUtils;
 
-public class DomainHelper
+public class EncodeHelper
 {
     public static byte[] encodeBase64Image(String stringToEncode)
     {

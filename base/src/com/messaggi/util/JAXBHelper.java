@@ -8,11 +8,8 @@ import javax.xml.bind.Marshaller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
-
 public class JAXBHelper
 {
-    public static boolean prettyXML = true;
-
     private static <T> Marshaller getJAXBMarshaller(T instance) throws Exception
     {
         JAXBContext context = JAXBContext.newInstance(instance.getClass());
@@ -25,11 +22,16 @@ public class JAXBHelper
 
     public static <T> String objectToJSON(T instance) throws Exception
     {
+        return objectToJSON(instance, true);
+    }
+
+    public static <T> String objectToJSON(T instance, boolean removeWhitespace) throws Exception
+    {
         // Use jaxb annotations when serializing (by default it uses jackson annotations).
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(module);
-        if (prettyXML) {
+        if (!removeWhitespace) {
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(instance);
         }
         return mapper.writeValueAsString(instance);

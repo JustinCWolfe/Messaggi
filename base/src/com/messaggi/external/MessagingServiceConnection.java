@@ -13,6 +13,8 @@ public interface MessagingServiceConnection
 
     void connect() throws Exception;
 
+    void disconnect() throws Exception;
+
     SendMessageResponse sendMessage(SendMessageRequest request) throws SendMessageException;
 }
 

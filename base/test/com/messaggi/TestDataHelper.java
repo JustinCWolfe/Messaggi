@@ -19,8 +19,8 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.ApplicationPlatform.Platform;
 import com.messaggi.domain.ApplicationPlatformMsgLog;
 import com.messaggi.domain.Device;
-import com.messaggi.domain.DomainHelper;
 import com.messaggi.domain.User;
+import com.messaggi.util.EncodeHelper;
 
 public class TestDataHelper
 {
@@ -585,7 +585,7 @@ public class TestDataHelper
                 stmt.setString(1, u.getName());
                 stmt.setString(2, u.getEmail());
                 stmt.setString(3, u.getPhone());
-                stmt.setBytes(4, DomainHelper.encodeBase64Image(u.getPasswordHash()));
+                stmt.setBytes(4, EncodeHelper.encodeBase64Image(u.getPasswordHash()));
                 stmt.setString(5, u.getPasswordSalt());
                 stmt.setString(6, u.getLocale().toLanguageTag());
                 stmt.execute();
