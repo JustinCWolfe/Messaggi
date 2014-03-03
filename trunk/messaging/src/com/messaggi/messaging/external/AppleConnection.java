@@ -1,6 +1,6 @@
 package com.messaggi.messaging.external;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -23,9 +23,7 @@ public class AppleConnection implements MessagingServiceConnection
 
     private static final String KEY_ALGORITHM = "sunx509";
 
-    private static String CERTIFICATE_FILE = "/path/to/file/Cert.p12";
-
-    private static String KEYSTORE_PASSWORD = "";
+    private static String KEYSTORE_PASSWORD = "jwolfema2226";
 
     // APNs production host - this is set to a different host for unit testing (via a mock object).
     protected static String APPLE_PUSH_NOTIFICATION_HOST = "gateway.push.apple.com";
@@ -92,7 +90,9 @@ public class AppleConnection implements MessagingServiceConnection
         char[] passwordKey = KEYSTORE_PASSWORD.toCharArray();
 
         KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
-        keyStore.load(new FileInputStream(CERTIFICATE_FILE), passwordKey);
+        byte[] authentication = applicationPlatform.getExternalServiceTokenAsBinary();
+        ByteArrayInputStream authenticationStream = new ByteArrayInputStream(authentication);
+        keyStore.load(authenticationStream, passwordKey);
 
         // Get a KeyManager and initialize it
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KEY_ALGORITHM);
