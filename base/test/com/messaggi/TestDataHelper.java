@@ -2,6 +2,9 @@ package com.messaggi;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -171,17 +174,18 @@ public class TestDataHelper
     {
         public static final UUID TOKEN = UUID.randomUUID();
 
-        public static final String EXTERNAL_SERVICE_TOKEN = getUnitTestProperties().getProperty(
-                "messaggi.android.server.appkey");
-
         public static final Platform PLATFORM = Platform.IOS;
 
-        public static ApplicationPlatform getDomainObject()
+        public static ApplicationPlatform getDomainObject() throws Exception
         {
             ApplicationPlatform ap = new ApplicationPlatform();
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
-            ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
+            String certificateFilename = getUnitTestProperties()
+                    .getProperty("messaggi.apple.server.appkey.certificate");
+            Path certPath = Paths.get(certificateFilename);
+            byte[] certBytes = Files.readAllBytes(certPath);
+            ap.setExternalServiceTokenAsBinary(certBytes);
             return ap;
         }
     }

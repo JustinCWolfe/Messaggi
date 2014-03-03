@@ -1,16 +1,21 @@
 package com.messaggi.messaging.external;
 
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.lang.reflect.Field;
+
+import javax.net.ssl.SSLSocket;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
@@ -27,12 +32,15 @@ public class TestAppleConnection extends ConnectionTestCase
 
     private static final String MESSAGE1_VALUE = "First message text";
 
+    private SSLSocket apnsSSLSocket;
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
         MESSAGE_MAP.put(MESSAGE1_KEY, MESSAGE1_VALUE);
         APP_PLAT = ApplicationPlatformAppleTesting.getDomainObject();
         connection = new MockAppleConnection();
+        connection.setApplicationPlatform(APP_PLAT);
     }
 
     @AfterClass
@@ -53,25 +61,50 @@ public class TestAppleConnection extends ConnectionTestCase
     {
     }
 
+    private void createSocketReference() throws Exception
+    {
+        Class<?> type = connection.getClass();
+        Field socketField = type.getSuperclass().getDeclaredField("apnsSSLSocket");
+        socketField.setAccessible(true);
+        apnsSSLSocket = (SSLSocket) socketField.get(connection);
+    }
+
     @Test
     public void testMessagingServiceConnectionFactory() throws Exception
     {
         MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
         assertThat(APP_PLAT, sameInstance(conn.getApplicationPlatform()));
     }
-
-    @Test
-    @Ignore
-    public void testConnect() throws Exception
+    
+    private void connectAndValidate() throws Exception
     {
         connection.connect();
+        createSocketReference();
+        assertThat(apnsSSLSocket, notNullValue());
+        assertTrue(apnsSSLSocket.isConnected());
+        assertFalse(apnsSSLSocket.isClosed());
+        assertFalse(apnsSSLSocket.isInputShutdown());
+        assertFalse(apnsSSLSocket.isOutputShutdown());
     }
 
     @Test
-    @Ignore
+    public void testConnect() throws Exception
+    {
+        connectAndValidate();
+        apnsSSLSocket.close();
+    }
+
+    @Test
     public void testDisconnect() throws Exception
     {
+        createSocketReference();
+        assertThat(apnsSSLSocket, nullValue());
         connection.disconnect();
+        assertThat(apnsSSLSocket, nullValue());
+        connectAndValidate();
+        connection.disconnect();
+        assertThat(apnsSSLSocket, notNullValue());
+        assertTrue(apnsSSLSocket.isClosed());
     }
 
     @Test
