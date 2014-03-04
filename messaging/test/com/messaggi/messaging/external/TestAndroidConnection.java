@@ -3,6 +3,7 @@ package com.messaggi.messaging.external;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -95,10 +96,10 @@ public class TestAndroidConnection extends ConnectionTestCase
 
     private void validateUninitializedAndroidResponse(AndroidSendMessageResponse androidResponse)
     {
-        assertThat(0L, equalTo(androidResponse.failedMessageCount));
-        assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
-        assertThat(0L, equalTo(androidResponse.multicastId));
-        assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+        assertThat(androidResponse.failedMessageCount, equalTo(0L));
+        assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(0L));
+        assertThat(androidResponse.multicastId, equalTo(0L));
+        assertThat(androidResponse.successfulMessageCount, equalTo(0L));
         assertThat(androidResponse.results, nullValue());
     }
 
@@ -112,24 +113,24 @@ public class TestAndroidConnection extends ConnectionTestCase
     private void validateOkWithFailedMessageAndroidResponse(AndroidSendMessageResponse androidResponse)
     {
         validateOkAndroidResponse(androidResponse);
-        assertThat(1L, equalTo(androidResponse.failedMessageCount));
-        assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+        assertThat(androidResponse.failedMessageCount, equalTo(1L));
+        assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(0L));
         assertThat(androidResponse.multicastId, greaterThan(0L));
-        assertThat(0L, equalTo(androidResponse.successfulMessageCount));
+        assertThat(androidResponse.successfulMessageCount, equalTo(0L));
     }
 
     private void validateOkWithFailedMessageAndErrorAndroidResponse(AndroidSendMessageResponse androidResponse,
             GCMErrorMessage gcmErrorMessage)
     {
         validateOkWithFailedMessageAndroidResponse(androidResponse);
-        assertThat(gcmErrorMessage, equalTo(androidResponse.results[0].getGCMErrorMessage()));
+        assertThat(androidResponse.results[0].getGCMErrorMessage(), equalTo(gcmErrorMessage));
     }
 
     @Test
     public void testMessagingServiceConnectionFactory() throws Exception
     {
         MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
-        assertThat(APP_PLAT, sameInstance(conn.getApplicationPlatform()));
+        assertThat(conn.getApplicationPlatform(), sameInstance(APP_PLAT));
     }
 
     @Test
@@ -348,8 +349,8 @@ public class TestAndroidConnection extends ConnectionTestCase
             AndroidSendMessageResponse androidResponse = e.response;
             validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.UNREGISTERED_DEVICE);
             List<String> unregisteredDeviceIds = e.getUnregisteredDeviceIds();
-            assertThat(1, equalTo(unregisteredDeviceIds.size()));
-            assertThat(UNREGISTERED_D4.getCode(), equalTo(unregisteredDeviceIds.get(0)));
+            assertThat(unregisteredDeviceIds.size(), equalTo(1));
+            assertThat(unregisteredDeviceIds.get(0), equalTo(UNREGISTERED_D4.getCode()));
             return;
         }
         fail("should not get here");
@@ -367,8 +368,8 @@ public class TestAndroidConnection extends ConnectionTestCase
             AndroidSendMessageResponse androidResponse = e.response;
             validateOkWithFailedMessageAndErrorAndroidResponse(androidResponse, GCMErrorMessage.INVALID_REGISTRATION_ID);
             List<String> invalidRegistrationIds = e.getInvalidRegistrationIds();
-            assertThat(1, equalTo(invalidRegistrationIds.size()));
-            assertThat(D2.getCode(), equalTo(invalidRegistrationIds.get(0)));
+            assertThat(invalidRegistrationIds.size(), equalTo(1));
+            assertThat(invalidRegistrationIds.get(0), equalTo(D2.getCode()));
             return;
         }
         fail("should not get here");
@@ -424,17 +425,17 @@ public class TestAndroidConnection extends ConnectionTestCase
         } catch (AndroidCanonicalIdException e) {
             AndroidSendMessageResponse androidResponse = e.response;
             validateOkAndroidResponse(androidResponse);
-            assertThat(0L, equalTo(androidResponse.failedMessageCount));
-            assertThat(1L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(androidResponse.failedMessageCount, equalTo(0L));
+            assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(1L));
             assertThat(androidResponse.multicastId, greaterThan(0L));
-            assertThat(1L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(androidResponse.successfulMessageCount, equalTo(1L));
             assertThat(androidResponse.results[0].error, nullValue());
             assertThat(androidResponse.results[0].messageId, notNullValue());
             assertThat(androidResponse.results[0].registrationId, notNullValue());
             Map<String, String> originalToCanonicalRegistrationIdMap = e.getOriginalToCanonicalRegistrationIdMap();
-            assertThat(1, equalTo(originalToCanonicalRegistrationIdMap.size()));
+            assertThat(originalToCanonicalRegistrationIdMap.size(), equalTo(1));
             assertThat(originalToCanonicalRegistrationIdMap.keySet(), contains(VALID_D1.getCode()));
-            assertThat(VALID_D1.getCode(), not(equalTo(originalToCanonicalRegistrationIdMap.get(VALID_D1.getCode()))));
+            assertThat(originalToCanonicalRegistrationIdMap.get(VALID_D1.getCode()), not(equalTo(VALID_D1.getCode())));
             assertThat(androidResponse.results[0].registrationId,
                     equalTo(originalToCanonicalRegistrationIdMap.get(VALID_D1.getCode())));
             return;
@@ -450,10 +451,10 @@ public class TestAndroidConnection extends ConnectionTestCase
         SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AndroidSendMessageResponse);
         AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
-        assertThat(0L, equalTo(androidResponse.failedMessageCount));
-        assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+        assertThat(androidResponse.failedMessageCount, equalTo(0L));
+        assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(0L));
         assertThat(androidResponse.multicastId, greaterThan(0L));
-        assertThat(1L, equalTo(androidResponse.successfulMessageCount));
+        assertThat(androidResponse.successfulMessageCount, equalTo(1L));
         assertThat(androidResponse.results[0].error, nullValue());
         assertThat(androidResponse.results[0].messageId, notNullValue());
         assertThat(androidResponse.results[0].registrationId, nullValue());
@@ -473,10 +474,10 @@ public class TestAndroidConnection extends ConnectionTestCase
         SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AndroidSendMessageResponse);
         AndroidSendMessageResponse androidResponse = (AndroidSendMessageResponse) response;
-        assertThat(0L, equalTo(androidResponse.failedMessageCount));
-        assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+        assertThat(androidResponse.failedMessageCount, equalTo(0L));
+        assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(0L));
         assertThat(androidResponse.multicastId, greaterThan(0L));
-        assertThat(3L, equalTo(androidResponse.successfulMessageCount));
+        assertThat(androidResponse.successfulMessageCount, equalTo(3L));
     }
 
     @Test
@@ -499,21 +500,21 @@ public class TestAndroidConnection extends ConnectionTestCase
             assertEquals(Response.Status.OK.getReasonPhrase(), androidResponse.response.getStatusInfo()
                     .getReasonPhrase());
             assertEquals(Response.Status.OK.getStatusCode(), androidResponse.response.getStatusInfo().getStatusCode());
-            assertThat(5L, equalTo(androidResponse.failedMessageCount));
-            assertThat(0L, equalTo(androidResponse.canonicalRegistrationIdCount));
+            assertThat(androidResponse.failedMessageCount, equalTo(5L));
+            assertThat(androidResponse.canonicalRegistrationIdCount, equalTo(0L));
             assertThat(androidResponse.multicastId, greaterThan(0L));
-            assertThat(3L, equalTo(androidResponse.successfulMessageCount));
+            assertThat(androidResponse.successfulMessageCount, equalTo(3L));
             for (int toIndex = 0; toIndex < to.length; toIndex++) {
                 // The first 5 are invalid registrations, the next 3 are valid.
                 if (toIndex < 5) {
-                    assertThat(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.INVALID_REGISTRATION_ID,
-                            equalTo(androidResponse.results[toIndex].getGCMErrorMessage()));
+                    assertThat(androidResponse.results[toIndex].getGCMErrorMessage(),
+                            equalTo(AndroidSendMessageResponse.AndroidResult.GCMErrorMessage.INVALID_REGISTRATION_ID));
                     assertThat(androidResponse.results[toIndex].messageId, nullValue());
-                    assertThat("", equalTo(androidResponse.results[toIndex].registrationId));
+                    assertThat(androidResponse.results[toIndex].registrationId, isEmptyString());
                 } else {
                     assertThat(androidResponse.results[toIndex].error, nullValue());
-                    assertThat("fake_message_id", equalTo(androidResponse.results[toIndex].messageId));
-                    assertThat("", equalTo(androidResponse.results[toIndex].registrationId));
+                    assertThat(androidResponse.results[toIndex].messageId, equalTo("fake_message_id"));
+                    assertThat(androidResponse.results[toIndex].registrationId, isEmptyString());
                 }
             }
             return;

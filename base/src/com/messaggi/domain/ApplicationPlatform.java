@@ -35,7 +35,7 @@ public class ApplicationPlatform
 
     private UUID token;
 
-    private String externalServiceToken;
+    private byte[] externalServiceToken;
 
     private HashSet<Device> devices;
 
@@ -100,23 +100,24 @@ public class ApplicationPlatform
     @XmlTransient
     public String getExternalServiceToken()
     {
-        return externalServiceToken;
+        return (externalServiceToken != null) ? EncodeHelper.decodeBase64Image(externalServiceToken) : null;
     }
 
     public void setExternalServiceToken(String externalServiceToken)
     {
-        this.externalServiceToken = externalServiceToken;
+        this.externalServiceToken = (externalServiceToken != null) ? EncodeHelper
+                .encodeBase64Image(externalServiceToken) : null;
     }
 
     @XmlAttribute(name = "ExternalServiceToken")
     public byte[] getExternalServiceTokenAsBinary()
     {
-        return EncodeHelper.encodeBase64Image(externalServiceToken);
+        return externalServiceToken;
     }
 
     public void setExternalServiceTokenAsBinary(byte[] externalServiceToken)
     {
-        this.externalServiceToken = EncodeHelper.decodeBase64Image(externalServiceToken);
+        this.externalServiceToken = externalServiceToken;
     }
 
     @XmlTransient
