@@ -1,7 +1,9 @@
 package com.messaggi.dao;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import com.messaggi.TestDataHelper.User1;
 import com.messaggi.TestDataHelper.User2;
 import com.messaggi.domain.User;
 import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.util.EncodeHelper;
 
 public class TestUserDAO extends MessaggiTestCase
 {
@@ -63,7 +66,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, retrievedUser1.getName());
         assertEquals(User1.EMAIL, retrievedUser1.getEmail());
         assertEquals(User1.PHONE, retrievedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
+        assertThat(retrievedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(retrievedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser1.getLocale());
         assertEquals(true, retrievedUser1.getActive());
@@ -72,7 +76,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, retrievedUser2.getName());
         assertEquals(User2.EMAIL, retrievedUser2.getEmail());
         assertEquals(User2.PHONE, retrievedUser2.getPhone());
-        assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
+        assertThat(retrievedUser2.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(retrievedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser2.getLocale());
         assertEquals(true, retrievedUser2.getActive());
@@ -120,7 +125,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, retrievedUser1.getName());
         assertEquals(User1.EMAIL, retrievedUser1.getEmail());
         assertEquals(User1.PHONE, retrievedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, retrievedUser1.getPasswordHash());
+        assertThat(retrievedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(retrievedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, retrievedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser1.getLocale());
         assertEquals(true, retrievedUser1.getActive());
@@ -129,7 +135,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, retrievedUser2.getName());
         assertEquals(User2.EMAIL, retrievedUser2.getEmail());
         assertEquals(User2.PHONE, retrievedUser2.getPhone());
-        assertEquals(User2.PASSWD_HASH, retrievedUser2.getPasswordHash());
+        assertThat(retrievedUser2.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(retrievedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, retrievedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser2.getLocale());
         assertEquals(true, retrievedUser2.getActive());
@@ -177,7 +184,9 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, retrievedUser31.getName());
         assertEquals(User1.EMAIL, retrievedUser31.getEmail());
         assertEquals(User1.PHONE, retrievedUser31.getPhone());
-        assertEquals(User1.PASSWD_HASH, retrievedUser31.getPasswordHash());
+        assertThat(retrievedUser31.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(retrievedUser31.getPasswordHashAsBinary(),
+                equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, retrievedUser31.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser31.getLocale());
         assertEquals(true, retrievedUser31.getActive());
@@ -198,7 +207,9 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, retrievedUser41.getName());
         assertEquals(User1.EMAIL, retrievedUser41.getEmail());
         assertEquals(User1.PHONE, retrievedUser41.getPhone());
-        assertEquals(User1.PASSWD_HASH, retrievedUser41.getPasswordHash());
+        assertThat(retrievedUser41.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(retrievedUser41.getPasswordHashAsBinary(),
+                equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, retrievedUser41.getPasswordSalt());
         assertEquals(User1.LOCALE, retrievedUser41.getLocale());
         assertEquals(true, retrievedUser41.getActive());
@@ -207,7 +218,9 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, retrievedUser42.getName());
         assertEquals(User2.EMAIL, retrievedUser42.getEmail());
         assertEquals(User2.PHONE, retrievedUser42.getPhone());
-        assertEquals(User2.PASSWD_HASH, retrievedUser42.getPasswordHash());
+        assertThat(retrievedUser42.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(retrievedUser42.getPasswordHashAsBinary(),
+                equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, retrievedUser42.getPasswordSalt());
         assertEquals(User2.LOCALE, retrievedUser42.getLocale());
         assertEquals(true, retrievedUser42.getActive());
@@ -226,7 +239,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, savedUser1.getName());
         assertEquals(User1.EMAIL, savedUser1.getEmail());
         assertEquals(User1.PHONE, savedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
         assertEquals(true, savedUser1.getActive());
@@ -255,7 +269,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, savedUser1.getName());
         assertEquals(User1.EMAIL, savedUser1.getEmail());
         assertEquals(User1.PHONE, savedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
         assertEquals(true, savedUser1.getActive());
@@ -265,7 +280,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser2.getName());
         assertEquals(User2.EMAIL, savedUser2.getEmail());
         assertEquals(User2.PHONE, savedUser2.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser2.getPasswordHash());
+        assertThat(savedUser2.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
         assertEquals(true, savedUser2.getActive());
@@ -295,7 +311,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser1.getName());
         assertEquals(updateUser1Email, savedUser1.getEmail());
         assertEquals(User2.PHONE, savedUser1.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
         assertEquals(true, savedUser1.getActive());
@@ -342,7 +359,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser1.getName());
         assertEquals(updateUser1Email, savedUser1.getEmail());
         assertEquals(User2.PHONE, savedUser1.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
         assertEquals(true, savedUser1.getActive());
@@ -352,7 +370,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, savedUser2.getName());
         assertEquals(updateUser2Email, savedUser2.getEmail());
         assertEquals(User1.PHONE, savedUser2.getPhone());
-        assertEquals(User1.PASSWD_HASH, savedUser2.getPasswordHash());
+        assertThat(savedUser2.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(savedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser2.getLocale());
         assertEquals(true, savedUser2.getActive());
@@ -394,7 +413,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser1.getName());
         assertEquals(updateUser1Email, savedUser1.getEmail());
         assertEquals(User2.PHONE, savedUser1.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser1.getLocale());
         assertEquals(true, savedUser1.getActive());
@@ -404,7 +424,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser2.getName());
         assertEquals(User2.EMAIL, savedUser2.getEmail());
         assertEquals(User2.PHONE, savedUser2.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser2.getPasswordHash());
+        assertThat(savedUser2.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
         assertEquals(true, savedUser2.getActive());
@@ -426,7 +447,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, savedUser1.getName());
         assertEquals(User1.EMAIL, savedUser1.getEmail());
         assertEquals(User1.PHONE, savedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
         assertEquals(false, savedUser1.getActive());
@@ -458,7 +480,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User1.NAME, savedUser1.getName());
         assertEquals(User1.EMAIL, savedUser1.getEmail());
         assertEquals(User1.PHONE, savedUser1.getPhone());
-        assertEquals(User1.PASSWD_HASH, savedUser1.getPasswordHash());
+        assertThat(savedUser1.getPasswordHash(), equalTo(User1.PASSWD_HASH));
+        assertThat(savedUser1.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User1.PASSWD_HASH)));
         assertEquals(User1.PASSWD_SALT, savedUser1.getPasswordSalt());
         assertEquals(User1.LOCALE, savedUser1.getLocale());
         assertEquals(false, savedUser1.getActive());
@@ -468,7 +491,8 @@ public class TestUserDAO extends MessaggiTestCase
         assertEquals(User2.NAME, savedUser2.getName());
         assertEquals(User2.EMAIL, savedUser2.getEmail());
         assertEquals(User2.PHONE, savedUser2.getPhone());
-        assertEquals(User2.PASSWD_HASH, savedUser2.getPasswordHash());
+        assertThat(savedUser2.getPasswordHash(), equalTo(User2.PASSWD_HASH));
+        assertThat(savedUser2.getPasswordHashAsBinary(), equalTo(EncodeHelper.encodeBase64Image(User2.PASSWD_HASH)));
         assertEquals(User2.PASSWD_SALT, savedUser2.getPasswordSalt());
         assertEquals(User2.LOCALE, savedUser2.getLocale());
         assertEquals(false, savedUser2.getActive());

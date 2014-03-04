@@ -20,7 +20,7 @@ public class User
 
     private String phone;
 
-    private String passwordHash;
+    private byte[] passwordHash;
 
     private String passwordSalt;
 
@@ -77,23 +77,23 @@ public class User
     @XmlTransient
     public String getPasswordHash()
     {
-        return passwordHash;
+        return (passwordHash != null) ? EncodeHelper.decodeBase64Image(passwordHash) : null;
     }
 
     public void setPasswordHash(String passwordHash)
     {
-        this.passwordHash = passwordHash;
+        this.passwordHash = (passwordHash != null) ? EncodeHelper.encodeBase64Image(passwordHash) : null;
     }
 
     @XmlAttribute(name = "PasswordHash")
     public byte[] getPasswordHashAsBinary()
     {
-        return EncodeHelper.encodeBase64Image(passwordHash);
+        return passwordHash;
     }
 
     public void setPasswordHashAsBinary(byte[] passwordHash)
     {
-        this.passwordHash = EncodeHelper.decodeBase64Image(passwordHash);
+        this.passwordHash = passwordHash;
     }
 
     @XmlAttribute(name = "PasswordSalt")

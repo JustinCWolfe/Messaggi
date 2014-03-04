@@ -73,7 +73,7 @@ public class TestAppleConnection extends ConnectionTestCase
     public void testMessagingServiceConnectionFactory() throws Exception
     {
         MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
-        assertThat(APP_PLAT, sameInstance(conn.getApplicationPlatform()));
+        assertThat(conn.getApplicationPlatform(), sameInstance(APP_PLAT));
     }
     
     private void connectAndValidate() throws Exception
@@ -130,10 +130,10 @@ public class TestAppleConnection extends ConnectionTestCase
         SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AppleSendMessageResponse);
         AppleSendMessageResponse appleResponse = (AppleSendMessageResponse) response;
-        //assertThat(0L, equalTo(appleResponse.failedMessageCount));
-        //assertThat(0L, equalTo(appleResponse.canonicalRegistrationIdCount));
+        //assertThat(appleResponse.failedMessageCount), equalTo(0L);
+        //assertThat(appleResponse.canonicalRegistrationIdCount, equalTo(0L));
         //assertThat(appleResponse.multicastId, greaterThan(0L));
-        //assertThat(1L, equalTo(appleResponse.successfulMessageCount));
+        //assertThat(appleResponse.successfulMessageCount, equalTo(1L));
         //assertThat(appleResponse.results[0].error, nullValue());
         //assertThat(appleResponse.results[0].messageId, notNullValue());
         //assertThat(appleResponse.results[0].registrationId, nullValue());
