@@ -103,6 +103,8 @@ public class TestDataHelper
 
         public static final String EXTERNAL_SERVICE_TOKEN = "IOS_APPLICATION_TOKEN1";
 
+        public static final String EXTERNAL_SERVICE_PASSWORD = "IOS_APPLICATION_PASSWORD1";
+
         public static final Platform PLATFORM = Platform.IOS;
 
         public static ApplicationPlatform getDomainObject()
@@ -111,6 +113,7 @@ public class TestDataHelper
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
             ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
+            ap.setExternalServicePassword(EXTERNAL_SERVICE_PASSWORD);
             return ap;
         }
     }
@@ -139,6 +142,8 @@ public class TestDataHelper
 
         public static final String EXTERNAL_SERVICE_TOKEN = "IOS_APPLICATION_TOKEN2";
 
+        public static final String EXTERNAL_SERVICE_PASSWORD = "IOS_APPLICATION_PASSWORD2";
+
         public static final Platform PLATFORM = Platform.IOS;
 
         public static ApplicationPlatform getDomainObject()
@@ -147,6 +152,7 @@ public class TestDataHelper
             ap.setPlatform(PLATFORM);
             ap.setToken(TOKEN);
             ap.setExternalServiceToken(EXTERNAL_SERVICE_TOKEN);
+            ap.setExternalServicePassword(EXTERNAL_SERVICE_PASSWORD);
             return ap;
         }
     }
@@ -183,9 +189,12 @@ public class TestDataHelper
             ap.setToken(TOKEN);
             String certificateFilename = getUnitTestProperties()
                     .getProperty("messaggi.apple.server.appkey.certificate");
+            String certificatePassword = getUnitTestProperties().getProperty(
+                    "messaggi.apple.server.appkey.certificate.password");
             Path certPath = Paths.get(certificateFilename);
             byte[] certBytes = Files.readAllBytes(certPath);
             ap.setExternalServiceTokenAsBinary(certBytes);
+            ap.setExternalServicePassword(certificatePassword);
             return ap;
         }
     }

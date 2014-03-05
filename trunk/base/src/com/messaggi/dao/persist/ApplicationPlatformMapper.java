@@ -32,6 +32,9 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
             byte[] externalServiceToken = rs.getBytes("ExternalServiceToken");
             domainObject.setExternalServiceTokenAsBinary(rs.wasNull() ? null : externalServiceToken);
 
+            byte[] externalServicePassword = rs.getBytes("ExternalServicePassword");
+            domainObject.setExternalServicePasswordAsBinary(rs.wasNull() ? null : externalServicePassword);
+
             int applicationId = rs.getInt("ApplicationID");
             Integer applicationIdObj = rs.wasNull() ? null : applicationId;
             if (applicationIdObj != null) {
@@ -51,7 +54,6 @@ public class ApplicationPlatformMapper implements Get<ApplicationPlatform>, GetA
             domainObjects.add(domainObject);
         }
     }
-
 
     // Get implementation
     @Override
