@@ -37,6 +37,8 @@ public class ApplicationPlatform
 
     private byte[] externalServiceToken;
 
+    private byte[] externalServicePassword;
+
     private HashSet<Device> devices;
 
     private HashSet<ApplicationPlatformMsgLog> applicationPlatformMsgLogs;
@@ -118,6 +120,29 @@ public class ApplicationPlatform
     public void setExternalServiceTokenAsBinary(byte[] externalServiceToken)
     {
         this.externalServiceToken = externalServiceToken;
+    }
+
+    @XmlTransient
+    public String getExternalServicePassword()
+    {
+        return (externalServicePassword != null) ? EncodeHelper.decodeBase64Image(externalServicePassword) : null;
+    }
+
+    public void setExternalServicePassword(String externalServicePassword)
+    {
+        this.externalServicePassword = (externalServicePassword != null) ? EncodeHelper
+                .encodeBase64Image(externalServicePassword) : null;
+    }
+
+    @XmlAttribute(name = "ExternalServicePassword")
+    public byte[] getExternalServicePasswordAsBinary()
+    {
+        return externalServicePassword;
+    }
+
+    public void setExternalServicePasswordAsBinary(byte[] externalServicePassword)
+    {
+        this.externalServicePassword = externalServicePassword;
     }
 
     @XmlTransient

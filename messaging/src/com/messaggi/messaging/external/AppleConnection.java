@@ -23,8 +23,6 @@ public class AppleConnection implements MessagingServiceConnection
 
     private static final String KEY_ALGORITHM = "sunx509";
 
-    private static String KEYSTORE_PASSWORD = "jwolfema2226";
-
     // APNs production host - this is set to a different host for unit testing (via a mock object).
     protected static String APPLE_PUSH_NOTIFICATION_HOST = "gateway.push.apple.com";
 
@@ -32,7 +30,6 @@ public class AppleConnection implements MessagingServiceConnection
 
     private SSLSocket apnsSSLSocket;
 
-    //TODO: start unit testing.
     //TODO: add error handling.
     //TODO: add support for the feedback service.
 
@@ -48,26 +45,6 @@ public class AppleConnection implements MessagingServiceConnection
     public void setApplicationPlatform(ApplicationPlatform applicationPlatform)
     {
         this.applicationPlatform = applicationPlatform;
-    }
-
-    private void sendData()
-    {
-        //send HTTP get request
-        //BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(sslSock.getOutputStream(), "UTF8"));            
-        //wr.write("GET /mail HTTP/1.1\r\nhost: mail.google.com\r\n\r\n");
-        //wr.flush();
-
-        // read response
-        //BufferedReader rd = new BufferedReader(new InputStreamReader(sslSock.getInputStream()));           
-        //String string = null;
-
-        //while ((string = rd.readLine()) != null) {
-        //System.out.println(string);
-        //System.out.flush();
-        //}
-
-        //rd.close();
-        //wr.close(); 
     }
 
     /**
@@ -87,7 +64,7 @@ public class AppleConnection implements MessagingServiceConnection
         // made by a legitimate provider. 
         // When a provider authenticates itself to APNs, it sends its topic to the APNs server, which identifies the 
         // application for which it’s providing data. The topic is currently the bundle identifier of the target application.
-        char[] passwordKey = KEYSTORE_PASSWORD.toCharArray();
+        char[] passwordKey = applicationPlatform.getExternalServicePassword().toCharArray();
 
         KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
         byte[] authentication = applicationPlatform.getExternalServiceTokenAsBinary();
@@ -117,6 +94,26 @@ public class AppleConnection implements MessagingServiceConnection
         if (apnsSSLSocket != null) {
             apnsSSLSocket.close();
         }
+    }
+
+    private void sendData()
+    {
+        //send HTTP get request
+        //BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(sslSock.getOutputStream(), "UTF8"));            
+        //wr.write("GET /mail HTTP/1.1\r\nhost: mail.google.com\r\n\r\n");
+        //wr.flush();
+
+        // read response
+        //BufferedReader rd = new BufferedReader(new InputStreamReader(sslSock.getInputStream()));           
+        //String string = null;
+
+        //while ((string = rd.readLine()) != null) {
+        //System.out.println(string);
+        //System.out.flush();
+        //}
+
+        //rd.close();
+        //wr.close(); 
     }
 
     protected Response sendMessageInternal(AppleSendMessageRequest appleRequest)

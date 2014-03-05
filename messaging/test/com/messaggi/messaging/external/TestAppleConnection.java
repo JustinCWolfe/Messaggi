@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
+import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
@@ -78,6 +79,11 @@ public class TestAppleConnection extends ConnectionTestCase
     
     private void connectAndValidate() throws Exception
     {
+        connectAndValidate(connection);
+    }
+
+    private void connectAndValidate(MessagingServiceConnection connection) throws Exception
+    {
         connection.connect();
         createSocketReference();
         assertThat(apnsSSLSocket, notNullValue());
@@ -85,6 +91,28 @@ public class TestAppleConnection extends ConnectionTestCase
         assertFalse(apnsSSLSocket.isClosed());
         assertFalse(apnsSSLSocket.isInputShutdown());
         assertFalse(apnsSSLSocket.isOutputShutdown());
+    }
+
+    @Test
+    public void testConnectWithNullExternalServiceToken() throws Exception
+    {
+        ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
+        invalidAppPlat.setExternalServiceToken(null);
+        MockAppleConnection mockConnection = new MockAppleConnection();
+        mockConnection.setApplicationPlatform(invalidAppPlat);
+        connectAndValidate(mockConnection);
+        apnsSSLSocket.close();
+    }
+
+    @Test
+    public void testConnectWithInvalidExternalServiceToken() throws Exception
+    {
+        ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
+        invalidAppPlat.setExternalServiceToken("--something not valid--");
+        MockAppleConnection mockConnection = new MockAppleConnection();
+        mockConnection.setApplicationPlatform(invalidAppPlat);
+        connectAndValidate(mockConnection);
+        apnsSSLSocket.close();
     }
 
     @Test
