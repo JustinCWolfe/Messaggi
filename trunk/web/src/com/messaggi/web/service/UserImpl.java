@@ -103,7 +103,7 @@ public class UserImpl implements User
     {
         validateRequest(request);
         // Verify that the user id in the uri and the request body are the same.
-        if (!id.equals(request.getUser().getId().toString())) {
+        if (id.equals(request.getUser().getId())) {
             throw new WebServiceException(Messages.PATH_PARAMETER_REQUEST_BODY_MISMATCH);
         }
         com.messaggi.domain.User[] newUsers = { request.getUser() };

@@ -155,7 +155,8 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
     private int computeConnectionId(long connectionCacheSize, String from, String to)
     {
         int hashCode = (from + to).hashCode();
-        return (int) (Math.abs(hashCode) % connectionCacheSize);
+        int connectionId = (int) (hashCode % connectionCacheSize);
+        return Math.abs(connectionId);
     }
 
     //TODO: The cache values will be connection interfaces that will be implemented by the apple 

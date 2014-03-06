@@ -29,7 +29,7 @@ public class TestDataHelper
 {
     private static Properties UNIT_TEST_PROPERTIES;
 
-    private static final Properties getUnitTestProperties()
+    private synchronized static final Properties getUnitTestProperties()
     {
         if (UNIT_TEST_PROPERTIES  == null) 
         {

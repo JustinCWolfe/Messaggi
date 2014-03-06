@@ -15,7 +15,7 @@ public interface User
         protected static final String PATH_PARAMETER_REQUEST_BODY_MISMATCH = "Path parameter does not match request body.";
     }
 
-    static final String NEW_USER_URI_FRAGMENT_FORMAT = "/id/{0}";
+    static final String NEW_USER_URI_FRAGMENT_FORMAT = "/id/%s";
 
     @XmlRootElement
     class UserRequest

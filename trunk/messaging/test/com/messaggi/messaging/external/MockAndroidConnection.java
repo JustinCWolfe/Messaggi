@@ -27,12 +27,19 @@ public class MockAndroidConnection extends AndroidConnection
 
     private final ResponseType responseType;
 
+    private static final Random random = new Random();
+
     private static AndroidSendMessageResponse getEmptyAndroidSendMessageResponse()
     {
         AndroidSendMessageResponse androidResponse = new AndroidSendMessageResponse();
         androidResponse.canonicalRegistrationIdCount = 0;
         androidResponse.failedMessageCount = 1;
-        androidResponse.multicastId = Math.abs(new Random().nextLong());
+        // If the value in multicastId is MIN_VALUE, its absolute value cannot be mapped to 
+        // a long .  To handle this case, manually compute the absolute value for MIN_VALUE
+        // by changing it to MAX_VALUE.
+        long multicastId = random.nextLong();
+        multicastId = (multicastId == Long.MIN_VALUE) ? Long.MAX_VALUE : Math.abs(multicastId);
+        androidResponse.multicastId = multicastId;
         androidResponse.successfulMessageCount = 0;
         androidResponse.results = new AndroidResult[] { new AndroidResult() };
         return androidResponse;
