@@ -85,6 +85,8 @@ public class TestDataHelper
 
         public static final String EXTERNAL_SERVICE_TOKEN = "ANDROID_APPLICATION_TOKEN1";
 
+        public static final String EXTERNAL_SERVICE_PASSWORD = null;
+
         public static final Platform PLATFORM = Platform.ANDROID;
 
         public static ApplicationPlatform getDomainObject()
@@ -123,6 +125,8 @@ public class TestDataHelper
         public static final UUID TOKEN = UUID.fromString("8CA72FDF-EA74-44D7-9F03-01C46BD8FCFF");
 
         public static final String EXTERNAL_SERVICE_TOKEN = "WINDOWS_APPLICATION_TOKEN1";
+
+        public static final String EXTERNAL_SERVICE_PASSWORD = null;
 
         public static final Platform PLATFORM = Platform.WINDOWS;
 
@@ -163,6 +167,8 @@ public class TestDataHelper
 
         public static final String EXTERNAL_SERVICE_TOKEN = getUnitTestProperties().getProperty(
                 "messaggi.android.server.appkey");
+
+        public static final String EXTERNAL_SERVICE_PASSWORD = null;
 
         public static final Platform PLATFORM = Platform.ANDROID;
 
@@ -471,7 +477,7 @@ public class TestDataHelper
     {
         private static final String CREATE_APP_STMT = "insert into dbo.[Application] (UserID, Name) values (?,?)";
 
-        private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token, ExternalServiceToken) values (?,?,?,?)";
+        private static final String CREATE_APP_PLAT_STMT = "insert into dbo.[ApplicationPlatform] (ApplicationID, PlatformCode, Token, ExternalServiceToken, ExternalServicePassword) values (?,?,?,?,?)";
 
         private static final String CREATE_APP_PLAT_MSG_LOG_STMT = "insert into dbo.[ApplicationPlatformMsgLog] (ApplicationPlatformID, Date, MsgCount) values (?,?,?)";
 
@@ -534,6 +540,7 @@ public class TestDataHelper
                 stmt.setString(2, ap.getPlatform().toString());
                 stmt.setString(3, ap.getToken().toString());
                 stmt.setBytes(4, ap.getExternalServiceTokenAsBinary());
+                stmt.setBytes(5, ap.getExternalServicePasswordAsBinary());
                 stmt.execute();
                 try (ResultSet rs = stmt.getGeneratedKeys();) {
                     while (rs.next()) {

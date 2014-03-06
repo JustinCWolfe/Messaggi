@@ -721,35 +721,32 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertEquals(appPlat1.getToken(), retrievedAppPlat1.getToken());
         assertNull(retrievedAppPlat1.getExternalServiceToken());
         assertNull(retrievedAppPlat1.getExternalServiceTokenAsBinary());
-        assertThat(retrievedAppPlat1.getExternalServicePassword(), equalTo(appPlat1.getExternalServicePassword()));
-        assertThat(retrievedAppPlat1.getExternalServicePasswordAsBinary(), equalTo(appPlat1.getExternalServicePasswordAsBinary()));
+        assertNull(retrievedAppPlat1.getExternalServicePassword());
+        assertNull(retrievedAppPlat1.getExternalServicePasswordAsBinary());
         assertNull(retrievedAppPlat1.getApplication());
         assertNull(retrievedAppPlat1.getPlatform());
         assertEquals(appPlat2.getId(), retrievedAppPlat2.getId());
         assertEquals(appPlat2.getToken(), retrievedAppPlat2.getToken());
         assertNull(retrievedAppPlat2.getExternalServiceToken());
         assertNull(retrievedAppPlat2.getExternalServiceTokenAsBinary());
-        assertThat(retrievedAppPlat2.getExternalServicePassword(), equalTo(appPlat2.getExternalServicePassword()));
-        assertThat(retrievedAppPlat2.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat2.getExternalServicePasswordAsBinary()));
+        assertNull(retrievedAppPlat2.getExternalServicePassword());
+        assertNull(retrievedAppPlat2.getExternalServicePasswordAsBinary());
         assertNull(retrievedAppPlat2.getApplication());
         assertNull(retrievedAppPlat2.getPlatform());
         assertEquals(appPlat3.getId(), retrievedAppPlat3.getId());
         assertEquals(appPlat3.getToken(), retrievedAppPlat3.getToken());
         assertNull(retrievedAppPlat3.getExternalServiceToken());
         assertNull(retrievedAppPlat3.getExternalServiceTokenAsBinary());
-        assertThat(retrievedAppPlat3.getExternalServicePassword(), equalTo(appPlat3.getExternalServicePassword()));
-        assertThat(retrievedAppPlat3.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat3.getExternalServicePasswordAsBinary()));
+        assertNull(retrievedAppPlat3.getExternalServicePassword());
+        assertNull(retrievedAppPlat3.getExternalServicePasswordAsBinary());
         assertNull(retrievedAppPlat3.getApplication());
         assertNull(retrievedAppPlat3.getPlatform());
         assertEquals(appPlat4.getId(), retrievedAppPlat4.getId());
         assertEquals(appPlat4.getToken(), retrievedAppPlat4.getToken());
         assertNull(retrievedAppPlat4.getExternalServiceToken());
         assertNull(retrievedAppPlat4.getExternalServiceTokenAsBinary());
-        assertThat(retrievedAppPlat4.getExternalServicePassword(), equalTo(appPlat4.getExternalServicePassword()));
-        assertThat(retrievedAppPlat4.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat4.getExternalServicePasswordAsBinary()));
+        assertNull(retrievedAppPlat4.getExternalServicePassword());
+        assertNull(retrievedAppPlat4.getExternalServicePasswordAsBinary());
         assertNull(retrievedAppPlat4.getApplication());
         assertNull(retrievedAppPlat4.getPlatform());
     }
@@ -880,9 +877,9 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat1.getExternalServiceToken(), equalTo(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN));
         assertThat(savedAppPlat1.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN)));
-        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(appPlat2.getExternalServicePassword()));
+        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(ApplicationPlatform2.EXTERNAL_SERVICE_PASSWORD));
         assertThat(savedAppPlat1.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat2.getExternalServicePasswordAsBinary()));
+                equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform2.EXTERNAL_SERVICE_PASSWORD)));
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(1, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
@@ -909,6 +906,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
 
         appPlat2.setToken(ApplicationPlatform1.TOKEN);
         appPlat2.setExternalServiceToken(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN);
+        appPlat2.setExternalServicePasswordAsBinary(null);
         appPlat2.setPlatform(ApplicationPlatform1.PLATFORM);
         appPlat2.setApplication(app2);
 
@@ -939,9 +937,9 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat1.getExternalServiceToken(), equalTo(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN));
         assertThat(savedAppPlat1.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN)));
-        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(appPlat3.getExternalServicePassword()));
+        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(ApplicationPlatform3.EXTERNAL_SERVICE_PASSWORD));
         assertThat(savedAppPlat1.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat3.getExternalServicePasswordAsBinary()));
+                equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform3.EXTERNAL_SERVICE_PASSWORD)));
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
@@ -951,9 +949,9 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat2.getExternalServiceToken(), equalTo(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN));
         assertThat(savedAppPlat2.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform1.EXTERNAL_SERVICE_TOKEN)));
-        assertThat(savedAppPlat2.getExternalServicePassword(), equalTo(appPlat1.getExternalServicePassword()));
+        assertThat(savedAppPlat2.getExternalServicePassword(), equalTo(ApplicationPlatform1.EXTERNAL_SERVICE_PASSWORD));
         assertThat(savedAppPlat2.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat1.getExternalServicePasswordAsBinary()));
+                equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform1.EXTERNAL_SERVICE_PASSWORD)));
         assertEquals(app2.getId(), savedAppPlat2.getApplication().getId());
         assertEquals(2, savedAppPlat2.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat2.getId());
@@ -963,9 +961,9 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat3.getExternalServiceToken(), equalTo(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN));
         assertThat(savedAppPlat3.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform2.EXTERNAL_SERVICE_TOKEN)));
-        assertThat(savedAppPlat3.getExternalServicePassword(), equalTo(appPlat2.getExternalServicePassword()));
+        assertThat(savedAppPlat3.getExternalServicePassword(), equalTo(ApplicationPlatform2.EXTERNAL_SERVICE_PASSWORD));
         assertThat(savedAppPlat3.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat2.getExternalServicePasswordAsBinary()));
+                equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform2.EXTERNAL_SERVICE_PASSWORD)));
         assertEquals(app1.getId(), savedAppPlat3.getApplication().getId());
         assertEquals(1, savedAppPlat3.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat3.getId());
@@ -1014,9 +1012,9 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat1.getExternalServiceToken(), equalTo(ApplicationPlatform4.EXTERNAL_SERVICE_TOKEN));
         assertThat(savedAppPlat1.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform4.EXTERNAL_SERVICE_TOKEN)));
-        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(appPlat4.getExternalServicePassword()));
+        assertThat(savedAppPlat1.getExternalServicePassword(), equalTo(ApplicationPlatform4.EXTERNAL_SERVICE_PASSWORD));
         assertThat(savedAppPlat1.getExternalServicePasswordAsBinary(),
-                equalTo(appPlat4.getExternalServicePasswordAsBinary()));
+                equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform4.EXTERNAL_SERVICE_PASSWORD)));
         assertEquals(app2.getId(), savedAppPlat1.getApplication().getId());
         assertEquals(2, savedAppPlat1.getApplication().getApplicationPlatforms().size());
         assertNotNull(savedAppPlat1.getId());
@@ -1039,7 +1037,7 @@ public class TestApplicationPlatformDAO extends MessaggiTestCase
         assertThat(savedAppPlat3.getExternalServiceTokenAsBinary(),
                 equalTo(EncodeHelper.encodeBase64Image(ApplicationPlatform3.EXTERNAL_SERVICE_TOKEN)));
         assertThat(savedAppPlat3.getExternalServicePassword(), equalTo(appPlat3.getExternalServicePassword()));
-        assertThat(savedAppPlat1.getExternalServicePasswordAsBinary(),
+        assertThat(savedAppPlat3.getExternalServicePasswordAsBinary(),
                 equalTo(appPlat3.getExternalServicePasswordAsBinary()));
         assertEquals(app2.getId(), savedAppPlat3.getApplication().getId());
         assertEquals(2, savedAppPlat3.getApplication().getApplicationPlatforms().size());
