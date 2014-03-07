@@ -26,16 +26,16 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     public void setUp() throws Exception
     {
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatforms.Instance.getInstance().initialize(cip);
+        ApplicationPlatformsCache.Instance.getInstance().initialize(cip);
         createCacheReference();
     }
 
     @SuppressWarnings("unchecked")
     private void createCacheReference() throws Exception
     {
-        Field cacheField = getCacheField(ApplicationPlatformsImpl.class);
+        Field cacheField = getCacheField(ApplicationPlatformsCacheImpl.class);
         cache = (LoadingCache<Integer, ApplicationPlatform>) cacheField
-                .get(ApplicationPlatforms.Instance.getInstance());
+                .get(ApplicationPlatformsCache.Instance.getInstance());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
 
         int nonExistentID = -1;
         try {
-            ApplicationPlatforms.Instance.getInstance().get(nonExistentID);
+            ApplicationPlatforms.get(nonExistentID);
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
@@ -80,8 +80,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         Integer nonExistentID1 = -1;
         Integer nonExistentID2 = -2;
         try {
-            ApplicationPlatforms.Instance.getInstance().getAll(
-                    Arrays.asList(new Integer[] { nonExistentID1, nonExistentID2 }));
+            ApplicationPlatforms.getAll(Arrays.asList(new Integer[] { nonExistentID1, nonExistentID2 }));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
@@ -113,7 +112,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     {
         validateCacheInitialState(cache);
 
-        ApplicationPlatform appPlat11 = ApplicationPlatforms.Instance.getInstance().get(appPlat1.getId());
+        ApplicationPlatform appPlat11 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat11.getId());
 
         assertEquals(1, cache.size());
@@ -138,7 +137,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         lastLoadTime = stats1.totalLoadTime();
 
         // Get the same id - should be returned from the cache instead of loaded.
-        ApplicationPlatform appPlat12 = ApplicationPlatforms.Instance.getInstance().get(appPlat1.getId());
+        ApplicationPlatform appPlat12 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat12.getId());
 
         assertEquals(1, cache.size());
@@ -161,7 +160,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertEquals(lastLoadTime, stats2.totalLoadTime());
 
         // Get another id - should be loaded.
-        ApplicationPlatform appPlat21 = ApplicationPlatforms.Instance.getInstance().get(appPlat2.getId());
+        ApplicationPlatform appPlat21 = ApplicationPlatforms.get(appPlat2.getId());
         assertEquals(appPlat2.getId(), appPlat21.getId());
 
         assertEquals(2, cache.size());
@@ -187,7 +186,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
 
         // Get another id - should be loaded.  This is the 3rd id in the cache and I've set the 
         // max size to 2 so the first id that was loaded should now be evicted.
-        ApplicationPlatform appPlat31 = ApplicationPlatforms.Instance.getInstance().get(appPlat3.getId());
+        ApplicationPlatform appPlat31 = ApplicationPlatforms.get(appPlat3.getId());
         assertEquals(appPlat3.getId(), appPlat31.getId());
 
         assertEquals(2, cache.size());
@@ -213,7 +212,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
 
         // Get another id - should be loaded.  This is the 4th id in the cache and I've set the 
         // max size to 2 so the first and second ids that were loaded should now be evicted.
-        ApplicationPlatform appPlat41 = ApplicationPlatforms.Instance.getInstance().get(appPlat4.getId());
+        ApplicationPlatform appPlat41 = ApplicationPlatforms.get(appPlat4.getId());
         assertEquals(appPlat4.getId(), appPlat41.getId());
 
         assertEquals(2, cache.size());
@@ -237,7 +236,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(stats5.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats5.totalLoadTime();
 
-        ApplicationPlatform appPlat42 = ApplicationPlatforms.Instance.getInstance().get(appPlat4.getId());
+        ApplicationPlatform appPlat42 = ApplicationPlatforms.get(appPlat4.getId());
         assertEquals(appPlat4.getId(), appPlat42.getId());
 
         assertEquals(2, cache.size());
@@ -266,8 +265,8 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     {
         validateCacheInitialState(cache);
 
-        ImmutableMap<Integer, ApplicationPlatform> appPlats1And21 = ApplicationPlatforms.Instance.getInstance().getAll(
-                Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
+        ImmutableMap<Integer, ApplicationPlatform> appPlats1And21 = ApplicationPlatforms.getAll(Arrays
+                .asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         assertTrue(appPlats1And21.containsKey(appPlat1.getId()));
         assertTrue(appPlats1And21.containsKey(appPlat2.getId()));
 
@@ -294,7 +293,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         lastLoadTime = stats1.totalLoadTime();
 
         // Get the same ids - should be returned from the cache instead of loaded.
-        ImmutableMap<Integer, ApplicationPlatform> appPlats1And22 = ApplicationPlatforms.Instance.getInstance().getAll(
+        ImmutableMap<Integer, ApplicationPlatform> appPlats1And22 = ApplicationPlatforms.getAll(
                 Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         assertTrue(appPlats1And22.containsKey(appPlat1.getId()));
         assertTrue(appPlats1And22.containsKey(appPlat2.getId()));
@@ -320,9 +319,8 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertEquals(lastLoadTime, stats2.totalLoadTime());
 
         // Get more ids - mix of one hit and one miss which should be loaded.
-        ImmutableMap<Integer, ApplicationPlatform> appPlatsId2And31 = ApplicationPlatforms.Instance.getInstance()
-                .getAll(
-                Arrays.asList(new Integer[] { appPlat2.getId(), appPlat3.getId() }));
+        ImmutableMap<Integer, ApplicationPlatform> appPlatsId2And31 = ApplicationPlatforms.getAll(Arrays
+                .asList(new Integer[] { appPlat2.getId(), appPlat3.getId() }));
         assertTrue(appPlatsId2And31.containsKey(appPlat2.getId()));
         assertTrue(appPlatsId2And31.containsKey(appPlat3.getId()));
 
@@ -348,9 +346,8 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         lastLoadTime = stats3.totalLoadTime();
 
         // Get more ids - one should be in the cache and one should be loaded.
-        ImmutableMap<Integer, ApplicationPlatform> appPlatsId3And41 = ApplicationPlatforms.Instance.getInstance()
-                .getAll(
-                Arrays.asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
+        ImmutableMap<Integer, ApplicationPlatform> appPlatsId3And41 = ApplicationPlatforms.getAll(Arrays
+                .asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
         assertTrue(appPlatsId3And41.containsKey(appPlat3.getId()));
         assertTrue(appPlatsId3And41.containsKey(appPlat4.getId()));
 
@@ -375,9 +372,8 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(stats4.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats4.totalLoadTime();
 
-        ImmutableMap<Integer, ApplicationPlatform> appPlatsId3And42 = ApplicationPlatforms.Instance.getInstance()
-                .getAll(
-                Arrays.asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
+        ImmutableMap<Integer, ApplicationPlatform> appPlatsId3And42 = ApplicationPlatforms.getAll(Arrays
+                .asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
         assertTrue(appPlatsId3And42.containsKey(appPlat3.getId()));
         assertTrue(appPlatsId3And42.containsKey(appPlat4.getId()));
 
@@ -407,7 +403,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     {
         validateCacheInitialState(cache);
 
-        ApplicationPlatform appPlat11 = ApplicationPlatforms.Instance.getInstance().get(appPlat1.getId());
+        ApplicationPlatform appPlat11 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat11.getId());
 
         assertEquals(1, cache.size());
@@ -432,7 +428,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         lastLoadTime = stats1.totalLoadTime();
 
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatforms.Instance.getInstance().initialize(cip);
+        ApplicationPlatformsCache.Instance.getInstance().initialize(cip);
         createCacheReference();
 
         assertEquals(0, cache.size());

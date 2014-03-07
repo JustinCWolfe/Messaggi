@@ -33,6 +33,10 @@
         <include name="*.jar"/>
     </fileset>
 
+    <fileset id="apns.lib" dir="${lib}/apns-0.1.5">
+        <include name="*.jar"/>
+    </fileset>
+
     <fileset id="jersey.lib" dir="${lib}/jaxrs-ri-2.3.1">
       <include name="api/*.jar"/>
       <include name="ext/*.jar"/>

@@ -10,28 +10,19 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 import javax.ws.rs.core.Response;
 
+import com.google.common.base.Strings;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
+import com.notnoop.apns.APNS;
+import com.notnoop.apns.ApnsService;
 
 public class AppleConnection implements MessagingServiceConnection
 {
-    private static final String KEYSTORE_TYPE = "PKCS12";
-
-    private static final String KEY_ALGORITHM = "sunx509";
-
-    // APNs production host - this is set to a different host for unit testing (via a mock object).
-    protected static String APPLE_PUSH_NOTIFICATION_HOST = "gateway.push.apple.com";
-
-    private static final int APPLE_PUSH_NOTIFICATION_PORT = 2195;
-
-    private SSLSocket apnsSSLSocket;
-
-    //TODO: add error handling.
-    //TODO: add support for the feedback service.
+    private ApnsService service;
 
     private ApplicationPlatform applicationPlatform;
 
@@ -47,15 +38,11 @@ public class AppleConnection implements MessagingServiceConnection
         this.applicationPlatform = applicationPlatform;
     }
 
-    /**
-     * Note: To establish a TLS session with APNs, an Entrust Secure CA root
-     * certificate must be installed on the provider’s server. If the server is
-     * running OS X, this root certificate is already in the keychain. On other
-     * systems, the certificate might not be available. You can download this
-     * certificate from the Entrust SSL Certificates website.
-     */
-    @Override
-    public void connect() throws Exception
+    private SSLSocket getConnectedSocket() throws Exception
+    {
+    }
+
+    private SSLSocket getConnectedSocket() throws Exception
     {
         // Connection trust between a provider and APNs is also established through TLS peer-to-peer authentication. 
         // The provider initiates a TLS connection, gets the server certificate from APNs, and validates that certificate. 
@@ -64,7 +51,12 @@ public class AppleConnection implements MessagingServiceConnection
         // made by a legitimate provider. 
         // When a provider authenticates itself to APNs, it sends its topic to the APNs server, which identifies the 
         // application for which it’s providing data. The topic is currently the bundle identifier of the target application.
-        char[] passwordKey = applicationPlatform.getExternalServicePassword().toCharArray();
+        String externalServicePassword = applicationPlatform.getExternalServicePassword();
+        if (Strings.isNullOrEmpty(externalServicePassword)) {
+            throw new IllegalArgumentException("Passwords must be specified."
+                    + "Oracle Java SDK does not support passwordless p12 certificates");
+        }
+        char[] passwordKey = (externalServicePassword != null) ? externalServicePassword.toCharArray() : null;
 
         KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
         byte[] authentication = applicationPlatform.getExternalServiceTokenAsBinary();
@@ -81,11 +73,26 @@ public class AppleConnection implements MessagingServiceConnection
         trustManagerFactory.init((KeyStore) null);
 
         // Get the SSLContext to help create SSLSocketFactory
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
         SSLSocketFactory factory = sslContext.getSocketFactory();
-        apnsSSLSocket = (SSLSocket) factory.createSocket(APPLE_PUSH_NOTIFICATION_HOST, APPLE_PUSH_NOTIFICATION_PORT);
+        return (SSLSocket) factory.createSocket(APPLE_PUSH_NOTIFICATION_HOST, APPLE_PUSH_NOTIFICATION_PORT);
+        return APNS.newService().withCert("/path/to/certificate.p12", "MyCertPassword").withSandboxDestination()
+                .build();
+    }
+
+    /**
+     * Note: To establish a TLS session with APNs, an Entrust Secure CA root
+     * certificate must be installed on the provider’s server. If the server is
+     * running OS X, this root certificate is already in the keychain. On other
+     * systems, the certificate might not be available. You can download this
+     * certificate from the Entrust SSL Certificates website.
+     */
+    @Override
+    public void connect() throws Exception
+    {
+        apnsSSLSocket = getConnectedSocket();
     }
 
     @Override
@@ -93,6 +100,19 @@ public class AppleConnection implements MessagingServiceConnection
     {
         if (apnsSSLSocket != null) {
             apnsSSLSocket.close();
+        }
+    }
+
+    public void testConnection() throws Exception
+    {
+        SSLSocket testSocket = null;
+        try {
+            testSocket = getConnectedSocket();
+            //testSocket .sendMessage(new SimpleApnsNotification(new byte[]{0}, new byte[]{0}));
+        } finally {
+            if (testSocket != null) {
+                testSocket.close();
+            }
         }
     }
 

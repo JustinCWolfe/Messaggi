@@ -3,41 +3,33 @@ package com.messaggi.cache;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import com.google.common.collect.ImmutableMap;
-import com.messaggi.util.JNDIHelper;
 
-/**
- * Maps application platform tokens to application platform ids. Tokens are
- * passed-in the client applications but internally we use application platform
- * ids.
- */
-public interface ApplicationPlatformTokens
+public class ApplicationPlatformTokens
 {
-    public static class Instance
-    {
-        private static final String CACHE_IMPL_CLASS_JNDI_NAME = "java:/comp/env/ApplicationPlatformTokensCacheImpl";
+    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformTokensCache";
 
-        private static final Object lock = new Object();
+    private static final ApplicationPlatformTokensCache cache;
 
-        private static volatile ApplicationPlatformTokens instance;
-
-        public static ApplicationPlatformTokens getInstance() throws Exception
-        {
-            if (instance == null) {
-                synchronized (lock) {
-		            if (instance == null) {
-                        instance = JNDIHelper.createInstance(CACHE_IMPL_CLASS_JNDI_NAME);
-		            }
-                }
-            }
-            return instance;
+    static {
+        try {
+            cache = (ApplicationPlatformTokensCache) InitialContext.doLookup(CACHE_JNDI_NAME);
+        } catch (NamingException e) {
+            throw new RuntimeException("Could not find " + CACHE_JNDI_NAME, e);
         }
     }
 
-    Integer get(UUID token) throws ExecutionException;
+    public static Integer get(UUID token) throws ExecutionException
+    {
+        return cache.get(token);
+    }
 
-    ImmutableMap<UUID, Integer> getAll(Iterable<? extends UUID> tokens) throws ExecutionException;
-
-    void initialize(CacheInitializationParameters initParams);
+    public static ImmutableMap<UUID, Integer> getAll(Iterable<? extends UUID> tokens) throws ExecutionException
+    {
+        return cache.getAll(tokens);
+    }
 }
 

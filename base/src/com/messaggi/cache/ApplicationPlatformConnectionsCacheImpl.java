@@ -14,7 +14,7 @@ import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnectionFactory;
 
-public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformConnections
+public class ApplicationPlatformConnectionsCacheImpl implements ApplicationPlatformConnectionsCache
 {
     static final int DEFAULT_NUMBER_OF_CONNECTIONS = 2;
 
@@ -32,7 +32,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
         applicationPlatformCacheLoader = createApplicationPlatformCacheLoader();
     }
 
-    private ApplicationPlatformConnectionsImpl()
+    private ApplicationPlatformConnectionsCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
@@ -137,8 +137,7 @@ public class ApplicationPlatformConnectionsImpl implements ApplicationPlatformCo
 
     private static MessagingServiceConnection createConnection(ConnectionKey key) throws Exception
     {
-        ApplicationPlatform applicationPlatform = ApplicationPlatforms.Instance.getInstance().get(
-                key.applicationPlatformId);
+        ApplicationPlatform applicationPlatform = ApplicationPlatforms.get(key.applicationPlatformId);
         return MessagingServiceConnectionFactory.Instance.getInstance().create(applicationPlatform);
     }
     

@@ -32,5 +32,13 @@ public abstract class AppleSendMessageException extends SendMessageException
             super(request, response);
         }
     }
+
+    public static class AppleInvalidPasswordException extends AppleSendMessageException
+    {
+        public AppleInvalidPasswordException(AppleSendMessageRequest request, AppleSendMessageResponse response)
+        {
+            super(request, response);
+        }
+    }
 }
 

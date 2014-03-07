@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
 
-public class ApplicationPlatformsImpl implements ApplicationPlatforms
+public class ApplicationPlatformsCacheImpl implements ApplicationPlatformsCache
 {
     private static final ApplicationPlatformDAO dao;
 
@@ -26,7 +26,7 @@ public class ApplicationPlatformsImpl implements ApplicationPlatforms
         cacheLoader = createCacheLoader();
     }
 
-    private ApplicationPlatformsImpl()
+    private ApplicationPlatformsCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

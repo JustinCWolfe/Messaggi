@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 
 import javax.net.ssl.SSLSocket;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -79,11 +80,6 @@ public class TestAppleConnection extends ConnectionTestCase
     
     private void connectAndValidate() throws Exception
     {
-        connectAndValidate(connection);
-    }
-
-    private void connectAndValidate(MessagingServiceConnection connection) throws Exception
-    {
         connection.connect();
         createSocketReference();
         assertThat(apnsSSLSocket, notNullValue());
@@ -100,19 +96,50 @@ public class TestAppleConnection extends ConnectionTestCase
         invalidAppPlat.setExternalServiceToken(null);
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connectAndValidate(mockConnection);
-        apnsSSLSocket.close();
+        connection.connect();
+        createSocketReference();
+        assertThat(apnsSSLSocket, nullValue());
     }
 
     @Test
     public void testConnectWithInvalidExternalServiceToken() throws Exception
     {
         ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
-        invalidAppPlat.setExternalServiceToken("--something not valid--");
+        byte[] externalServiceTokenBytes = invalidAppPlat.getExternalServiceTokenAsBinary();
+        ArrayUtils.reverse(externalServiceTokenBytes);
+        invalidAppPlat.setExternalServiceTokenAsBinary(externalServiceTokenBytes);
+        invalidAppPlat.setExternalServiceToken("something invalid");
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connectAndValidate(mockConnection);
-        apnsSSLSocket.close();
+        connection.connect();
+        createSocketReference();
+        assertThat(apnsSSLSocket, nullValue());
+    }
+
+    @Test
+    public void testConnectWithNullExternalServicePassword() throws Exception
+    {
+        ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
+        invalidAppPlat.setExternalServicePassword(null);
+        MockAppleConnection mockConnection = new MockAppleConnection();
+        mockConnection.setApplicationPlatform(invalidAppPlat);
+        connection.connect();
+        createSocketReference();
+        assertThat(apnsSSLSocket, nullValue());
+    }
+
+    @Test
+    public void testConnectWithInvalidExternalServicePassword() throws Exception
+    {
+        ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
+        byte[] externalServicePasswordBytes = invalidAppPlat.getExternalServicePasswordAsBinary();
+        ArrayUtils.reverse(externalServicePasswordBytes);
+        invalidAppPlat.setExternalServicePasswordAsBinary(externalServicePasswordBytes);
+        MockAppleConnection mockConnection = new MockAppleConnection();
+        mockConnection.setApplicationPlatform(invalidAppPlat);
+        connection.connect();
+        createSocketReference();
+        assertThat(apnsSSLSocket, nullValue());
     }
 
     @Test

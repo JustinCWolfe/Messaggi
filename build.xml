@@ -103,6 +103,7 @@
       <fileset refid="commons-lang3.lib"/>
       <fileset refid="guava.lib"/>
       <fileset refid="smack.lib"/>
+      <fileset refid="apns.lib"/>
     </copy>
     <copy todir="${messaggi.web}" overwrite="true" flatten="true">
       <fileset dir=".">
