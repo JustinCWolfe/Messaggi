@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
 
-public class ApplicationPlatformTokensImpl implements ApplicationPlatformTokens
+public class ApplicationPlatformTokensCacheImpl implements ApplicationPlatformTokensCache
 {
     private final static ApplicationPlatformDAO dao;
 
@@ -27,7 +27,7 @@ public class ApplicationPlatformTokensImpl implements ApplicationPlatformTokens
         cacheLoader = createCacheLoader();
     }
 
-    private ApplicationPlatformTokensImpl()
+    private ApplicationPlatformTokensCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

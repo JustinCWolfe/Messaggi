@@ -15,7 +15,7 @@ import com.messaggi.dao.DeviceDAO;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 
-public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevices
+public class ApplicationPlatformDevicesCacheImpl implements ApplicationPlatformDevicesCache
 {
     private static final ApplicationPlatformDAO applicationPlatformsDao;
 
@@ -34,7 +34,7 @@ public class ApplicationPlatformDevicesImpl implements ApplicationPlatformDevice
         applicationPlatformCacheLoader = createApplicationPlatformCacheLoader();
     }
 
-    private ApplicationPlatformDevicesImpl()
+    private ApplicationPlatformDevicesCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

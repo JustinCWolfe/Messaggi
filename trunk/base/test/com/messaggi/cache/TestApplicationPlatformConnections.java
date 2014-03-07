@@ -1,6 +1,6 @@
 package com.messaggi.cache;
 
-import static com.messaggi.cache.ApplicationPlatformConnectionsImpl.DEFAULT_NUMBER_OF_CONNECTIONS;
+import static com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl.DEFAULT_NUMBER_OF_CONNECTIONS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
-import com.messaggi.cache.ApplicationPlatformConnectionsImpl.ConnectionKey;
+import com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl.ConnectionKey;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
 
@@ -30,16 +30,16 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
     public void setUp() throws Exception
     {
         CacheInitializationParameters cip = new CacheInitializationParameters(3, true);
-        ApplicationPlatformConnections.Instance.getInstance().initialize(cip);
+        ApplicationPlatformConnectionsCache.Instance.getInstance().initialize(cip);
         createCacheReference();
     }
 
     @SuppressWarnings("unchecked")
     private void createCacheReference() throws Exception
     {
-        Field cacheField = getCacheField(ApplicationPlatformConnectionsImpl.class);
+        Field cacheField = getCacheField(ApplicationPlatformConnectionsCacheImpl.class);
         cache = (LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>>) cacheField
-                .get(ApplicationPlatformConnections.Instance.getInstance());
+                .get(ApplicationPlatformConnectionsCache.Instance.getInstance());
     }
 
     private LoadingCache<ConnectionKey, MessagingServiceConnection> getConnectionCacheReferenceForApplicationPlatform(
@@ -65,8 +65,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
                 String from = RandomStringUtils.random(10 + sendReceiveIndex);
                 String to = RandomStringUtils.random(10 + sendReceiveIndex);
-                MessagingServiceConnection conn = ApplicationPlatformConnections.Instance.getInstance().getConnection(
-                        appPlat.getId(), from, to);
+                MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection( MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection( appPlat.getId(), from, to);
                 assertNotNull(conn);
                 assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
             }
@@ -138,7 +137,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
         int hits = 0;
         int requests = 0;
 
-        ApplicationPlatformConnections.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         requests += 2;
 
@@ -192,7 +191,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnections.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         hits += 2;
         requests += 2;
@@ -245,7 +244,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnections.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat3.getId() }));
         requests++;
 
@@ -301,7 +300,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnections.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
         hits++;
         requests += 2;
@@ -378,7 +377,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
                 String from = RandomStringUtils.random(10 + sendReceiveIndex);
                 String to = RandomStringUtils.random(10 + sendReceiveIndex);
-                MessagingServiceConnection conn = ApplicationPlatformConnections.Instance.getInstance().getConnection(
+                MessagingServiceConnection conn = ApplicationPlatformConnectionsCache.Instance.getInstance().getConnection(
                         appPlat.getId(), from, to);
                 assertNotNull(conn);
                 assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
@@ -411,7 +410,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
         lastLoadTime = stats1.totalLoadTime();
 
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformConnections.Instance.getInstance().initialize(cip);
+        ApplicationPlatformConnectionsCache.Instance.getInstance().initialize(cip);
         createCacheReference();
 
         assertEquals(0, cache.size());

@@ -30,15 +30,15 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
     public void setUp() throws Exception
     {
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformTokens.Instance.getInstance().initialize(cip);
+        ApplicationPlatformTokensCache.Instance.getInstance().initialize(cip);
         createCacheReference();
     }
 
     @SuppressWarnings("unchecked")
     private void createCacheReference() throws Exception
     {
-        Field cacheField = getCacheField(ApplicationPlatformTokensImpl.class);
-        cache = (LoadingCache<UUID, Integer>) cacheField.get(ApplicationPlatformTokens.Instance.getInstance());
+        Field cacheField = getCacheField(ApplicationPlatformTokensCacheImpl.class);
+        cache = (LoadingCache<UUID, Integer>) cacheField.get(ApplicationPlatformTokensCache.Instance.getInstance());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
 
         UUID nonExistentUUID = UUID.randomUUID();
         try {
-            ApplicationPlatformTokens.Instance.getInstance().get(nonExistentUUID);
+            ApplicationPlatformTokens.get(nonExistentUUID);
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
             assertEquals(0, cache.size());
@@ -83,7 +83,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         UUID nonExistentUUID1 = UUID.randomUUID();
         UUID nonExistentUUID2 = UUID.randomUUID();
         try {
-            ApplicationPlatformTokens.Instance.getInstance().getAll(
+            ApplicationPlatformTokens.getAll(
                     Arrays.asList(new UUID[] { nonExistentUUID1, nonExistentUUID2 }));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
@@ -116,7 +116,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
     {
         validateCacheInitialState(cache);
 
-        Integer appPlat11 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform1.TOKEN);
+        Integer appPlat11 = ApplicationPlatformTokens.get(ApplicationPlatform1.TOKEN);
         assertEquals(appPlat1.getId(), appPlat11);
 
         assertEquals(1, cache.size());
@@ -141,7 +141,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         lastLoadTime = stats1.totalLoadTime();
 
         // Get the same token - should be returned from the cache instead of loaded.
-        Integer appPlat12 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform1.TOKEN);
+        Integer appPlat12 = ApplicationPlatformTokens.get(ApplicationPlatform1.TOKEN);
         assertEquals(appPlat1.getId(), appPlat12);
 
         assertEquals(1, cache.size());
@@ -164,7 +164,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         assertEquals(lastLoadTime, stats2.totalLoadTime());
 
         // Get another token - should be loaded.
-        Integer appPlat21 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform2.TOKEN);
+        Integer appPlat21 = ApplicationPlatformTokens.get(ApplicationPlatform2.TOKEN);
         assertEquals(appPlat2.getId(), appPlat21);
 
         assertEquals(2, cache.size());
@@ -190,7 +190,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
 
         // Get another token - should be loaded.  This is the 3rd token in the cache and I've set the 
         // max size to 2 so the first token that was loaded should now be evicted.
-        Integer appPlat31 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform3.TOKEN);
+        Integer appPlat31 = ApplicationPlatformTokens.get(ApplicationPlatform3.TOKEN);
         assertEquals(appPlat3.getId(), appPlat31);
 
         assertEquals(2, cache.size());
@@ -216,7 +216,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
 
         // Get another token - should be loaded.  This is the 4th token in the cache and I've set the 
         // max size to 2 so the first and second tokens that were loaded should now be evicted.
-        Integer appPlat41 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform4.TOKEN);
+        Integer appPlat41 = ApplicationPlatformTokens.get(ApplicationPlatform4.TOKEN);
         assertEquals(appPlat4.getId(), appPlat41);
 
         assertEquals(2, cache.size());
@@ -240,7 +240,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         assertTrue(stats5.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats5.totalLoadTime();
 
-        Integer appPlat42 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform4.TOKEN);
+        Integer appPlat42 = ApplicationPlatformTokens.get(ApplicationPlatform4.TOKEN);
         assertEquals(appPlat4.getId(), appPlat42);
 
         assertEquals(2, cache.size());
@@ -269,7 +269,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
     {
         validateCacheInitialState(cache);
 
-        ImmutableMap<UUID, Integer> appPlatsId1 = ApplicationPlatformTokens.Instance.getInstance().getAll(
+        ImmutableMap<UUID, Integer> appPlatsId1 = ApplicationPlatformTokens.getAll(
                 Arrays.asList(new UUID[] { ApplicationPlatform1.TOKEN, ApplicationPlatform2.TOKEN }));
         assertEquals(appPlat1.getId(), appPlatsId1.get(ApplicationPlatform1.TOKEN));
         assertEquals(appPlat2.getId(), appPlatsId1.get(ApplicationPlatform2.TOKEN));
@@ -297,7 +297,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         lastLoadTime = stats1.totalLoadTime();
 
         // Get the same tokens - should be returned from the cache instead of loaded.
-        ImmutableMap<UUID, Integer> appPlatsId2 = ApplicationPlatformTokens.Instance.getInstance().getAll(
+        ImmutableMap<UUID, Integer> appPlatsId2 = ApplicationPlatformTokens.getAll(
                 Arrays.asList(new UUID[] { ApplicationPlatform1.TOKEN, ApplicationPlatform2.TOKEN }));
         assertEquals(appPlat1.getId(), appPlatsId2.get(ApplicationPlatform1.TOKEN));
         assertEquals(appPlat2.getId(), appPlatsId2.get(ApplicationPlatform2.TOKEN));
@@ -323,7 +323,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         assertEquals(lastLoadTime, stats2.totalLoadTime());
 
         // Get more tokens - mix of one hit and one miss which should be loaded.
-        ImmutableMap<UUID, Integer> appPlatsId3 = ApplicationPlatformTokens.Instance.getInstance().getAll(
+        ImmutableMap<UUID, Integer> appPlatsId3 = ApplicationPlatformTokens.getAll(
                 Arrays.asList(new UUID[] { ApplicationPlatform2.TOKEN, ApplicationPlatform3.TOKEN }));
         assertEquals(appPlat2.getId(), appPlatsId3.get(ApplicationPlatform2.TOKEN));
         assertEquals(appPlat3.getId(), appPlatsId3.get(ApplicationPlatform3.TOKEN));
@@ -350,7 +350,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         lastLoadTime = stats3.totalLoadTime();
 
         // Get more tokens - one should be in the cache and one should be loaded.
-        ImmutableMap<UUID, Integer> appPlatsId4 = ApplicationPlatformTokens.Instance.getInstance().getAll(
+        ImmutableMap<UUID, Integer> appPlatsId4 = ApplicationPlatformTokens.getAll(
                 Arrays.asList(new UUID[] { ApplicationPlatform3.TOKEN, ApplicationPlatform4.TOKEN }));
         assertEquals(appPlat3.getId(), appPlatsId4.get(ApplicationPlatform3.TOKEN));
         assertEquals(appPlat4.getId(), appPlatsId4.get(ApplicationPlatform4.TOKEN));
@@ -376,7 +376,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         assertTrue(stats4.totalLoadTime() > lastLoadTime);
         lastLoadTime = stats4.totalLoadTime();
 
-        ImmutableMap<UUID, Integer> appPlatsId5 = ApplicationPlatformTokens.Instance.getInstance().getAll(
+        ImmutableMap<UUID, Integer> appPlatsId5 = ApplicationPlatformTokens.getAll(
                 Arrays.asList(new UUID[] { ApplicationPlatform3.TOKEN, ApplicationPlatform4.TOKEN }));
         assertEquals(appPlat3.getId(), appPlatsId5.get(ApplicationPlatform3.TOKEN));
         assertEquals(appPlat4.getId(), appPlatsId5.get(ApplicationPlatform4.TOKEN));
@@ -407,7 +407,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
     {
         validateCacheInitialState(cache);
 
-        Integer appPlat11 = ApplicationPlatformTokens.Instance.getInstance().get(ApplicationPlatform1.TOKEN);
+        Integer appPlat11 = ApplicationPlatformTokens.get(ApplicationPlatform1.TOKEN);
         assertEquals(appPlat1.getId(), appPlat11);
 
         assertEquals(1, cache.size());
@@ -432,7 +432,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
         lastLoadTime = stats1.totalLoadTime();
 
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformTokens.Instance.getInstance().initialize(cip);
+        ApplicationPlatformTokensCache.Instance.getInstance().initialize(cip);
         createCacheReference();
 
         assertEquals(0, cache.size());

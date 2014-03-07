@@ -13,8 +13,8 @@ public class MessagingWorkflowFactoryImpl implements MessagingWorkflowFactory
     @Override
     public MessagingWorkflow create(UUID applicationPlatformToken) throws Exception
     {
-        Integer id = ApplicationPlatformTokens.Instance.getInstance().get(applicationPlatformToken);
-        ApplicationPlatform applicationPlatform = ApplicationPlatforms.Instance.getInstance().get(id);
+        Integer id = ApplicationPlatformTokens.get(applicationPlatformToken);
+        ApplicationPlatform applicationPlatform = ApplicationPlatforms.get(id);
         MessagingWorkflow messagingWorkflow = null;
         switch (applicationPlatform.getPlatform()) {
             case ANDROID:

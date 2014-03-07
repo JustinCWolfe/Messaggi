@@ -20,6 +20,7 @@
       <fileset refid="tomcat.lib"/>
       <fileset refid="log4j.lib"/>
       <fileset refid="smack.lib"/>
+      <fileset refid="apns.lib"/>
       <fileset refid="jersey.lib"/>
       <fileset refid="jackson.lib"/>
   </path>
