@@ -1,27 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Context>
-	<Environment 
-		name="MessagingServiceConnectionFactoryImpl" 
-		description="Implementation class name for MessagingServiceConnectionFactory." 
-		value="com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl" 
-		type="java.lang.String" 
-		override="false"/>
-		
-	<Environment 
-		name="MessagingWorkflowFactoryImpl" 
-		description="Implementation class name for MessagingWorkflowFactory." 
-		value="com.messaggi.messaging.workflow.MessagingWorkflowFactoryImpl" 
-		type="java.lang.String" 
-		override="false"/>
-
-	<Environment 
-		name="SendMessageThreadPoolImpl" 
-		description="Implementation class name for SendMessage thread pool." 
-		value="com.messaggi.messaging.pool.SendMessageThreadPoolImpl" 
-		type="java.lang.String" 
-		override="false"/>
-		
 	<Resource 
 		name="jdbc/Messaggi" 
 		auth="Container" 

@@ -15,9 +15,11 @@ import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 
 import org.apache.catalina.startup.Bootstrap;
 import org.apache.catalina.startup.Tomcat;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
+import com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl;
+import com.messaggi.cache.ApplicationPlatformDevicesCacheImpl;
+import com.messaggi.cache.ApplicationPlatformTokensCacheImpl;
+import com.messaggi.cache.ApplicationPlatformsCacheImpl;
 import com.messaggi.dao.persist.PersistManager;
 
 public abstract class MessaggiTestCase extends MessaggiLogicTestCase
@@ -104,21 +106,22 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         ds.setDescription("Messaggi SqlServer(jTDS) Unit Testing DataSource");
         ic.bind(PersistManager.MESSAGGI_DATABASE_JNDI_NAME, ds);
 
+        ic.createSubcontext("messaggi:");
+
+        ic.createSubcontext("messaggi:/cache");
         // Implementation class names for caches.
-        ic.bind("java:/comp/env/ApplicationPlatformTokensCacheImpl", "com.messaggi.cache.ApplicationPlatformTokensImpl");
-        ic.bind("java:/comp/env/ApplicationPlatformsCacheImpl", "com.messaggi.cache.ApplicationPlatformsImpl");
-        ic.bind("java:/comp/env/ApplicationPlatformDevicesCacheImpl",
-                "com.messaggi.cache.ApplicationPlatformDevicesImpl");
-        ic.bind("java:/comp/env/ApplicationPlatformConnectionsCacheImpl",
-                "com.messaggi.cache.ApplicationPlatformConnectionsImpl");
+        ic.bind("messaggi:/cache/ApplicationPlatformConnectionsCache", new ApplicationPlatformConnectionsCacheImpl());
+        ic.bind("messaggi:/cache/ApplicationPlatformDevicesCache", new ApplicationPlatformDevicesCacheImpl());
+        ic.bind("messaggi:/cache/ApplicationPlatformsCache", new ApplicationPlatformsCacheImpl());
+        ic.bind("messaggi:/cache/ApplicationPlatformTokensCache", new ApplicationPlatformTokensCacheImpl());
 
-        // Implementation class name for messaging service connection factory.
-        ic.bind("java:/comp/env/MessagingServiceConnectionFactoryImpl",
-                "com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl");
-
+        ic.createSubcontext("messaggi:/factory");
         // Implementation class name for messaging workflow factory.
-        ic.bind("java:/comp/env/MessagingWorkflowFactoryImpl",
-                "com.messaggi.messaging.workflow.MessagingWorkflowFactoryImpl");
+        // This should move to the messaging project.
+        ic.bind("messaggi:/factory/MessagingWorkflowFactory", null);
+
+        // Implementation class name for send message thread pool.
+        ic.createSubcontext("messaggi:/pool");
     }
 
     public static void startTomcat() throws Exception
@@ -159,15 +162,13 @@ public abstract class MessaggiTestCase extends MessaggiLogicTestCase
         }
     }
 
-    @BeforeClass
-    public static void suiteSetUp() throws Exception
+    public static void messaggiSuiteSetUp() throws Exception
     {
         startTomcatEmbedded();
         setupTestingContext();
     }
 
-    @AfterClass
-    public static void suiteTearDown() throws Exception
+    public static void messaggiSuiteTearDown() throws Exception
     {
         stopTomcatEmbedded();
     }

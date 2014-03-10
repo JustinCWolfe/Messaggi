@@ -12,7 +12,7 @@ import com.google.common.cache.LoadingCache;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.external.MessagingServiceConnectionFactory;
+import com.messaggi.external.MessagingServiceConnections;
 
 public class ApplicationPlatformConnectionsCacheImpl implements ApplicationPlatformConnectionsCache
 {
@@ -32,7 +32,7 @@ public class ApplicationPlatformConnectionsCacheImpl implements ApplicationPlatf
         applicationPlatformCacheLoader = createApplicationPlatformCacheLoader();
     }
 
-    private ApplicationPlatformConnectionsCacheImpl()
+    public ApplicationPlatformConnectionsCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }
@@ -138,7 +138,7 @@ public class ApplicationPlatformConnectionsCacheImpl implements ApplicationPlatf
     private static MessagingServiceConnection createConnection(ConnectionKey key) throws Exception
     {
         ApplicationPlatform applicationPlatform = ApplicationPlatforms.get(key.applicationPlatformId);
-        return MessagingServiceConnectionFactory.Instance.getInstance().create(applicationPlatform);
+        return MessagingServiceConnections.create(applicationPlatform);
     }
     
     @Override

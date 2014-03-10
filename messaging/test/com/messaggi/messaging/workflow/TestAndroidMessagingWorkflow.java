@@ -8,23 +8,29 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TestAndroidMessagingWorkflow
+import com.messaggi.junit.MessaggiTestCase;
+
+public class TestAndroidMessagingWorkflow extends MessaggiTestCase
 {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
+        messaggiSuiteSetUp();
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception
     {
+        messaggiSuiteTearDown();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception
     {
     }
 
+    @Override
     @After
     public void tearDown() throws Exception
     {

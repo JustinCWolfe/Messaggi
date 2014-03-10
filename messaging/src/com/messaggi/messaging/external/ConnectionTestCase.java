@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 import com.messaggi.TestDataHelper.Device1;
 import com.messaggi.TestDataHelper.Device2;
@@ -39,16 +37,6 @@ public abstract class ConnectionTestCase extends MessaggiTestCase
 
     protected static final Device D6 = Device6.getDomainObject();
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
-    {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
-    {
-    }
-
     @Override
     @Before
     public void setUp() throws Exception
@@ -61,5 +49,14 @@ public abstract class ConnectionTestCase extends MessaggiTestCase
     {
     }
 
+    public static void connectionSuiteSetUp() throws Exception
+    {
+        messaggiSuiteSetUp();
+    }
+
+    public static void connectionSuiteTearDown() throws Exception
+    {
+        messaggiSuiteTearDown();
+    }
 }
 

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +37,7 @@ import com.messaggi.TestDataHelper.DeviceAndroidTesting4;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.external.MessagingServiceConnectionFactory;
+import com.messaggi.external.MessagingServiceConnections;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
@@ -87,11 +88,18 @@ public class TestAndroidConnection extends ConnectionTestCase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
+        connectionSuiteSetUp();
         MESSAGE_MAP.put(MESSAGE1_KEY, MESSAGE1_VALUE);
         MESSAGE_MAP.put(MESSAGE2_KEY, MESSAGE2_VALUE);
         APP_PLAT = ApplicationPlatformAndroidTesting.getDomainObject();
-        connection = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
+        connection = MessagingServiceConnections.create(APP_PLAT);
         assertSame(APP_PLAT, connection.getApplicationPlatform());
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception
+    {
+        connectionSuiteTearDown();
     }
 
     private void validateUninitializedAndroidResponse(AndroidSendMessageResponse androidResponse)
@@ -129,7 +137,7 @@ public class TestAndroidConnection extends ConnectionTestCase
     @Test
     public void testMessagingServiceConnectionFactory() throws Exception
     {
-        MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
+        MessagingServiceConnection conn = MessagingServiceConnections.create(APP_PLAT);
         assertThat(conn.getApplicationPlatform(), sameInstance(APP_PLAT));
     }
 
@@ -190,8 +198,7 @@ public class TestAndroidConnection extends ConnectionTestCase
     {
         Device[] to = { D2 };
         ApplicationPlatform invalidAPIKeyAppPlat = ApplicationPlatform1.getDomainObject();
-        MessagingServiceConnection connection = MessagingServiceConnectionFactory.Instance.getInstance().create(
-                invalidAPIKeyAppPlat);
+        MessagingServiceConnection connection = MessagingServiceConnections.create(invalidAPIKeyAppPlat);
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         try {
             connection.sendMessage(request);

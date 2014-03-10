@@ -8,7 +8,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentMap;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.cache.CacheLoader.InvalidCacheLoadException;
@@ -19,42 +21,60 @@ import com.messaggi.domain.ApplicationPlatform;
 
 public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
 {
-    private LoadingCache<Integer, ApplicationPlatform> cache;
+    private ApplicationPlatformsCache cache;
+
+    private LoadingCache<Integer, ApplicationPlatform> guavaCache;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        applicationPlatformCacheSuiteSetUp();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        applicationPlatformCacheSuiteTearDown();
+    }
 
     @Override
     @Before
     public void setUp() throws Exception
     {
-        CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformsCache.Instance.getInstance().initialize(cip);
-        createCacheReference();
+        createCacheReferences();
     }
 
     @SuppressWarnings("unchecked")
-    private void createCacheReference() throws Exception
+    private void createCacheReferences() throws Exception
     {
-        Field cacheField = getCacheField(ApplicationPlatformsCacheImpl.class);
-        cache = (LoadingCache<Integer, ApplicationPlatform>) cacheField
-                .get(ApplicationPlatformsCache.Instance.getInstance());
+        Field cacheField = getCacheField(ApplicationPlatforms.class);
+        cacheField.setAccessible(true);
+        cache = (ApplicationPlatformsCache) cacheField.get(null);
+
+        CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
+        cache.initialize(cip);
+
+        Field guavaCacheField = getCacheField(ApplicationPlatformsCacheImpl.class);
+        guavaCache = (LoadingCache<Integer, ApplicationPlatform>) guavaCacheField.get(cache);
     }
 
     @Test
     public void testLoadInvalidId() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         int nonExistentID = -1;
         try {
             ApplicationPlatforms.get(nonExistentID);
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
-            assertEquals(0, cache.size());
+            assertEquals(0, guavaCache.size());
 
-            ConcurrentMap<Integer, ApplicationPlatform> map = cache.asMap();
+            ConcurrentMap<Integer, ApplicationPlatform> map = guavaCache.asMap();
             assertEquals(0, map.size());
 
             long lastLoadTime = 0;
-            CacheStats stats = cache.stats();
+            CacheStats stats = guavaCache.stats();
             assertEquals(0, stats.evictionCount());
             assertEquals(0, stats.hitCount());
             assertEquals(0.0, stats.hitRate(), EPSILON);
@@ -75,7 +95,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     @Test
     public void testLoadAllInvalidIds() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         Integer nonExistentID1 = -1;
         Integer nonExistentID2 = -2;
@@ -83,13 +103,13 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
             ApplicationPlatforms.getAll(Arrays.asList(new Integer[] { nonExistentID1, nonExistentID2 }));
             fail("The call above should have thrown");
         } catch (InvalidCacheLoadException e) {
-            assertEquals(0, cache.size());
+            assertEquals(0, guavaCache.size());
 
-            ConcurrentMap<Integer, ApplicationPlatform> map = cache.asMap();
+            ConcurrentMap<Integer, ApplicationPlatform> map = guavaCache.asMap();
             assertEquals(0, map.size());
 
             long lastLoadTime = 0;
-            CacheStats stats = cache.stats();
+            CacheStats stats = guavaCache.stats();
             assertEquals(0, stats.evictionCount());
             assertEquals(0, stats.hitCount());
             assertEquals(0.0, stats.hitRate(), EPSILON);
@@ -110,19 +130,19 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     @Test
     public void testLoadValidId() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         ApplicationPlatform appPlat11 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat11.getId());
 
-        assertEquals(1, cache.size());
+        assertEquals(1, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map1 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map1 = guavaCache.asMap();
         assertEquals(1, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(0, stats1.hitCount());
         assertEquals(0, stats1.hitRate(), EPSILON);
@@ -140,13 +160,13 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         ApplicationPlatform appPlat12 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat12.getId());
 
-        assertEquals(1, cache.size());
+        assertEquals(1, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map2 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map2 = guavaCache.asMap();
         assertEquals(1, map2.size());
         assertTrue(map2.containsKey(appPlat1.getId()));
 
-        CacheStats stats2 = cache.stats();
+        CacheStats stats2 = guavaCache.stats();
         assertEquals(0, stats2.evictionCount());
         assertEquals(1, stats2.hitCount());
         assertEquals(.5, stats2.hitRate(), EPSILON);
@@ -163,14 +183,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         ApplicationPlatform appPlat21 = ApplicationPlatforms.get(appPlat2.getId());
         assertEquals(appPlat2.getId(), appPlat21.getId());
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map3 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map3 = guavaCache.asMap();
         assertEquals(2, map3.size());
         assertTrue(map3.containsKey(appPlat1.getId()));
         assertTrue(map3.containsKey(appPlat2.getId()));
 
-        CacheStats stats3 = cache.stats();
+        CacheStats stats3 = guavaCache.stats();
         assertEquals(0, stats3.evictionCount());
         assertEquals(1, stats3.hitCount());
         assertEquals(.333333333333, stats3.hitRate(), EPSILON);
@@ -189,14 +209,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         ApplicationPlatform appPlat31 = ApplicationPlatforms.get(appPlat3.getId());
         assertEquals(appPlat3.getId(), appPlat31.getId());
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map4 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map4 = guavaCache.asMap();
         assertEquals(2, map4.size());
         assertTrue(map4.containsKey(appPlat2.getId()));
         assertTrue(map4.containsKey(appPlat3.getId()));
 
-        CacheStats stats4 = cache.stats();
+        CacheStats stats4 = guavaCache.stats();
         assertEquals(1, stats4.evictionCount());
         assertEquals(1, stats4.hitCount());
         assertEquals(.25, stats4.hitRate(), EPSILON);
@@ -215,14 +235,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         ApplicationPlatform appPlat41 = ApplicationPlatforms.get(appPlat4.getId());
         assertEquals(appPlat4.getId(), appPlat41.getId());
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map5 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map5 = guavaCache.asMap();
         assertEquals(2, map5.size());
         assertTrue(map5.containsKey(appPlat3.getId()));
         assertTrue(map5.containsKey(appPlat4.getId()));
 
-        CacheStats stats5 = cache.stats();
+        CacheStats stats5 = guavaCache.stats();
         assertEquals(2, stats5.evictionCount());
         assertEquals(1, stats5.hitCount());
         assertEquals(.20, stats5.hitRate(), EPSILON);
@@ -239,14 +259,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         ApplicationPlatform appPlat42 = ApplicationPlatforms.get(appPlat4.getId());
         assertEquals(appPlat4.getId(), appPlat42.getId());
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map6 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map6 = guavaCache.asMap();
         assertEquals(2, map6.size());
         assertTrue(map6.containsKey(appPlat3.getId()));
         assertTrue(map6.containsKey(appPlat4.getId()));
 
-        CacheStats stats6 = cache.stats();
+        CacheStats stats6 = guavaCache.stats();
         assertEquals(2, stats6.evictionCount());
         assertEquals(2, stats6.hitCount());
         assertEquals(.333333333333, stats6.hitRate(), EPSILON);
@@ -263,22 +283,22 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     @Test
     public void testLoadAllValidIds() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         ImmutableMap<Integer, ApplicationPlatform> appPlats1And21 = ApplicationPlatforms.getAll(Arrays
                 .asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         assertTrue(appPlats1And21.containsKey(appPlat1.getId()));
         assertTrue(appPlats1And21.containsKey(appPlat2.getId()));
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map1 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map1 = guavaCache.asMap();
         assertEquals(2, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
         assertTrue(map1.containsKey(appPlat2.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(0, stats1.hitCount());
         assertEquals(0, stats1.hitRate(), EPSILON);
@@ -298,14 +318,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(appPlats1And22.containsKey(appPlat1.getId()));
         assertTrue(appPlats1And22.containsKey(appPlat2.getId()));
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map2 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map2 = guavaCache.asMap();
         assertEquals(2, map2.size());
         assertTrue(map2.containsKey(appPlat1.getId()));
         assertTrue(map2.containsKey(appPlat2.getId()));
 
-        CacheStats stats2 = cache.stats();
+        CacheStats stats2 = guavaCache.stats();
         assertEquals(0, stats2.evictionCount());
         assertEquals(2, stats2.hitCount());
         assertEquals(.5, stats2.hitRate(), EPSILON);
@@ -324,14 +344,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(appPlatsId2And31.containsKey(appPlat2.getId()));
         assertTrue(appPlatsId2And31.containsKey(appPlat3.getId()));
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map3 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map3 = guavaCache.asMap();
         assertEquals(2, map3.size());
         assertTrue(map3.containsKey(appPlat2.getId()));
         assertTrue(map3.containsKey(appPlat3.getId()));
 
-        CacheStats stats3 = cache.stats();
+        CacheStats stats3 = guavaCache.stats();
         assertEquals(1, stats3.evictionCount());
         assertEquals(3, stats3.hitCount());
         assertEquals(.5, stats3.hitRate(), EPSILON);
@@ -351,14 +371,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(appPlatsId3And41.containsKey(appPlat3.getId()));
         assertTrue(appPlatsId3And41.containsKey(appPlat4.getId()));
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map4 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map4 = guavaCache.asMap();
         assertEquals(2, map4.size());
         assertTrue(map4.containsKey(appPlat3.getId()));
         assertTrue(map4.containsKey(appPlat4.getId()));
 
-        CacheStats stats4 = cache.stats();
+        CacheStats stats4 = guavaCache.stats();
         assertEquals(2, stats4.evictionCount());
         assertEquals(4, stats4.hitCount());
         assertEquals(.5, stats4.hitRate(), EPSILON);
@@ -377,14 +397,14 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         assertTrue(appPlatsId3And42.containsKey(appPlat3.getId()));
         assertTrue(appPlatsId3And42.containsKey(appPlat4.getId()));
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map5 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map5 = guavaCache.asMap();
         assertEquals(2, map5.size());
         assertTrue(map5.containsKey(appPlat3.getId()));
         assertTrue(map5.containsKey(appPlat4.getId()));
 
-        CacheStats stats5 = cache.stats();
+        CacheStats stats5 = guavaCache.stats();
         assertEquals(2, stats5.evictionCount());
         assertEquals(6, stats5.hitCount());
         assertEquals(.6, stats5.hitRate(), EPSILON);
@@ -401,19 +421,19 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     @Test
     public void testInitialize() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         ApplicationPlatform appPlat11 = ApplicationPlatforms.get(appPlat1.getId());
         assertEquals(appPlat1.getId(), appPlat11.getId());
 
-        assertEquals(1, cache.size());
+        assertEquals(1, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map1 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map1 = guavaCache.asMap();
         assertEquals(1, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(0, stats1.hitCount());
         assertEquals(0, stats1.hitRate(), EPSILON);
@@ -428,15 +448,15 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
         lastLoadTime = stats1.totalLoadTime();
 
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformsCache.Instance.getInstance().initialize(cip);
-        createCacheReference();
+        cache.initialize(cip);
+        createCacheReferences();
 
-        assertEquals(0, cache.size());
+        assertEquals(0, guavaCache.size());
 
-        ConcurrentMap<Integer, ApplicationPlatform> map2 = cache.asMap();
+        ConcurrentMap<Integer, ApplicationPlatform> map2 = guavaCache.asMap();
         assertEquals(0, map2.size());
 
-        CacheStats stats2 = cache.stats();
+        CacheStats stats2 = guavaCache.stats();
         assertEquals(0, stats2.evictionCount());
         assertEquals(0, stats2.hitCount());
         assertEquals(1.0, stats2.hitRate(), EPSILON);

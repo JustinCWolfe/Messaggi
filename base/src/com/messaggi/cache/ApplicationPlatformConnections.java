@@ -9,7 +9,7 @@ import com.messaggi.external.MessagingServiceConnection;
 
 public class ApplicationPlatformConnections
 {
-    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformsCache";
+    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformConnectionsCache";
 
     private static final ApplicationPlatformConnectionsCache cache;
 
@@ -17,7 +17,7 @@ public class ApplicationPlatformConnections
         try {
             cache = (ApplicationPlatformConnectionsCache) InitialContext.doLookup(CACHE_JNDI_NAME);
         } catch (NamingException e) {
-            throw new RuntimeException("Could not find crd:cache/Broker: " + e);
+            throw new RuntimeException("Could not find " + CACHE_JNDI_NAME, e);
         }
     }
 

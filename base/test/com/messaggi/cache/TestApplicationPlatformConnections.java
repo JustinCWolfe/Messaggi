@@ -11,8 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.naming.InitialContext;
+
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.cache.CacheStats;
@@ -20,32 +24,55 @@ import com.google.common.cache.LoadingCache;
 import com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl.ConnectionKey;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl;
 
 public class TestApplicationPlatformConnections extends ApplicationPlatformCacheTestCase
 {
-    private LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> cache;
+    private ApplicationPlatformConnectionsCache cache;
+
+    private LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> guavaCache;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        applicationPlatformCacheSuiteSetUp();
+        // Implementation class name for messaging service connection factory.
+        InitialContext ic = new InitialContext();
+        ic.bind("messaggi:/factory/MessagingServiceConnectionFactory", new MessagingServiceConnectionFactoryImpl());
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        applicationPlatformCacheSuiteTearDown();
+    }
 
     @Override
     @Before
     public void setUp() throws Exception
     {
-        CacheInitializationParameters cip = new CacheInitializationParameters(3, true);
-        ApplicationPlatformConnectionsCache.Instance.getInstance().initialize(cip);
-        createCacheReference();
+        createCacheReferences();
     }
 
     @SuppressWarnings("unchecked")
-    private void createCacheReference() throws Exception
+    private void createCacheReferences() throws Exception
     {
-        Field cacheField = getCacheField(ApplicationPlatformConnectionsCacheImpl.class);
-        cache = (LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>>) cacheField
-                .get(ApplicationPlatformConnectionsCache.Instance.getInstance());
+        Field cacheField = getCacheField(ApplicationPlatformConnections.class);
+        cacheField.setAccessible(true);
+        cache = (ApplicationPlatformConnectionsCache) cacheField.get(null);
+
+        CacheInitializationParameters cip = new CacheInitializationParameters(3, true);
+        cache.initialize(cip);
+
+        Field guavaCacheField = getCacheField(ApplicationPlatformConnectionsCacheImpl.class);
+        guavaCache = (LoadingCache<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>>) guavaCacheField
+                .get(cache);
     }
 
     private LoadingCache<ConnectionKey, MessagingServiceConnection> getConnectionCacheReferenceForApplicationPlatform(
             Integer id) throws Exception
     {
-        return cache.get(id);
+        return guavaCache.get(id);
     }
 
     @Test
@@ -65,7 +92,8 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
                 String from = RandomStringUtils.random(10 + sendReceiveIndex);
                 String to = RandomStringUtils.random(10 + sendReceiveIndex);
-                MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection( MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection( appPlat.getId(), from, to);
+                MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection(appPlat.getId(), from,
+                        to);
                 assertNotNull(conn);
                 assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
             }
@@ -73,16 +101,16 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             requests += numberOfFromToPairs;
         }
 
-        assertEquals(3, cache.size());
+        assertEquals(3, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = guavaCache.asMap();
         assertEquals(3, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
         assertTrue(map1.containsKey(appPlat2.getId()));
         assertTrue(map1.containsKey(appPlat3.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(hits, stats1.hitCount());
         assertEquals(hits / (double) requests, stats1.hitRate(), EPSILON);
@@ -137,19 +165,19 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
         int hits = 0;
         int requests = 0;
 
-        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
-                Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
+        cache.createConnectionCacheForAllApplicationPlatforms(Arrays.asList(new Integer[] { appPlat1.getId(),
+                appPlat2.getId() }));
         requests += 2;
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = guavaCache.asMap();
         assertEquals(2, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
         assertTrue(map1.containsKey(appPlat2.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(hits, stats1.hitCount());
         assertEquals(hits / (double) requests, stats1.hitRate(), EPSILON);
@@ -191,19 +219,19 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        cache.createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat1.getId(), appPlat2.getId() }));
         hits += 2;
         requests += 2;
 
-        assertEquals(2, cache.size());
+        assertEquals(2, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map2 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map2 = guavaCache.asMap();
         assertEquals(2, map2.size());
         assertTrue(map2.containsKey(appPlat1.getId()));
         assertTrue(map2.containsKey(appPlat2.getId()));
 
-        CacheStats stats2 = cache.stats();
+        CacheStats stats2 = guavaCache.stats();
         assertEquals(0, stats2.evictionCount());
         assertEquals(hits, stats2.hitCount());
         assertEquals(hits / (double) requests, stats2.hitRate(), EPSILON);
@@ -244,19 +272,19 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        cache.createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat3.getId() }));
         requests++;
 
-        assertEquals(3, cache.size());
+        assertEquals(3, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map3 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map3 = guavaCache.asMap();
         assertEquals(3, map3.size());
         assertTrue(map3.containsKey(appPlat1.getId()));
         assertTrue(map3.containsKey(appPlat2.getId()));
         assertTrue(map3.containsKey(appPlat3.getId()));
 
-        CacheStats stats3 = cache.stats();
+        CacheStats stats3 = guavaCache.stats();
         assertEquals(0, stats3.evictionCount());
         assertEquals(hits, stats3.hitCount());
         assertEquals(hits / (double) requests, stats3.hitRate(), EPSILON);
@@ -300,20 +328,20 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             assertTrue(connectionStats.totalLoadTime() > connectionLastLoadTime);
         }
 
-        ApplicationPlatformConnectionsCache.Instance.getInstance().createConnectionCacheForAllApplicationPlatforms(
+        cache.createConnectionCacheForAllApplicationPlatforms(
                 Arrays.asList(new Integer[] { appPlat3.getId(), appPlat4.getId() }));
         hits++;
         requests += 2;
 
-        assertEquals(3, cache.size());
+        assertEquals(3, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map4 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map4 = guavaCache.asMap();
         assertEquals(3, map4.size());
         assertTrue(map4.containsKey(appPlat2.getId()));
         assertTrue(map4.containsKey(appPlat3.getId()));
         assertTrue(map4.containsKey(appPlat4.getId()));
 
-        CacheStats stats4 = cache.stats();
+        CacheStats stats4 = guavaCache.stats();
         assertEquals(1, stats4.evictionCount());
         assertEquals(hits, stats4.hitCount());
         assertEquals(hits / (double) requests, stats4.hitRate(), EPSILON);
@@ -361,7 +389,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
     @Test
     public void testInitialize() throws Exception
     {
-        validateCacheInitialState(cache);
+        validateCacheInitialState(guavaCache);
 
         List<ApplicationPlatform> appPlats = new ArrayList<>();
         appPlats.add(appPlat1);
@@ -377,8 +405,8 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             for (int sendReceiveIndex = 0; sendReceiveIndex < numberOfFromToPairs; sendReceiveIndex++) {
                 String from = RandomStringUtils.random(10 + sendReceiveIndex);
                 String to = RandomStringUtils.random(10 + sendReceiveIndex);
-                MessagingServiceConnection conn = ApplicationPlatformConnectionsCache.Instance.getInstance().getConnection(
-                        appPlat.getId(), from, to);
+                MessagingServiceConnection conn = ApplicationPlatformConnections.getConnection(appPlat.getId(), from,
+                        to);
                 assertNotNull(conn);
                 assertEquals(appPlat.getId(), conn.getApplicationPlatform().getId());
             }
@@ -386,16 +414,16 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
             requests += numberOfFromToPairs;
         }
 
-        assertEquals(3, cache.size());
+        assertEquals(3, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map1 = guavaCache.asMap();
         assertEquals(3, map1.size());
         assertTrue(map1.containsKey(appPlat1.getId()));
         assertTrue(map1.containsKey(appPlat2.getId()));
         assertTrue(map1.containsKey(appPlat3.getId()));
 
         long lastLoadTime = 0;
-        CacheStats stats1 = cache.stats();
+        CacheStats stats1 = guavaCache.stats();
         assertEquals(0, stats1.evictionCount());
         assertEquals(hits, stats1.hitCount());
         assertEquals(hits / (double) requests, stats1.hitRate(), EPSILON);
@@ -410,15 +438,15 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
         lastLoadTime = stats1.totalLoadTime();
 
         CacheInitializationParameters cip = new CacheInitializationParameters(2, true);
-        ApplicationPlatformConnectionsCache.Instance.getInstance().initialize(cip);
-        createCacheReference();
+        cache.initialize(cip);
+        createCacheReferences();
 
-        assertEquals(0, cache.size());
+        assertEquals(0, guavaCache.size());
 
-        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map2 = cache.asMap();
+        ConcurrentMap<Integer, LoadingCache<ConnectionKey, MessagingServiceConnection>> map2 = guavaCache.asMap();
         assertEquals(0, map2.size());
 
-        CacheStats stats2 = cache.stats();
+        CacheStats stats2 = guavaCache.stats();
         assertEquals(0, stats2.evictionCount());
         assertEquals(0, stats2.hitCount());
         assertEquals(1.0, stats2.hitRate(), EPSILON);
@@ -432,4 +460,3 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
         assertTrue(stats2.totalLoadTime() == 0);
     }
 }
-

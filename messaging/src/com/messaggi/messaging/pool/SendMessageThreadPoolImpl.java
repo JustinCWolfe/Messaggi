@@ -13,7 +13,7 @@ public class SendMessageThreadPoolImpl implements SendMessageThreadPool, ThreadF
 
     private final ExecutorService pool;
 
-    private SendMessageThreadPoolImpl()
+    public SendMessageThreadPoolImpl()
     {
         pool = Executors.newCachedThreadPool(this);
     }
