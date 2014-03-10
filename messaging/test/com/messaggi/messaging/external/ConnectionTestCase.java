@@ -3,6 +3,8 @@ package com.messaggi.messaging.external;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.InitialContext;
+
 import org.junit.After;
 import org.junit.Before;
 
@@ -52,6 +54,9 @@ public abstract class ConnectionTestCase extends MessaggiTestCase
     public static void connectionSuiteSetUp() throws Exception
     {
         messaggiSuiteSetUp();
+        // Implementation class name for messaging service connection factory.
+        InitialContext ic = new InitialContext();
+        ic.bind("messaggi:/factory/MessagingServiceConnectionFactory", new MessagingServiceConnectionFactoryImpl());
     }
 
     public static void connectionSuiteTearDown() throws Exception
