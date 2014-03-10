@@ -1,16 +1,9 @@
 package com.messaggi.messaging.external;
 
 import java.io.ByteArrayInputStream;
-import java.security.KeyStore;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
@@ -19,6 +12,8 @@ import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
+import com.notnoop.apns.ApnsServiceBuilder;
+import com.notnoop.apns.ReconnectPolicy.Provided;
 
 public class AppleConnection implements MessagingServiceConnection
 {
@@ -38,48 +33,9 @@ public class AppleConnection implements MessagingServiceConnection
         this.applicationPlatform = applicationPlatform;
     }
 
-    private SSLSocket getConnectedSocket() throws Exception
+    protected void setBuilderDestination(ApnsServiceBuilder builder)
     {
-    }
-
-    private SSLSocket getConnectedSocket() throws Exception
-    {
-        // Connection trust between a provider and APNs is also established through TLS peer-to-peer authentication. 
-        // The provider initiates a TLS connection, gets the server certificate from APNs, and validates that certificate. 
-        // Then the provider sends its provider certificate to APNs, which validates it on its end. Once this procedure 
-        // is complete, a secure TLS connection has been established; APNs is now satisfied that the connection has been 
-        // made by a legitimate provider. 
-        // When a provider authenticates itself to APNs, it sends its topic to the APNs server, which identifies the 
-        // application for which it’s providing data. The topic is currently the bundle identifier of the target application.
-        String externalServicePassword = applicationPlatform.getExternalServicePassword();
-        if (Strings.isNullOrEmpty(externalServicePassword)) {
-            throw new IllegalArgumentException("Passwords must be specified."
-                    + "Oracle Java SDK does not support passwordless p12 certificates");
-        }
-        char[] passwordKey = (externalServicePassword != null) ? externalServicePassword.toCharArray() : null;
-
-        KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);
-        byte[] authentication = applicationPlatform.getExternalServiceTokenAsBinary();
-        ByteArrayInputStream authenticationStream = new ByteArrayInputStream(authentication);
-        keyStore.load(authenticationStream, passwordKey);
-
-        // Get a KeyManager and initialize it
-        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KEY_ALGORITHM);
-        keyManagerFactory.init(keyStore, passwordKey);
-
-        // Get a TrustManagerFactory with the DEFAULT KEYSTORE, so we have all
-        // the certificates in cacerts trusted
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(KEY_ALGORITHM);
-        trustManagerFactory.init((KeyStore) null);
-
-        // Get the SSLContext to help create SSLSocketFactory
-        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
-        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-
-        SSLSocketFactory factory = sslContext.getSocketFactory();
-        return (SSLSocket) factory.createSocket(APPLE_PUSH_NOTIFICATION_HOST, APPLE_PUSH_NOTIFICATION_PORT);
-        return APNS.newService().withCert("/path/to/certificate.p12", "MyCertPassword").withSandboxDestination()
-                .build();
+        builder.withProductionDestination();
     }
 
     /**
@@ -92,27 +48,29 @@ public class AppleConnection implements MessagingServiceConnection
     @Override
     public void connect() throws Exception
     {
-        apnsSSLSocket = getConnectedSocket();
+        ApnsServiceBuilder serviceBuilder = APNS.newService();
+        byte[] authentication = applicationPlatform.getExternalServiceTokenAsBinary();
+        ByteArrayInputStream authenticationStream = new ByteArrayInputStream(authentication);
+        serviceBuilder.withCert(authenticationStream, applicationPlatform.getExternalServicePassword());
+        serviceBuilder.withReconnectPolicy(Provided.NEVER);
+        serviceBuilder.asQueued();
+        setBuilderDestination(serviceBuilder);
+        service = serviceBuilder.build();
+        service.testConnection();
     }
 
     @Override
     public void disconnect() throws Exception
     {
-        if (apnsSSLSocket != null) {
-            apnsSSLSocket.close();
+        if (service != null) {
+            service.stop();
         }
     }
 
     public void testConnection() throws Exception
     {
-        SSLSocket testSocket = null;
-        try {
-            testSocket = getConnectedSocket();
-            //testSocket .sendMessage(new SimpleApnsNotification(new byte[]{0}, new byte[]{0}));
-        } finally {
-            if (testSocket != null) {
-                testSocket.close();
-            }
+        if (service != null) {
+            service.testConnection();
         }
     }
 
