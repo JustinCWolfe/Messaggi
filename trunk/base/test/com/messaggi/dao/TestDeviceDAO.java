@@ -8,7 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper;
@@ -54,6 +56,18 @@ public class TestDeviceDAO extends MessaggiTestCase
     private DeviceDAO deviceDAO;
 
     private User user1;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        messaggiSuiteSetUp();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        messaggiSuiteTearDown();
+    }
 
     @Override
     @Before

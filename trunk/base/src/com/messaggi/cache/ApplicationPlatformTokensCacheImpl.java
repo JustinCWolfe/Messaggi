@@ -27,7 +27,7 @@ public class ApplicationPlatformTokensCacheImpl implements ApplicationPlatformTo
         cacheLoader = createCacheLoader();
     }
 
-    private ApplicationPlatformTokensCacheImpl()
+    public ApplicationPlatformTokensCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

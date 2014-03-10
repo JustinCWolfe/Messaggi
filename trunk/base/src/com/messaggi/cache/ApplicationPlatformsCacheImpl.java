@@ -26,7 +26,7 @@ public class ApplicationPlatformsCacheImpl implements ApplicationPlatformsCache
         cacheLoader = createCacheLoader();
     }
 
-    private ApplicationPlatformsCacheImpl()
+    public ApplicationPlatformsCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

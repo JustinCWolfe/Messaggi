@@ -11,7 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.junit.WebServiceTestCase;
@@ -22,6 +24,18 @@ public class TestTokenGenerator extends WebServiceTestCase
     private WebTarget webTarget;
 
     private static final int TOKEN_LENGTH = 36;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        webServiceSuiteSetUp();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        webServiceSuiteTearDown();
+    }
 
     @Override
     @Before

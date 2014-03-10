@@ -34,7 +34,7 @@ public class ApplicationPlatformDevicesCacheImpl implements ApplicationPlatformD
         applicationPlatformCacheLoader = createApplicationPlatformCacheLoader();
     }
 
-    private ApplicationPlatformDevicesCacheImpl()
+    public ApplicationPlatformDevicesCacheImpl()
     {
         initialize(CacheInitializationParameters.DEFAULT_INIT_PARAMS);
     }

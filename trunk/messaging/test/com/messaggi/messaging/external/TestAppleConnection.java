@@ -23,7 +23,7 @@ import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.external.MessagingServiceConnectionFactory;
+import com.messaggi.external.MessagingServiceConnections;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
@@ -39,6 +39,7 @@ public class TestAppleConnection extends ConnectionTestCase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
+        connectionSuiteSetUp();
         MESSAGE_MAP.put(MESSAGE1_KEY, MESSAGE1_VALUE);
         APP_PLAT = ApplicationPlatformAppleTesting.getDomainObject();
         connection = new MockAppleConnection();
@@ -48,7 +49,7 @@ public class TestAppleConnection extends ConnectionTestCase
     @AfterClass
     public static void tearDownAfterClass() throws Exception
     {
-
+        connectionSuiteTearDown();
     }
 
     @Override
@@ -74,7 +75,7 @@ public class TestAppleConnection extends ConnectionTestCase
     @Test
     public void testMessagingServiceConnectionFactory() throws Exception
     {
-        MessagingServiceConnection conn = MessagingServiceConnectionFactory.Instance.getInstance().create(APP_PLAT);
+        MessagingServiceConnection conn = MessagingServiceConnections.create(APP_PLAT);
         assertThat(conn.getApplicationPlatform(), sameInstance(APP_PLAT));
     }
     

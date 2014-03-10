@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.naming.InitialContext;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,8 +17,16 @@ public class TestSendMessageThreadPool extends MessaggiTestCase
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
     {
+        messaggiSuiteSetUp();
+
         InitialContext ic = new InitialContext();
-        ic.bind("java:/comp/env/SendMessageThreadPoolImpl", "com.messaggi.messaging.pool.SendMessageThreadPoolImpl");
+        ic.bind("messaggi:/pool/SendMessageThreadPool", new SendMessageThreadPoolImpl());
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        messaggiSuiteTearDown();
     }
 
     @Override

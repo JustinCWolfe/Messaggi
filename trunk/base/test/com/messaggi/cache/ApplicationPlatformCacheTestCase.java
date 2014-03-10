@@ -5,9 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentMap;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import com.messaggi.TestDataHelper;
@@ -41,9 +38,9 @@ public abstract class ApplicationPlatformCacheTestCase extends MessaggiTestCase
 
     protected static User user1;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception
+    public static void applicationPlatformCacheSuiteSetUp() throws Exception
     {
+        MessaggiTestCase.messaggiSuiteSetUp();
         user1 = User1.getDomainObject();
         TestDataHelper.createUser(user1);
         app1 = Application1.getDomainObject();
@@ -66,8 +63,7 @@ public abstract class ApplicationPlatformCacheTestCase extends MessaggiTestCase
         TestDataHelper.createApplicationPlatform(appPlat4);
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception
+    public static void applicationPlatformCacheSuiteTearDown() throws Exception
     {
         TestDataHelper.deleteApplicationPlatform(appPlat1);
         TestDataHelper.deleteApplicationPlatform(appPlat2);
@@ -76,6 +72,7 @@ public abstract class ApplicationPlatformCacheTestCase extends MessaggiTestCase
         TestDataHelper.deleteApplication(app1);
         TestDataHelper.deleteApplication(app2);
         TestDataHelper.deleteUser(user1);
+        MessaggiTestCase.messaggiSuiteTearDown();
     }
 
     protected static Field getCacheField(Class<?> cacheImplClass) throws Exception

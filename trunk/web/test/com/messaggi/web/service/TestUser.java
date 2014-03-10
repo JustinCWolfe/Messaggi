@@ -14,7 +14,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.domain.User;
@@ -53,6 +55,18 @@ public class TestUser extends WebServiceTestCase
     private static final long PHONE1_PARSED = 6175492403L;
 
     private static final long PHONE2_PARSED = 6175498277L;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        webServiceSuiteSetUp();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClassClass() throws Exception
+    {
+        webServiceSuiteTearDown();
+    }
 
     @Override
     @Before
