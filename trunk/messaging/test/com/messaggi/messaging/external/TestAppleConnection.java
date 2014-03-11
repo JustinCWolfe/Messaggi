@@ -1,22 +1,22 @@
 package com.messaggi.messaging.external;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 
-import javax.net.ssl.SSLSocket;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
@@ -27,14 +27,16 @@ import com.messaggi.external.MessagingServiceConnections;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
+import com.notnoop.apns.ApnsService;
+import com.notnoop.apns.internal.QueuedApnsService;
+import com.notnoop.exceptions.InvalidSSLConfig;
+import com.notnoop.exceptions.NetworkIOException;
 
 public class TestAppleConnection extends ConnectionTestCase
 {
     private static final String MESSAGE1_KEY = "key1";
 
     private static final String MESSAGE1_VALUE = "First message text";
-
-    private SSLSocket apnsSSLSocket;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception
@@ -64,12 +66,20 @@ public class TestAppleConnection extends ConnectionTestCase
     {
     }
 
-    private void createSocketReference() throws Exception
+    private ApnsService getServiceReference(MessagingServiceConnection connection) throws Exception
     {
         Class<?> type = connection.getClass();
-        Field socketField = type.getSuperclass().getDeclaredField("apnsSSLSocket");
-        socketField.setAccessible(true);
-        apnsSSLSocket = (SSLSocket) socketField.get(connection);
+        Field serviceField = type.getSuperclass().getDeclaredField("service");
+        serviceField.setAccessible(true);
+        return (ApnsService) serviceField.get(connection);
+    }
+    
+    private void connectAndValidate(MessagingServiceConnection connection) throws Exception
+    {
+        connection.connect();
+        ApnsService service = getServiceReference(connection);
+        assertThat(service, notNullValue());
+        assertThat(service, instanceOf(QueuedApnsService.class));
     }
 
     @Test
@@ -77,17 +87,6 @@ public class TestAppleConnection extends ConnectionTestCase
     {
         MessagingServiceConnection conn = MessagingServiceConnections.create(APP_PLAT);
         assertThat(conn.getApplicationPlatform(), sameInstance(APP_PLAT));
-    }
-    
-    private void connectAndValidate() throws Exception
-    {
-        connection.connect();
-        createSocketReference();
-        assertThat(apnsSSLSocket, notNullValue());
-        assertTrue(apnsSSLSocket.isConnected());
-        assertFalse(apnsSSLSocket.isClosed());
-        assertFalse(apnsSSLSocket.isInputShutdown());
-        assertFalse(apnsSSLSocket.isOutputShutdown());
     }
 
     @Test
@@ -97,24 +96,57 @@ public class TestAppleConnection extends ConnectionTestCase
         invalidAppPlat.setExternalServiceToken(null);
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connection.connect();
-        createSocketReference();
-        assertThat(apnsSSLSocket, nullValue());
+        try {
+            mockConnection.connect();
+            fail("Should not get here");
+        } catch (NetworkIOException e) {
+            assertThat(
+                    e.getMessage(),
+                    containsString("javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure"));
+            ApnsService service = getServiceReference(mockConnection);
+            assertThat(service, notNullValue());
+            assertThat(service, instanceOf(QueuedApnsService.class));
+            return;
+        }
+        fail("Should not get here");
     }
 
     @Test
-    public void testConnectWithInvalidExternalServiceToken() throws Exception
+    public void testConnectWithInvalidExternalServiceToken_Reversed() throws Exception
     {
         ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
         byte[] externalServiceTokenBytes = invalidAppPlat.getExternalServiceTokenAsBinary();
         ArrayUtils.reverse(externalServiceTokenBytes);
         invalidAppPlat.setExternalServiceTokenAsBinary(externalServiceTokenBytes);
+        MockAppleConnection mockConnection = new MockAppleConnection();
+        mockConnection.setApplicationPlatform(invalidAppPlat);
+        try {
+            mockConnection.connect();
+            fail("Should not get here");
+        } catch (InvalidSSLConfig e) {
+            assertThat(e.getMessage(), containsString("java.io.IOException: toDerInputStream rejects tag type 1"));
+            assertThat(getServiceReference(mockConnection), nullValue());
+            return;
+        }
+        fail("Should not get here");
+    }
+
+    @Test
+    public void testConnectWithInvalidExternalServiceToken_TooShort() throws Exception
+    {
+        ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
         invalidAppPlat.setExternalServiceToken("something invalid");
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connection.connect();
-        createSocketReference();
-        assertThat(apnsSSLSocket, nullValue());
+        try {
+            mockConnection.connect();
+            fail("Should not get here");
+        } catch (InvalidSSLConfig e) {
+            assertThat(e.getMessage(), containsString("java.io.EOFException: Detect premature EOF"));
+            assertThat(getServiceReference(mockConnection), nullValue());
+            return;
+        }
+        fail("Should not get here");
     }
 
     @Test
@@ -124,43 +156,56 @@ public class TestAppleConnection extends ConnectionTestCase
         invalidAppPlat.setExternalServicePassword(null);
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connection.connect();
-        createSocketReference();
-        assertThat(apnsSSLSocket, nullValue());
+        try {
+            mockConnection.connect();
+            fail("Should not get here");
+        } catch (IllegalArgumentException e) {
+            assertThat(
+                    e.getMessage(),
+                    containsString("Passwords must be specified.Oracle Java SDK does not support passwordless p12 certificates"));
+            assertThat(getServiceReference(mockConnection), nullValue());
+            return;
+        }
+        fail("Should not get here");
     }
 
     @Test
     public void testConnectWithInvalidExternalServicePassword() throws Exception
     {
         ApplicationPlatform invalidAppPlat = ApplicationPlatformAppleTesting.getDomainObject();
-        byte[] externalServicePasswordBytes = invalidAppPlat.getExternalServicePasswordAsBinary();
-        ArrayUtils.reverse(externalServicePasswordBytes);
-        invalidAppPlat.setExternalServicePasswordAsBinary(externalServicePasswordBytes);
+        invalidAppPlat.setExternalServicePassword("something invalid");
         MockAppleConnection mockConnection = new MockAppleConnection();
         mockConnection.setApplicationPlatform(invalidAppPlat);
-        connection.connect();
-        createSocketReference();
-        assertThat(apnsSSLSocket, nullValue());
+        try {
+            mockConnection.connect();
+            fail("Should not get here");
+        } catch (InvalidSSLConfig e) {
+            assertThat(e.getMessage(), containsString("java.io.IOException: Sequence tag error"));
+            assertThat(getServiceReference(mockConnection), nullValue());
+            return;
+        }
+        fail("Should not get here");
     }
 
     @Test
     public void testConnect() throws Exception
     {
-        connectAndValidate();
-        apnsSSLSocket.close();
+        connectAndValidate(connection);
+        ApnsService service = getServiceReference(connection);
+        service.testConnection();
+        service.stop();
     }
 
     @Test
     public void testDisconnect() throws Exception
     {
-        createSocketReference();
-        assertThat(apnsSSLSocket, nullValue());
+        assertThat(getServiceReference(connection), nullValue());
         connection.disconnect();
-        assertThat(apnsSSLSocket, nullValue());
-        connectAndValidate();
+        assertThat(getServiceReference(connection), nullValue());
+        connectAndValidate(connection);
+        assertThat(getServiceReference(connection), notNullValue());
         connection.disconnect();
-        assertThat(apnsSSLSocket, notNullValue());
-        assertTrue(apnsSSLSocket.isClosed());
+        assertThat(getServiceReference(connection), nullValue());
     }
 
     @Test
@@ -179,6 +224,7 @@ public class TestAppleConnection extends ConnectionTestCase
     }
 
     @Test
+    @Ignore
     public void testSendMessage() throws Exception
     {
         Device[] to = { D2 };
