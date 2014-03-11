@@ -33,7 +33,7 @@
         <include name="*.jar"/>
     </fileset>
 
-    <fileset id="apns.lib" dir="${lib}/apns-0.1.5">
+    <fileset id="apns.lib" dir="${lib}/apns-0.2.3">
         <include name="*.jar"/>
     </fileset>
 
