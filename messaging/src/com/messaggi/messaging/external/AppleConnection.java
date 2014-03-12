@@ -7,6 +7,7 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleInvalidConnectionException;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
@@ -78,6 +79,11 @@ public class AppleConnection implements MessagingServiceConnection
         if (appleRequest.request.to.length > 1) {
             throw new AppleMulticastException(appleRequest, null);
         }
+        if (service == null) {
+            throw new AppleInvalidConnectionException(appleRequest, null);
+        }
+        //EnhancedApnsNotification notification = new EnhancedApnsNotification (appleRequest.notificationId)
+        //service.push()
         return null;
     }
 }

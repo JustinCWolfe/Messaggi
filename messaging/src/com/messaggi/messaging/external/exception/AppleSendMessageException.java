@@ -33,9 +33,11 @@ public abstract class AppleSendMessageException extends SendMessageException
         }
     }
 
-    public static class AppleInvalidPasswordException extends AppleSendMessageException
+    public static class AppleInvalidConnectionException extends AppleSendMessageException
     {
-        public AppleInvalidPasswordException(AppleSendMessageRequest request, AppleSendMessageResponse response)
+        private static final long serialVersionUID = 7020492528145170347L;
+
+        public AppleInvalidConnectionException(AppleSendMessageRequest request, AppleSendMessageResponse response)
         {
             super(request, response);
         }
