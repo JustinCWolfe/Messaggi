@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
@@ -26,6 +25,7 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.external.MessagingServiceConnections;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleInvalidConnectionException;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.internal.QueuedApnsService;
@@ -64,6 +64,7 @@ public class TestAppleConnection extends ConnectionTestCase
     @After
     public void tearDown() throws Exception
     {
+        connection.disconnect();
     }
 
     private ApnsService getServiceReference(MessagingServiceConnection connection) throws Exception
@@ -224,21 +225,38 @@ public class TestAppleConnection extends ConnectionTestCase
     }
 
     @Test
-    @Ignore
+    public void testSendMessage_AppleInvalidConnectionException() throws Exception
+    {
+        Device[] to = { D2 };
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
+        try {
+            connection.sendMessage(request);
+            fail("should not get here");
+        } catch (AppleInvalidConnectionException e) {
+            assertThat(e.request.request, sameInstance(request));
+            assertThat(e.response, nullValue());
+            return;
+        }
+        fail("should not get here");
+    }
+
+    @Test
+    public void testSendMessage_NoToDevice() throws Exception
+    {
+        connectAndValidate(connection);
+        SendMessageRequest request = new SendMessageRequest(D1, null, MESSAGE_MAP);
+        SendMessageResponse response = connection.sendMessage(request);
+    }
+
+    @Test
     public void testSendMessage() throws Exception
     {
         Device[] to = { D2 };
+        connectAndValidate(connection);
         SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
         SendMessageResponse response = connection.sendMessage(request);
         assertTrue(response instanceof AppleSendMessageResponse);
         AppleSendMessageResponse appleResponse = (AppleSendMessageResponse) response;
-        //assertThat(appleResponse.failedMessageCount), equalTo(0L);
-        //assertThat(appleResponse.canonicalRegistrationIdCount, equalTo(0L));
-        //assertThat(appleResponse.multicastId, greaterThan(0L));
-        //assertThat(appleResponse.successfulMessageCount, equalTo(1L));
-        //assertThat(appleResponse.results[0].error, nullValue());
-        //assertThat(appleResponse.results[0].messageId, notNullValue());
-        //assertThat(appleResponse.results[0].registrationId, nullValue());
     }
 }
 
