@@ -7,11 +7,12 @@ import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
 import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleInvalidConnectionException;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
+import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleNotConnectedException;
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.ApnsServiceBuilder;
+import com.notnoop.apns.EnhancedApnsNotification;
 
 public class AppleConnection implements MessagingServiceConnection
 {
@@ -80,10 +81,11 @@ public class AppleConnection implements MessagingServiceConnection
             throw new AppleMulticastException(appleRequest, null);
         }
         if (service == null) {
-            throw new AppleInvalidConnectionException(appleRequest, null);
+            throw new AppleNotConnectedException(appleRequest, null);
         }
-        //EnhancedApnsNotification notification = new EnhancedApnsNotification (appleRequest.notificationId)
-        //service.push()
+        EnhancedApnsNotification notification = new EnhancedApnsNotification(appleRequest.notificationId,
+                appleRequest.expirationDate, appleRequest.deviceToken, appleRequest.payloadBytes);
+        service.push(notification);
         return null;
     }
 }
