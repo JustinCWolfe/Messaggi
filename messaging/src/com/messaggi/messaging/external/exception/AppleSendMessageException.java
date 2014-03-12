@@ -19,6 +19,13 @@ public abstract class AppleSendMessageException extends SendMessageException
         this.response = response;
     }
 
+    public AppleSendMessageException(AppleSendMessageRequest request, AppleSendMessageResponse response, Throwable cause)
+    {
+        super(cause);
+        this.request = request;
+        this.response = response;
+    }
+
     /**
      * Multicast messaging is not supported via Apple Push Notification service
      * messaging.
@@ -33,13 +40,24 @@ public abstract class AppleSendMessageException extends SendMessageException
         }
     }
 
-    public static class AppleInvalidConnectionException extends AppleSendMessageException
+    public static class AppleNotConnectedException extends AppleSendMessageException
     {
         private static final long serialVersionUID = 7020492528145170347L;
 
-        public AppleInvalidConnectionException(AppleSendMessageRequest request, AppleSendMessageResponse response)
+        public AppleNotConnectedException(AppleSendMessageRequest request, AppleSendMessageResponse response)
         {
             super(request, response);
+        }
+    }
+
+    public static class AppleInvalidPayloadException extends AppleSendMessageException
+    {
+        private static final long serialVersionUID = 2926278104410896176L;
+
+        public AppleInvalidPayloadException(AppleSendMessageRequest request, AppleSendMessageResponse response,
+                Throwable cause)
+        {
+            super(request, response, cause);
         }
     }
 }
