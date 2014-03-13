@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.messaging.external.AppleSendMessageRequest.AppleSendMessagePayload.ContentAvailable;
 import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleInvalidPayloadException;
 import com.messaggi.util.EncodeHelper;
 import com.messaggi.util.JAXBHelper;
@@ -80,8 +81,10 @@ public class AppleSendMessageRequest
 
             this.deviceToken = request.to[0].getCodeAsBinary();
 
-            //TODO: populate the payload fields.
-            this.payload = new AppleSendMessagePayload();
+            if (request.messageMap.size() != 1) {
+                throw new AppleInvalidPayloadException(this, null);
+            }
+            this.payload = new AppleSendMessagePayload(request.getDefaultMessage(), 0, ContentAvailable.No);
             try {
                 String payloadJSON = JAXBHelper.objectToJSON(payload);
                 this.payloadBytes = EncodeHelper.encodeBase64Image(payloadJSON);
@@ -94,6 +97,17 @@ public class AppleSendMessageRequest
     @XmlRootElement(name = "aps")
     static class AppleSendMessagePayload
     {
+        enum ContentAvailable {
+            No(0), Yes(0);
+
+            private final int value;
+
+            private ContentAvailable(int value)
+            {
+                this.value = value;
+            }
+        }
+        
         /**
          * If this property is included, the system displays a standard alert.
          * You may specify a string as the value of alert or a dictionary as its
@@ -117,12 +131,7 @@ public class AppleSendMessageRequest
         @XmlElement(name = "alert")
         public String getAlert() throws Exception
         {
-            if (alertDictionary != null) {
-                String json = JAXBHelper.objectToJSON(alertDictionary);
-                return JAXBHelper.objectToJSON(alertDictionary);
-            } else {
-                return alertString;
-            }
+            return (alertDictionary != null) ? JAXBHelper.objectToJSON(alertDictionary) : alertString;
         }
 
         /**
@@ -150,7 +159,19 @@ public class AppleSendMessageRequest
          * content downloads.
          */
         @XmlElement(name = "content-available")
-        public int contentAvailable;
+        public int getContentAvailableValue()
+        {
+            return contentAvailable.value;
+        }
+
+        public ContentAvailable  contentAvailable;
+
+        AppleSendMessagePayload(String alert, int badge, ContentAvailable contentAvailable)
+        {
+            this.alertString = alert;
+            this.badge = badge;
+            this.contentAvailable = contentAvailable;
+        }
 
         @XmlRootElement(name = "")
         public static class Alert

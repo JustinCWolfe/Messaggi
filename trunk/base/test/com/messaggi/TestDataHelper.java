@@ -419,6 +419,18 @@ public class TestDataHelper
         }
     }
 
+    public static class DeviceAppleTesting1
+    {
+        public static final String CODE = getUnitTestProperties().getProperty("messaggi.apple.client.deviceToken1");
+
+        public static Device getDomainObject()
+        {
+            Device d = new Device();
+            d.setCode(CODE);
+            return d;
+        }
+    }
+
     public static class User1
     {
         public static final String NAME = "Unit Test User 1";

@@ -54,6 +54,11 @@ public abstract class AppleSendMessageException extends SendMessageException
     {
         private static final long serialVersionUID = 2926278104410896176L;
 
+        public AppleInvalidPayloadException(AppleSendMessageRequest request, AppleSendMessageResponse response)
+        {
+            super(request, response);
+        }
+
         public AppleInvalidPayloadException(AppleSendMessageRequest request, AppleSendMessageResponse response,
                 Throwable cause)
         {

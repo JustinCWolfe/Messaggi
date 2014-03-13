@@ -9,7 +9,7 @@ import com.messaggi.domain.Device;
 
 public class SendMessageRequest
 {
-    public static final String DEFAULT_MESSAGE_KEY = "message";
+    private static final String DEFAULT_MESSAGE_KEY = "message";
 
     public final boolean isDebug;
 
@@ -22,6 +22,11 @@ public class SendMessageRequest
     public final Device[] to;
 
     public final Map<String, String> messageMap;
+
+    public String getDefaultMessage()
+    {
+        return (messageMap.containsKey(DEFAULT_MESSAGE_KEY)) ? messageMap.get(DEFAULT_MESSAGE_KEY) : null;
+    }
 
     public SendMessageRequest(Device from, Device[] to, String messageText)
     {

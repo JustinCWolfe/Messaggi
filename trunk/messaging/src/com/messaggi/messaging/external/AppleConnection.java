@@ -86,7 +86,7 @@ public class AppleConnection implements MessagingServiceConnection
         EnhancedApnsNotification notification = new EnhancedApnsNotification(appleRequest.notificationId,
                 appleRequest.expirationDate, appleRequest.deviceToken, appleRequest.payloadBytes);
         service.push(notification);
-        return null;
+        return new AppleSendMessageResponse();
     }
 }
 
