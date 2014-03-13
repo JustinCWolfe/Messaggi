@@ -6,10 +6,11 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
@@ -19,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.messaggi.TestDataHelper.ApplicationPlatformAppleTesting;
+import com.messaggi.TestDataHelper.DeviceAppleTesting1;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
 import com.messaggi.external.MessagingServiceConnection;
@@ -35,6 +37,8 @@ import com.notnoop.exceptions.NetworkIOException;
 
 public class TestAppleConnection extends ConnectionTestCase
 {
+    private static final Device VALID_D1 = DeviceAppleTesting1.getDomainObject();
+
     private static final String MESSAGE1_KEY = "key1";
 
     private static final String MESSAGE1_VALUE = "First message text";
@@ -213,15 +217,18 @@ public class TestAppleConnection extends ConnectionTestCase
     @Test
     public void testSendMessage_AppleInvalidPayloadException() throws Exception
     {
+        Device[] to = { D2 };
         connectAndValidate(connection);
-        SendMessageRequest request = new SendMessageRequest(D1, null, MESSAGE_MAP);
+        Map<String, String> invalidMessage = new HashMap<>(MESSAGE_MAP);
+        // Put a second message into the map which should cause an invalid message exception.
+        invalidMessage.put("key2", "Second message text");
+        SendMessageRequest request = new SendMessageRequest(D1, to, invalidMessage);
         try {
             connection.sendMessage(request);
             fail("should not get here");
         } catch (AppleInvalidPayloadException e) {
             assertThat(e.request.request, sameInstance(request));
             assertThat(e.response, nullValue());
-            assertThat(e.getCause(), instanceOf(NullPointerException.class));
             return;
         }
         fail("should not get here");
@@ -263,10 +270,29 @@ public class TestAppleConnection extends ConnectionTestCase
     {
         Device[] to = { D2 };
         connectAndValidate(connection);
-        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE_MAP);
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_VALUE);
         SendMessageResponse response = connection.sendMessage(request);
-        assertTrue(response instanceof AppleSendMessageResponse);
-        AppleSendMessageResponse appleResponse = (AppleSendMessageResponse) response;
+        assertThat(response, notNullValue());
+        assertThat(response, instanceOf(AppleSendMessageResponse.class));
+    }
+
+    @Test
+    public void testSendMessage_Multiple() throws Exception
+    {
+        Device[] to = { VALID_D1 };
+        connectAndValidate(connection);
+        SendMessageRequest request = new SendMessageRequest(D1, to, MESSAGE1_VALUE);
+        SendMessageResponse response = connection.sendMessage(request);
+        assertThat(response, notNullValue());
+        assertThat(response, instanceOf(AppleSendMessageResponse.class));
+
+        SendMessageResponse response2 = connection.sendMessage(request);
+        assertThat(response2, notNullValue());
+        assertThat(response2, instanceOf(AppleSendMessageResponse.class));
+
+        SendMessageResponse response3 = connection.sendMessage(request);
+        assertThat(response3, notNullValue());
+        assertThat(response3, instanceOf(AppleSendMessageResponse.class));
     }
 }
 
