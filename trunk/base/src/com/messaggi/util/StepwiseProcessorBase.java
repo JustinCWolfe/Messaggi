@@ -1,9 +1,6 @@
-package com.messaggi.processor;
+package com.messaggi.util;
 
 import java.util.Observer;
-
-import com.messaggi.util.StepBase;
-import com.messaggi.util.StepBase.Result;
 
 public abstract class StepwiseProcessorBase<T, U> implements Observer
 {
@@ -26,8 +23,8 @@ public abstract class StepwiseProcessorBase<T, U> implements Observer
         for (StepBase<T, U> step : steps) {
             step.addObserver(this);
             try {
-                Result result = step.process(data);
-                if (result != Result.Continue) {
+                StepBase.Result result = step.process(data);
+                if (result != StepBase.Result.Continue) {
                     break;
                 }
             } finally {
