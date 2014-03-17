@@ -1,9 +1,11 @@
 package com.messaggi.messaging.task;
 
 import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.util.Task;
 
-public class SendMessageTask implements Runnable
+public class SendMessageTask implements Task
 {
     private final MessagingServiceConnection msgConnection;
 
@@ -18,7 +20,11 @@ public class SendMessageTask implements Runnable
     @Override
     public void run()
     {
-        //msgConnection.sendMessage(request);
+        try {
+            this.msgConnection.sendMessage(this.request);
+        } catch (SendMessageException e) {
+
+        }
     }
 }
 
