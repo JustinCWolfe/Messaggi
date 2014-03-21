@@ -110,6 +110,9 @@ public class MockAndroidConnection extends AndroidConnection
                 // For testing purposes, set the response status on the AndroidUnknownException to no-content.
                 builder = Response.noContent();
                 break;
+            default:
+                builder = Response.noContent();
+                break;
         }
         response = builder.build();
         if (androidResponse != null) {
