@@ -13,7 +13,7 @@ public class ThreadPool
 {
     private static final String THREAD_NAME_FORMAT = "ThreadPool-%s";
 
-    private static final long AWAIT_TERMINATION_INTERVAL_MILLISECONDS = 1000;
+    private static final long AWAIT_TERMINATION_INTERVAL_MILLISECONDS = 200;
 
     private static final EndOfStreamTask POISON = new EndOfStreamTask();
 
@@ -62,9 +62,6 @@ public class ThreadPool
         }
     }
 
-    //TODO: should create implementation that assigns to thread based on 
-    //algorithm that is part of an interface.  The assign method will callback
-    //to the caller which should define the assignment method.
     protected int getTaskQueueIndex()
     {
         return targetThreadCounter.getAndIncrement() % THREAD_COUNT;
@@ -120,6 +117,23 @@ public class ThreadPool
 
     private static class EndOfStreamTask implements Task
     {
+        private static final String NAME = "EndOfStreamTask";
+
+        @Override
+        public String getName()
+        {
+            return NAME;
+        }
+
+        /**
+         * This task doesn't actually run. It is used to signal the thread pool threads to terminate.
+         */
+        @Override
+        public long getTotalMilliseconds()
+        {
+            return 0;
+        }
+
         @Override
         public void run()
         {
@@ -139,19 +153,20 @@ public class ThreadPool
         @Override
         public void run()
         {
-            System.out.println("Starting..." + Thread.currentThread().getName());
+            String threadName = Thread.currentThread().getName();
+            System.out.println("Starting..." + threadName);
             for (;;) {
                 try {
-                    System.out.println("Waiting for work..." + Thread.currentThread().getName());
+                    System.out.println("Waiting for work..." + threadName);
                     Task task = taskQueue.take();
                     if (POISON == task) {
-                        System.out.println("Drank poison. Terminating..." + Thread.currentThread().getName());
+                        System.out.println("Drank poison. Terminating..." + threadName);
                         return;
                     }
-                    System.out.println("Doing work..." + Thread.currentThread().getName());
+                    System.out.println("Doing work on..." + threadName + "(" + task.getName() + ")");
                     task.run();
                 } catch (InterruptedException e) {
-                    System.out.println("Interrupted..." + Thread.currentThread().getName());
+                    System.out.println("Interrupted..." + threadName);
                 }
             }
         }
