@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
@@ -163,7 +162,7 @@ public class TestThreadPool extends MessaggiLogicTestCase
         List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads1) {
             t.start();
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         for (Thread t : testThreads1) {
             t.join();
@@ -323,7 +322,7 @@ public class TestThreadPool extends MessaggiLogicTestCase
         List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5);
         for (Thread t : testThreads1) {
             t.start();
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         for (Thread t : testThreads1) {
             t.join();
@@ -336,7 +335,7 @@ public class TestThreadPool extends MessaggiLogicTestCase
         List<Thread> testThreads2 = getTestThreads(r6, r7, r8, r9, r10);
         for (Thread t : testThreads2) {
             t.start();
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         for (Thread t : testThreads2) {
             t.join();
@@ -671,7 +670,7 @@ public class TestThreadPool extends MessaggiLogicTestCase
         List<Thread> testThreads = getTestThreads(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads) {
             t.start();
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         for (Thread t : testThreads) {
             t.join();
@@ -701,7 +700,6 @@ public class TestThreadPool extends MessaggiLogicTestCase
     }
 
     @Test
-    @Ignore
     //TODO: figure out why this test fails.
     public void testForcedConsumerThreadInterrupt_MultipleThreads() throws Exception
     {
@@ -720,7 +718,7 @@ public class TestThreadPool extends MessaggiLogicTestCase
         List<Thread> testThreads = getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads) {
             t.start();
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         Thread.sleep(1000);
         assertTrue(poolThreads.t1.isInterrupted());
