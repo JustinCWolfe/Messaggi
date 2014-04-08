@@ -59,5 +59,6 @@
 	<classpathentry kind="lib" path="lib/apns-0.2.3/apns-0.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/apns-0.2.3/slf4j-api-1.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/apns-0.2.3/slf4j-simple-1.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math3-3.2/commons-math3-3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

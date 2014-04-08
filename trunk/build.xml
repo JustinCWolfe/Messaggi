@@ -101,6 +101,7 @@
       <fileset refid="commons-beanutils.lib"/>
       <fileset refid="commons-logging.lib"/>
       <fileset refid="commons-lang3.lib"/>
+      <fileset refid="commons-math3.lib"/>
       <fileset refid="guava.lib"/>
       <fileset refid="smack.lib"/>
       <fileset refid="apns.lib"/>
