@@ -3,7 +3,7 @@ package com.messaggi.messaging.task;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
-import com.messaggi.util.DelegatingThreadPool;
+import com.messaggi.pool.DelegatingThreadPool;
 
 public class SendMessageService implements Runnable
 {

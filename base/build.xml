@@ -17,6 +17,7 @@
       <pathelement location="${build}"/>
       <fileset refid="jre7.lib"/>
       <fileset refid="commons-beanutils.lib"/>
+      <fileset refid="commons-math3.lib"/>
       <fileset refid="tomcat.lib"/>
       <fileset refid="guava.lib"/>
       <fileset refid="jersey.lib"/>

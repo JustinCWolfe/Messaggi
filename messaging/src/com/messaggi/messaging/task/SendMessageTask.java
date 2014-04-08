@@ -3,7 +3,7 @@ package com.messaggi.messaging.task;
 import com.messaggi.external.MessagingServiceConnection;
 import com.messaggi.messages.SendMessageException;
 import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.util.Task;
+import com.messaggi.pool.task.Task;
 
 public class SendMessageTask implements Task
 {

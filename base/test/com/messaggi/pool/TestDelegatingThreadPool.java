@@ -1,4 +1,4 @@
-package com.messaggi.util;
+package com.messaggi.pool;
 
 import static org.junit.Assert.fail;
 
