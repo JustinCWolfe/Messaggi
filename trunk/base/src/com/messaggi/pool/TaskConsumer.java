@@ -7,9 +7,9 @@ import com.messaggi.pool.task.Task;
 
 public class TaskConsumer implements Runnable
 {
-    private final BlockingQueue<Task> taskQueue;
+    private final BlockingQueue<Task<?>> taskQueue;
 
-    TaskConsumer(BlockingQueue<Task> taskQueue)
+    TaskConsumer(BlockingQueue<Task<?>> taskQueue)
     {
         this.taskQueue = taskQueue;
     }
@@ -22,7 +22,7 @@ public class TaskConsumer implements Runnable
         for (;;) {
             try {
                 System.out.println("Waiting for work..." + threadName);
-                Task task = taskQueue.take();
+                Task<?> task = taskQueue.take();
                 if (EndOfStreamTask.POISON == task) {
                     System.out.println("Drank poison. Terminating..." + threadName);
                     return;

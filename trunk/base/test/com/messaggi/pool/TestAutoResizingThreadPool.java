@@ -2,6 +2,8 @@ package com.messaggi.pool;
 
 import static org.junit.Assert.fail;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +16,7 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         pool = new AutoResizingThreadPool();
     }
 
@@ -21,7 +24,13 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
     @After
     public void tearDown() throws Exception
     {
-        pool.shutdown();
+        if (!pool.isShutdown()) {
+            pool.shutdown();
+        }
+        if (!pool.isTerminated()) {
+            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        }
+        super.tearDown();
     }
 
     @Test
