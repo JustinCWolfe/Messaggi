@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.messaggi.junit.MessaggiLogicTestCase;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask;
-import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task;
 import com.messaggi.pool.task.Task.State;
 import com.messaggi.pool.task.TaskBase;
@@ -32,9 +31,9 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
         assertTrue(poolThreads.t2.isAlive());
     }
 
-    protected void validateTaskInitialState(Task... tasks) throws Exception
+    protected void validateTaskInitialState(Task<?>... tasks) throws Exception
     {
-        for (Task task : tasks) {
+        for (Task<?> task : tasks) {
             assertThat(task.getTotalRunTime(TimeUnit.MILLISECONDS), equalTo(0L));
             assertThat(task.getState(), equalTo(State.NONE));
         }
@@ -204,12 +203,5 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
 
     public static class MockReceiveResultThreadPool extends AutoResizingThreadPool
     {
-        public PoolSizeOpinion receivedResult;
-
-        @Override
-        public void receiveTaskResult(PoolSizeOpinion result)
-        {
-            receivedResult = result;
-        }
     }
 }

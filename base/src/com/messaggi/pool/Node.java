@@ -11,7 +11,7 @@ class Node
 
     private final int index;
 
-    protected final BlockingDeque<Task> taskQueue;
+    protected final BlockingDeque<Task<?>> taskQueue;
 
     protected final Thread taskThread;
 
@@ -23,12 +23,12 @@ class Node
         taskThread.start();
     }
 
-    void addFirst(Task task)
+    void addFirst(Task<?> task)
     {
         taskQueue.addFirst(task);
     }
 
-    void addLast(Task task)
+    void addLast(Task<?> task)
     {
         taskQueue.addLast(task);
     }

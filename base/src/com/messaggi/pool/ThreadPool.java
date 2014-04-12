@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.messaggi.pool.task.EndOfStreamTask;
 import com.messaggi.pool.task.Task;
 
-public class ThreadPool //TODO: implements ExecutorService
+public class ThreadPool
 {
     // This is accessed by unit tests so must be package protected scoped.
     static final long AWAIT_TERMINATION_INTERVAL_MILLISECONDS = 200;
@@ -17,15 +17,15 @@ public class ThreadPool //TODO: implements ExecutorService
     // This is accessed by unit tests so must be package protected scoped.
     static final int DEFAULT_THREAD_COUNT = 2;
 
-    private final List<Node> nodes;
+    private List<Node> nodes;
 
-    private final AtomicBoolean shutdown;
+    private AtomicBoolean shutdown;
 
-    private final AtomicInteger targetThreadCounter;
+    private AtomicInteger targetThreadCounter;
 
-    private final Object threadAssignmentLock;
+    private Object threadAssignmentLock;
 
-    private final int threadCount;
+    protected int threadCount;
 
     public ThreadPool()
     {
@@ -33,6 +33,11 @@ public class ThreadPool //TODO: implements ExecutorService
     }
 
     public ThreadPool(int threadCount)
+    {
+        initialize(threadCount);
+    }
+
+    protected final void initialize(int threadCount)
     {
         this.nodes = new ArrayList<>(threadCount);
         for (int index = 0; index < threadCount; index++) {
@@ -44,17 +49,22 @@ public class ThreadPool //TODO: implements ExecutorService
         this.threadCount = threadCount;
     }
 
-    private void addTaskToBack(Task task, int index)
+    protected void addNode(Node node)
+    {
+        nodes.add(node);
+    }
+
+    private void addTaskToBack(Task<?> task, int index)
     {
         nodes.get(index).addLast(task);
     }
 
-    private void addTaskToFront(Task task, int index)
+    private void addTaskToFront(Task<?> task, int index)
     {
         nodes.get(index).addFirst(task);
     }
 
-    protected void addTaskInternal(Task task, boolean addToFront)
+    protected void addTaskInternal(Task<?> task, boolean addToFront)
     {
         synchronized (threadAssignmentLock) {
             if (shutdown.get()) {
@@ -69,7 +79,7 @@ public class ThreadPool //TODO: implements ExecutorService
         }
     }
 
-    public void addTask(Task task)
+    public void addTask(Task<?> task)
     {
         addTaskInternal(task, false);
     }
@@ -136,11 +146,6 @@ public class ThreadPool //TODO: implements ExecutorService
                 addTaskToBack(EndOfStreamTask.POISON, index);
             }
         }
-    }
-
-    protected void addNode(Node node)
-    {
-        nodes.add(node);
     }
 }
 

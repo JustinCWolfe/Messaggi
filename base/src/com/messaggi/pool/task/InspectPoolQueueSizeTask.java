@@ -24,26 +24,20 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
 
     private static final int POOL_SHOULD_SHRINK_COUNT = 5;
 
-    private final AutoResizingThreadPool pool;
-
     private final Mean meanCalculator;
-
-    private final StandardDeviation standardDeviationCalculator;
 
     private PoolSizeOpinion opinion = PoolSizeOpinion.NONE;
 
+    private final AutoResizingThreadPool pool;
+
+    private final StandardDeviation standardDeviationCalculator;
+
     public InspectPoolQueueSizeTask(AutoResizingThreadPool pool)
     {
-        // The thread pool will receive the results from this task run.
-        super(pool);
-        this.pool = pool;
+        super();
         this.meanCalculator = new Mean();
+        this.pool = pool;
         this.standardDeviationCalculator = new StandardDeviation();
-    }
-
-    public PoolSizeOpinion getOpinion()
-    {
-        return opinion;
     }
 
     @Override

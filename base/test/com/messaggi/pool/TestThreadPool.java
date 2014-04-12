@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
-import com.messaggi.pool.ThreadPool;
 import com.messaggi.pool.task.Task.State;
 
 public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
@@ -296,8 +295,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime * 1 + 10);
         assertThat(t1.getState(), equalTo(State.COMPLETED));
         assertThat(t2.getState(), equalTo(State.COMPLETED));
-        assertThat((double) t1.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 50));
-        assertThat((double) t2.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 50));
+        assertThat((double) t1.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 100));
+        assertThat((double) t2.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 100));
         assertThat(t3.getState(), equalTo(State.NONE));
         assertThat(t4.getState(), equalTo(State.NONE));
         assertThat(t5.getState(), equalTo(State.NONE));
@@ -310,8 +309,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime * 5 + 10);
         assertThat(t9.getState(), equalTo(State.COMPLETED));
         assertThat(t10.getState(), equalTo(State.COMPLETED));
-        assertThat((double) t9.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 50));
-        assertThat((double) t10.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 50));
+        assertThat((double) t9.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 100));
+        assertThat((double) t10.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 100));
         assertThat(t3.getState(), equalTo(State.NONE));
         assertThat(t4.getState(), equalTo(State.NONE));
         assertThat(t5.getState(), equalTo(State.NONE));
@@ -322,8 +321,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime * 4 + 10);
         assertThat(t7.getState(), equalTo(State.COMPLETED));
         assertThat(t8.getState(), equalTo(State.COMPLETED));
-        assertThat((double) t7.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 4, 50));
-        assertThat((double) t8.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 4, 50));
+        assertThat((double) t7.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 4, 100));
+        assertThat((double) t8.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 4, 100));
         assertThat(t3.getState(), equalTo(State.NONE));
         assertThat(t4.getState(), equalTo(State.NONE));
         assertThat(t5.getState(), equalTo(State.STARTED));
@@ -332,16 +331,16 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime * 3 + 10);
         assertThat(t5.getState(), equalTo(State.COMPLETED));
         assertThat(t6.getState(), equalTo(State.COMPLETED));
-        assertThat((double) t5.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 50));
-        assertThat((double) t6.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 50));
+        assertThat((double) t5.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 100));
+        assertThat((double) t6.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 100));
         assertThat(t3.getState(), equalTo(State.STARTED));
         assertThat(t4.getState(), equalTo(State.STARTED));
         // After 10 seconds, t1 and t2 should have completed.
         Thread.sleep(waitTime * 2 + 10);
         assertThat(t3.getState(), equalTo(State.COMPLETED));
         assertThat(t4.getState(), equalTo(State.COMPLETED));
-        assertThat((double) t3.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 50));
-        assertThat((double) t4.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 50));
+        assertThat((double) t3.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 100));
+        assertThat((double) t4.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 100));
         validatePoolRunningState();
     }
 

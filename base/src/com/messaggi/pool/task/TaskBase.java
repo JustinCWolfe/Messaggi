@@ -1,17 +1,14 @@
 package com.messaggi.pool.task;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
-public abstract class TaskBase<T> implements Task
+public abstract class TaskBase<T> implements Task<T>
 {
-    public interface ReceiveResult<T>
-    {
-        void receiveTaskResult(T result);
-    }
-
-    private final ReceiveResult<T> resultCallback;
+    private final BlockingQueue<T> resultHolder;
 
     private State state = State.NONE;
 
@@ -21,36 +18,21 @@ public abstract class TaskBase<T> implements Task
 
     protected TaskBase()
     {
-        this(null);
-    }
-
-    protected TaskBase(ReceiveResult<T> resultCallback)
-    {
-        this.resultCallback = resultCallback;
+        //TODO: investigate other types to use instead of this one.
+        this.resultHolder = new LinkedBlockingQueue<>(1);
         this.stopwatch = Stopwatch.createUnstarted();
     }
 
-    protected T getTaskResult()
-    {
-        return null;
-    }
-
-    protected abstract void runInternal();
-
     @Override
-    public void run()
+    public T getResult()
     {
-        state = State.STARTED;
-        stopwatch.reset();
-        stopwatch.start();
-        runInternal();
-        if (resultCallback != null) {
-            T result = getTaskResult();
-            resultCallback.receiveTaskResult(result);
+        //TODO: investigate proper way to handle interrupted exception.
+        for (;;) {
+            try {
+                return resultHolder.take();
+            } catch (InterruptedException e) {
+            }
         }
-        stopwatch.stop();
-        totalMilliseconds = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-        state = State.COMPLETED;
     }
 
     @Override
@@ -59,10 +41,42 @@ public abstract class TaskBase<T> implements Task
         return state;
     }
 
+    protected T getTaskResult()
+    {
+        return null;
+    }
+
     @Override
     public long getTotalRunTime(TimeUnit timeUnit)
     {
         return timeUnit.convert(totalMilliseconds, timeUnit);
+    }
+
+    protected abstract void runInternal();
+
+    @Override
+    public void run()
+    {
+        resultHolder.clear();
+        state = State.STARTED;
+        stopwatch.reset();
+        stopwatch.start();
+        runInternal();
+        T taskResult = getTaskResult();
+        if (taskResult != null) {
+            //TODO: investigate proper way to handle interrupted exception.
+            for (;;) {
+                try {
+                    resultHolder.put(taskResult);
+                    break;
+                } catch (InterruptedException e) {
+
+                }
+            }
+        }
+        stopwatch.stop();
+        totalMilliseconds = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+        state = State.COMPLETED;
     }
 }
 

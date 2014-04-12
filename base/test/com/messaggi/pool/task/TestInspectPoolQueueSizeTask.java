@@ -17,8 +17,6 @@ import org.junit.Test;
 
 import com.messaggi.pool.ThreadPoolTestCase;
 import com.messaggi.pool.ThreadPoolTestCase.MockReceiveResultThreadPool;
-import com.messaggi.pool.task.InspectPoolQueueSizeTask;
-import com.messaggi.pool.task.Task;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task.State;
 
@@ -64,13 +62,12 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
     }
 
     @Override
-    protected void validateTaskInitialState(Task... tasks) throws Exception
+    protected void validateTaskInitialState(Task<?>... tasks) throws Exception
     {
         super.validateTaskInitialState(tasks);
-        for (Task task : tasks) {
+        for (Task<?> task : tasks) {
             if (task instanceof InspectPoolQueueSizeTask) {
                 InspectPoolQueueSizeTask testTask = (InspectPoolQueueSizeTask) task;
-                assertThat(testTask.getOpinion(), equalTo(PoolSizeOpinion.NONE));
                 assertThat(testTask.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
             }
         }
@@ -86,9 +83,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -111,9 +106,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -138,9 +131,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -167,9 +158,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(1.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -198,9 +187,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(2.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -233,9 +220,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(2.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(2.0));
@@ -275,9 +260,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), closeTo(9, 1));
         assertThat(standardDeviationCalculator.getResult(), closeTo(10.0, 1));
@@ -310,9 +293,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(4.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -324,9 +305,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(5.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -338,9 +317,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.OK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.OK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.OK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(6.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -373,9 +350,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.OK));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.OK));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.OK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(99.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -387,9 +362,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(100.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -401,9 +374,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(101.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -424,9 +395,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
         poolInspectorThread.interrupt();
         poolInspectorThread.join();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(20, 20));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.INTERRUPTED));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.INTERRUPTED));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.INTERRUPTED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
@@ -472,9 +441,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
                 (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
                         (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getOpinion(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
-        assertThat(pool.receivedResult, equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), closeTo(550.0, 50));
         assertThat(standardDeviationCalculator.getResult(), closeTo(250.0, 50));
