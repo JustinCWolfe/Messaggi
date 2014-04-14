@@ -17,7 +17,7 @@ public class ThreadPool
     // This is accessed by unit tests so must be package protected scoped.
     static final int DEFAULT_THREAD_COUNT = 2;
 
-    private List<Node> nodes;
+    protected List<Node> nodes;
 
     private AtomicBoolean shutdown;
 
@@ -31,27 +31,15 @@ public class ThreadPool
     {
         this(DEFAULT_THREAD_COUNT);
     }
-
+    
     public ThreadPool(int threadCount)
     {
-        initialize(threadCount);
+        this(threadCount, true);
     }
 
-    protected final void initialize(int threadCount)
+    public ThreadPool(int threadCount, boolean startNodeTaskThreads)
     {
-        this.nodes = new ArrayList<>(threadCount);
-        for (int index = 0; index < threadCount; index++) {
-            addNode(new Node(index));
-        }
-        this.shutdown = new AtomicBoolean();
-        this.targetThreadCounter = new AtomicInteger();
-        this.threadAssignmentLock = new Object();
-        this.threadCount = threadCount;
-    }
-
-    protected void addNode(Node node)
-    {
-        nodes.add(node);
+        initialize(createNodes(threadCount), startNodeTaskThreads);
     }
 
     private void addTaskToBack(Task<?> task, int index)
@@ -100,6 +88,16 @@ public class ThreadPool
         }
     }
 
+    // Final because this is called from the constructor.
+    protected final List<Node> createNodes(int threadCount)
+    {
+        List<Node> nodes = new ArrayList<>(threadCount);
+        for (int index = 0; index < threadCount; index++) {
+            nodes.add(new Node(index));
+        }
+        return nodes;
+    }
+
     public int getPoolTaskCount()
     {
         int taskCount = 0;
@@ -114,6 +112,19 @@ public class ThreadPool
     protected int getTaskNodeIndex()
     {
         return targetThreadCounter.getAndIncrement() % threadCount;
+    }
+
+    // Final because this is called from the constructor.
+    protected final void initialize(List<Node> nodes, boolean startNodeTaskThreads)
+    {
+        this.nodes = nodes;
+        this.shutdown = new AtomicBoolean();
+        this.targetThreadCounter = new AtomicInteger();
+        this.threadAssignmentLock = new Object();
+        this.threadCount = nodes.size();
+        if (startNodeTaskThreads) {
+            startNodeTaskThreads();
+        }
     }
 
     public boolean isShutdown()
@@ -145,6 +156,13 @@ public class ThreadPool
             for (int index = 0; index < threadCount; index++) {
                 addTaskToBack(EndOfStreamTask.POISON, index);
             }
+        }
+    }
+
+    private void startNodeTaskThreads()
+    {
+        for (int index = 0; index < threadCount; index++) {
+            nodes.get(index).startTaskThread();
         }
     }
 }
