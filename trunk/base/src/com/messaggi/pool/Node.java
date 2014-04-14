@@ -20,6 +20,10 @@ class Node
         this.index = index;
         taskQueue = new LinkedBlockingDeque<>();
         taskThread = new Thread(new TaskConsumer(taskQueue), String.format(THREAD_NAME_FORMAT, this.index));
+    }
+
+    void startTaskThread()
+    {
         taskThread.start();
     }
 
