@@ -86,6 +86,8 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
                 }
             }
         } catch (InterruptedException e) {
+            // Reset interrupt flag.
+            Thread.currentThread().interrupt();
             opinion = PoolSizeOpinion.INTERRUPTED;
         }
     }

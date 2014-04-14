@@ -18,21 +18,21 @@ public abstract class TaskBase<T> implements Task<T>
 
     protected TaskBase()
     {
-        //TODO: investigate other types to use instead of this one.
-        this.resultHolder = new LinkedBlockingQueue<>(1);
-        this.stopwatch = Stopwatch.createUnstarted();
+        resultHolder = new LinkedBlockingQueue<>(1);
+        stopwatch = Stopwatch.createUnstarted();
     }
 
     @Override
     public T getResult()
     {
-        //TODO: investigate proper way to handle interrupted exception.
-        for (;;) {
-            try {
-                return resultHolder.take();
-            } catch (InterruptedException e) {
-            }
+        T result = null;
+        try {
+            result = resultHolder.take();
+        } catch (InterruptedException e) {
+            // Reset interrupt flag.
+            Thread.currentThread().interrupt();
         }
+        return result;
     }
 
     @Override
@@ -64,14 +64,11 @@ public abstract class TaskBase<T> implements Task<T>
         runInternal();
         T taskResult = getTaskResult();
         if (taskResult != null) {
-            //TODO: investigate proper way to handle interrupted exception.
-            for (;;) {
-                try {
-                    resultHolder.put(taskResult);
-                    break;
-                } catch (InterruptedException e) {
-
-                }
+            try {
+                resultHolder.put(taskResult);
+            } catch (InterruptedException e) {
+                // Reset interrupt flag.
+                Thread.currentThread().interrupt();
             }
         }
         stopwatch.stop();

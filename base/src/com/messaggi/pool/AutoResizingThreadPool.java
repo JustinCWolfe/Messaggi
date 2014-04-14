@@ -97,6 +97,7 @@ public class AutoResizingThreadPool extends ThreadPool
             // Do not shut down the scheduled executor service - just poison the pool threads (so we
             // call super.shutdown instead of shutdown).
             super.shutdown();
+            boolean interrupted = false;
             for (;;) {
                 System.out.println("Tasks remaining: " + getPoolTaskCount());
                 try {
@@ -104,8 +105,12 @@ public class AutoResizingThreadPool extends ThreadPool
                         break;
                     }
                 } catch (InterruptedException e) {
-
+                    interrupted = true;
                 }
+            }
+            if (interrupted) {
+                // Reset interrupt flag.
+                Thread.currentThread().interrupt();
             }
             initialize(newThreadCount);
             transferTasksFromTemporaryQueueToPool();

@@ -112,7 +112,8 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
             try {
                 Thread.sleep(waitTime);
             } catch (InterruptedException e) {
-
+                // Reset interrupt flag.
+                Thread.currentThread().interrupt();
             }
         }
     }
