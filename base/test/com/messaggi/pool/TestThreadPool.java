@@ -739,7 +739,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         // The first two tasks may have already started - it is a race so check for both
         // valid values: 2 and 4.
         assertThat(pool.getPoolTaskCount(), anyOf(equalTo(2), equalTo(4)));
-        Thread.sleep(20);
+        Thread.sleep(50);
         assertThat(pool.getPoolTaskCount(), equalTo(2));
         Thread.sleep(waitTime * 1 + 20);
         assertThat(pool.getPoolTaskCount(), equalTo(0));
