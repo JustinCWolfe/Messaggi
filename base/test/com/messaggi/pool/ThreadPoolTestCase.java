@@ -27,8 +27,9 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
         assertFalse(pool.isShutdown());
         assertFalse(pool.isTerminated());
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertTrue(poolThreads.t1.isAlive());
-        assertTrue(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertTrue(t.isAlive());
+        }
     }
 
     protected void validateTaskInitialState(Task<?>... tasks) throws Exception
@@ -72,21 +73,20 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
 
     protected TestingPoolThreads getPoolThreads(ThreadPool pool) throws Exception
     {
-        Thread t1 = getThreadPoolThreadByIndex(pool, 0);
-        Thread t2 = getThreadPoolThreadByIndex(pool, 1);
-        return new TestingPoolThreads(t1, t2);
+        Thread[] threads = new Thread[pool.threadCount];
+        for (int index = 0; index < pool.threadCount; index++) {
+            threads[index] = getThreadPoolThreadByIndex(pool, index);
+        }
+        return new TestingPoolThreads(threads);
     }
 
     protected static class TestingPoolThreads
     {
-        public final Thread t1;
+        public final Thread[] threads;
 
-        public final Thread t2;
-
-        protected TestingPoolThreads(Thread t1, Thread t2)
+        protected TestingPoolThreads(Thread... threads)
         {
-            this.t1 = t1;
-            this.t2 = t2;
+            this.threads = threads;
         }
     }
 
@@ -202,7 +202,11 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
         }
     }
 
-    public static class MockReceiveResultThreadPool extends AutoResizingThreadPool
+    public static class MockAutoResizingThreadPool extends AutoResizingThreadPool
     {
+        static {
+            SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 1;
+            SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 2;
+        }
     }
 }
