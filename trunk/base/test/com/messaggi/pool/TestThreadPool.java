@@ -362,8 +362,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isShutdown());
         assertFalse(pool.isTerminated());
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertTrue(poolThreads.t1.isAlive());
-        assertTrue(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertTrue(t.isAlive());
+        }
         try {
             pool.addTask(t4);
             fail("Should not get here");
@@ -430,8 +431,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isShutdown());
         assertFalse(pool.isTerminated());
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertTrue(poolThreads.t1.isAlive());
-        assertTrue(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertTrue(t.isAlive());
+        }
         List<Thread> testThreads2 = getTestThreads(r6, r7, r8, r9, r10);
         for (Thread t : testThreads2) {
             t.start();
@@ -507,8 +509,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertThat(t10.getTotalRunTime(TimeUnit.MILLISECONDS), equalTo(0L));
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
-        assertFalse(poolThreads.t1.isAlive());
-        assertFalse(poolThreads.t2.isAlive());
+        assertFalse(poolThreads.threads[0].isAlive());
+        assertFalse(poolThreads.threads[1].isAlive());
     }
 
     @Test
@@ -561,8 +563,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertFalse(poolThreads.t1.isAlive());
-        assertFalse(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertFalse(t.isAlive());
+        }
         assertThat(elapsedMilliseconds4, lessThan(waitTime4));
     }
 
@@ -716,8 +719,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertFalse(poolThreads.t1.isAlive());
-        assertFalse(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertFalse(t.isAlive());
+        }
         assertThat(elapsedMilliseconds4, lessThan(waitTime4));
     }
 
@@ -804,8 +808,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         // Give the threads time to terminate.
         Thread.sleep(500);
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertFalse(poolThreads.t1.isAlive());
-        assertFalse(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertFalse(t.isAlive());
+        }
         assertTrue(pool.isTerminated());
         // Should do nothing.
         pool.shutdown();
@@ -843,8 +848,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         // Give the threads time to terminate.
         Thread.sleep(waitTime * 2);
         TestingPoolThreads poolThreads = getPoolThreads(pool);
-        assertFalse(poolThreads.t1.isAlive());
-        assertFalse(poolThreads.t2.isAlive());
+        for (Thread t : poolThreads.threads) {
+            assertFalse(t.isAlive());
+        }
         assertTrue(pool.isTerminated());
         // Should do nothing.
         pool.shutdown();

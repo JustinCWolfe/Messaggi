@@ -16,11 +16,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.messaggi.pool.ThreadPoolTestCase;
-import com.messaggi.pool.ThreadPoolTestCase.MockReceiveResultThreadPool;
+import com.messaggi.pool.ThreadPoolTestCase.MockAutoResizingThreadPool;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task.State;
 
-public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceiveResultThreadPool>
+public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoResizingThreadPool>
 {
     private InspectPoolQueueSizeTask task;
 
@@ -33,7 +33,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockReceive
     public void setUp() throws Exception
     {
         super.setUp();
-        pool = new MockReceiveResultThreadPool();
+        pool = new MockAutoResizingThreadPool();
         task = new InspectPoolQueueSizeTask(pool);
         meanCalculator = getTaskMeanCalculator(task);
         standardDeviationCalculator = getTaskStandardDeviationCalculator(task);

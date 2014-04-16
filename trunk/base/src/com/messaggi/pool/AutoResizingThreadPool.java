@@ -13,9 +13,11 @@ public class AutoResizingThreadPool extends ThreadPool
 {
     private static final int GROW_SHRINK_FACTOR = 2;
 
-    private static final long SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 10;
+    // This is accessed by unit tests so must be package protected scoped.
+    static long SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 10;
 
-    private static final long SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 20;
+    // This is accessed by unit tests so must be package protected scoped.
+    static long SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 20;
 
     private static final int SCHEDULED_SERVICE_POOL_SIZE = 2;
 
