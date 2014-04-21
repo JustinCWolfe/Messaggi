@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.messaggi.pool.ThreadPoolTestCase.MockAutoResizingThreadPool;
+import com.messaggi.pool.task.InspectPoolQueueSizeTask;
+import com.messaggi.pool.task.Task;
 import com.messaggi.pool.task.Task.State;
 
 public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResizingThreadPool>
@@ -75,6 +79,7 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResiz
         assertThat(getDuringResizeTaskQueuingThreadPool(pool), nullValue());
         assertFalse(getScheduledExecutorService(pool).isShutdown());
         assertFalse(getScheduledExecutorService(pool).isTerminated());
+        assertThat(getPoolThreads(pool).threads.length, equalTo(ThreadPool.DEFAULT_THREAD_COUNT));
     }
 
     @Test
@@ -129,8 +134,58 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResiz
     }
 
     @Test
-    public void testAddTask2() throws Exception
+    public void testAddTask_WithResize() throws Exception
     {
-
+        long waitTime = 100;
+        List<Task<?>> tasks = new ArrayList<>();
+        // Put in 2 long running tasks what will span pool inspections.  These will run first
+        // and then inspection task should run immediately afterwards.
+        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
+        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
+        // Put in 2 long running tasks will run after pool inspections.
+        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
+        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
+        // Add a bunch of short tasks what will bump us over the resize limit.
+        for (int i = 0; i < (InspectPoolQueueSizeTask.POOL_SHOULD_GROW_COUNT + 10); i++) {
+            tasks.add(new WaitingTask(waitTime));
+        }
+        validatePoolRunningState();
+        validateTaskInitialState(tasks.toArray(new Task<?>[tasks.size()]));
+        for (Task<?> task : tasks) {
+            pool.addTask(task);
+        }
+        int loopWaitTimeMilliseconds = 10;
+        boolean didResize = false;
+        int maxThreadCount = Integer.MIN_VALUE;
+        int minThreadCount = Integer.MAX_VALUE;
+        boolean addedTasksDuringResize = false;
+        // Once we detect (via inspection) that the pool needs to be 
+        // resized, we should run down existing tasks and then resize.
+        while (pool.getPoolTaskCount() > 0) {
+            int poolThreadCount = getPoolThreads(pool).threads.length;
+            if (poolThreadCount > maxThreadCount) {
+                maxThreadCount = poolThreadCount;
+            }
+            if (poolThreadCount < minThreadCount) {
+                minThreadCount = poolThreadCount;
+            }
+            boolean isResizing = getIsResizing(pool);
+            didResize |= isResizing;
+            ThreadPool tempPool = getDuringResizeTaskQueuingThreadPool(pool);
+            if (isResizing) {
+                assertThat(tempPool, not(nullValue()));
+                if (!addedTasksDuringResize) {
+                    addedTasksDuringResize = true;
+                    // Add new tasks which should get added to temporary thread pool.
+                    for (int i = 0; i < (InspectPoolQueueSizeTask.POOL_SHOULD_GROW_COUNT + 10); i++) {
+                        tasks.add(new WaitingTask(waitTime));
+                    }
+                }
+            } else {
+                assertThat(tempPool, nullValue());
+            }
+            Thread.sleep(loopWaitTimeMilliseconds);
+        }
+        System.out.println("did resize: " + didResize);
     }
 }

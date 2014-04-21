@@ -20,9 +20,11 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
     // This is accessed by unit tests so must be package protected scoped.
     protected static final int NUMBER_OF_SAMPLES = 3;
 
-    private static final int POOL_SHOULD_GROW_COUNT = 100;
+    // This is accessed by unit tests so must be public scoped.
+    public static final int POOL_SHOULD_GROW_COUNT = 100;
 
-    private static final int POOL_SHOULD_SHRINK_COUNT = 5;
+    // This is accessed by unit tests so must be public scoped.
+    public static final int POOL_SHOULD_SHRINK_COUNT = 5;
 
     private final Mean meanCalculator;
 

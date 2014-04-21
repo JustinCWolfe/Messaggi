@@ -32,8 +32,8 @@ public class AutoResizingThreadPool extends ThreadPool
         super();
         resizing = new AtomicBoolean();
         scheduledExecutorService = Executors.newScheduledThreadPool(SCHEDULED_SERVICE_POOL_SIZE);
-        scheduledExecutorService.schedule(new ScheduledInspectPoolQueueSizeTask(this),
-                SECONDS_BETWEEN_POOL_SIZE_INSPECTION, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleWithFixedDelay(new ScheduledInspectPoolQueueSizeTask(this),
+                SECONDS_BETWEEN_POOL_SIZE_INSPECTION, SECONDS_BETWEEN_POOL_SIZE_INSPECTION, TimeUnit.SECONDS);
     }
 
     @Override
