@@ -136,32 +136,51 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResiz
     @Test
     public void testAddTask_WithResize() throws Exception
     {
-        long waitTime = 100;
+        long waitTime = 10;
         List<Task<?>> tasks = new ArrayList<>();
+
         // Put in 2 long running tasks what will span pool inspections.  These will run first
         // and then inspection task should run immediately afterwards.
-        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
-        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
-        // Put in 2 long running tasks will run after pool inspections.
-        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
-        tasks.add(new WaitingTask(AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 100));
+        long millisecondsToCompleteInitialWork = 0;
+        long longRunningTaskMilliseconds = AutoResizingThreadPool.SECONDS_BETWEEN_POOL_SIZE_INSPECTION * 1100;
+        tasks.add(new WaitingTask(longRunningTaskMilliseconds));
+        millisecondsToCompleteInitialWork += longRunningTaskMilliseconds;
+        tasks.add(new WaitingTask(longRunningTaskMilliseconds));
+        millisecondsToCompleteInitialWork += longRunningTaskMilliseconds;
+
+        // Put in 2 long running tasks that will run immediately after pool inspection.
+        tasks.add(new WaitingTask(longRunningTaskMilliseconds));
+        millisecondsToCompleteInitialWork += longRunningTaskMilliseconds;
+        tasks.add(new WaitingTask(longRunningTaskMilliseconds));
+        millisecondsToCompleteInitialWork += longRunningTaskMilliseconds;
+
         // Add a bunch of short tasks what will bump us over the resize limit.
         for (int i = 0; i < (InspectPoolQueueSizeTask.POOL_SHOULD_GROW_COUNT + 10); i++) {
             tasks.add(new WaitingTask(waitTime));
+            millisecondsToCompleteInitialWork += waitTime;
         }
+
         validatePoolRunningState();
         validateTaskInitialState(tasks.toArray(new Task<?>[tasks.size()]));
         for (Task<?> task : tasks) {
             pool.addTask(task);
         }
-        int loopWaitTimeMilliseconds = 10;
-        boolean didResize = false;
+
+        // Wait for first resize to finish before adding new tasks to the pool.
+        Thread.sleep(millisecondsToCompleteInitialWork);
+
+        int loopWaitTimeMilliseconds = 20;
         int maxThreadCount = Integer.MIN_VALUE;
         int minThreadCount = Integer.MAX_VALUE;
-        boolean addedTasksDuringResize = false;
+        long runTimeMilliseconds = 0;
         // Once we detect (via inspection) that the pool needs to be 
         // resized, we should run down existing tasks and then resize.
-        while (pool.getPoolTaskCount() > 0) {
+        // Throughout this process we will keep adding tasks which 
+        // should get added to a temp thread pool and then get run
+        // as the temp thread pool nodes get activated (become the 
+        // main thread pool nodes).  As tasks get run down, the pool 
+        // should shrink back to its default size.
+        while (runTimeMilliseconds < 30000) {
             int poolThreadCount = getPoolThreads(pool).threads.length;
             if (poolThreadCount > maxThreadCount) {
                 maxThreadCount = poolThreadCount;
@@ -169,23 +188,38 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResiz
             if (poolThreadCount < minThreadCount) {
                 minThreadCount = poolThreadCount;
             }
-            boolean isResizing = getIsResizing(pool);
-            didResize |= isResizing;
-            ThreadPool tempPool = getDuringResizeTaskQueuingThreadPool(pool);
-            if (isResizing) {
-                assertThat(tempPool, not(nullValue()));
-                if (!addedTasksDuringResize) {
-                    addedTasksDuringResize = true;
-                    // Add new tasks which should get added to temporary thread pool.
-                    for (int i = 0; i < (InspectPoolQueueSizeTask.POOL_SHOULD_GROW_COUNT + 10); i++) {
-                        tasks.add(new WaitingTask(waitTime));
-                    }
-                }
-            } else {
-                assertThat(tempPool, nullValue());
+            // Once we have scaled to 32 threads, dial back the number of new tasks to be
+            // added on each loop iteration so that pool will shrink back down.
+            // Adding 20 tasks with a 10ms wait time is adding 2000ms of work to the pool.
+            // Adding 4 tasks with a 10ms wait time is adding 40ms of work to the pool.
+            // Considering that we are adding these tasks every 20ms, we have the following:
+            // 2 threads * 20ms = 40ms of computation
+            // 4 threads * 20ms = 80ms of computation
+            // 8 threads * 20ms = 160ms of computation
+            // 16 threads * 20ms = 320ms of computation
+            // 32 threads * 20ms = 640ms of computation
+            // 64 threads * 20ms = 1280ms of computation
+            int numberOfNewTasksToAdd = (maxThreadCount < 32) ? 20 : 4;
+            // Add new tasks which in an attempt to collide with pool resize.
+            for (int i = 0; i < numberOfNewTasksToAdd; i++) {
+                WaitingTask task = new WaitingTask(waitTime);
+                tasks.add(task);
+                pool.addTask(task);
             }
             Thread.sleep(loopWaitTimeMilliseconds);
+            runTimeMilliseconds += loopWaitTimeMilliseconds;
         }
-        System.out.println("did resize: " + didResize);
+        System.out.println("max thread count: " + maxThreadCount);
+        System.out.println("min thread count: " + minThreadCount);
+        System.out.println("total task count: " + tasks.size());
+        
+        assertThat (minThreadCount, equalTo(2));
+        assertThat(maxThreadCount, equalTo(16));
+        assertThat(getPoolThreads(pool).threads.length, equalTo(2));
+
+        // Wait for all
+        for (Task<?> task : tasks) {
+            //inspectPoolQueueSizeTask.getResult()
+        }
     }
 }
