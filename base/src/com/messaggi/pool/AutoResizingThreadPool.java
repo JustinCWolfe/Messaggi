@@ -81,7 +81,7 @@ public class AutoResizingThreadPool extends ThreadPool
             super.shutdown();
             boolean interrupted = false;
             for (;;) {
-                System.out.println("Tasks remaining: " + getPoolTaskCount());
+                System.out.println("In resize tasks remaining: " + getPoolTaskCount());
                 try {
                     if (awaitTermination(SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS, TimeUnit.SECONDS)) {
                         break;
