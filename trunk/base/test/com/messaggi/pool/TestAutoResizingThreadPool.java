@@ -9,6 +9,7 @@ import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -168,46 +169,80 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<MockAutoResiz
 
         // Wait for first resize to finish before adding new tasks to the pool.
         Thread.sleep(millisecondsToCompleteInitialWork);
+        
+        // Computation available based on thread count.
+        // 2 threads * 20ms = 40ms of computation
+        // 4 threads * 20ms = 80ms of computation
+        // 8 threads * 20ms = 160ms of computation
+        // 16 threads * 20ms = 320ms of computation
+        // 32 threads * 20ms = 640ms of computation
+        // 64 threads * 20ms = 1280ms of computation
+        // 128 threads * 20ms = 2560ms of computation
+        // 256 threads * 20ms = 5120ms of computation
+        // 512 threads * 20ms = 10240ms of computation
 
+        // Tasks added during each loop iteration.
+        // 2 tasks * 10ms wait time = 20ms (accomplished by 2 threads)
+        // 6 tasks * 10ms wait time = 60ms (accomplished by 4 threads)
+        // 10 tasks * 10ms wait time = 100ms (accomplished by 8 threads)
+        // 20 tasks * 10ms wait time = 200ms (accomplished by 16 threads)
+        // 50 tasks * 10ms wait time = 500ms (accomplished by 32 threads)
+        // 100 tasks * 10ms wait time = 1000ms (accomplished by 64 threads)
+        // 200 tasks * 10ms wait time = 2000ms (accomplished by 128 threads)
+        // 300 tasks * 10ms wait time = 3000ms (accomplished by 256 threads)
+        HashMap<Integer, Integer> threadCountToTasksToAddToGrowPoolMap = new HashMap<>();
+        threadCountToTasksToAddToGrowPoolMap.put(2, 6); // add more than 40ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(4, 10); // add more than 80ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(8, 20); // add more than 160ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(16, 50); // add more than 320ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(32, 100); // add more than 640ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(64, 200); // add more than 1280ms of work
+        threadCountToTasksToAddToGrowPoolMap.put(128, 300); // add more than 2560ms of work
+        
+        HashMap<Integer, Integer> threadCountToTasksToAddToShrinkPoolMap = new HashMap<>();
+        threadCountToTasksToAddToShrinkPoolMap.put(2, 2); // add less than 40ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(4, 6); // add less than 80ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(8, 10); // add less than 160ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(16, 30); // add less than 320ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(32, 50); // add less than 640ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(64, 100); // add less than 1280ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(128, 200); // add less than 2560ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(256, 200); // add less than 5120ms of work
+        threadCountToTasksToAddToShrinkPoolMap.put(512, 200); // add less than 10240ms of work
+        
+        int threadCountToScaleTo = 128;
         int loopWaitTimeMilliseconds = 20;
         int maxThreadCount = Integer.MIN_VALUE;
         int minThreadCount = Integer.MAX_VALUE;
-        long runTimeMilliseconds = 0;
-        // Once we detect (via inspection) that the pool needs to be 
-        // resized, we should run down existing tasks and then resize.
-        // Throughout this process we will keep adding tasks which 
-        // should get added to a temp thread pool and then get run
-        // as the temp thread pool nodes get activated (become the 
-        // main thread pool nodes).  As tasks get run down, the pool 
-        // should shrink back to its default size.
-        while (runTimeMilliseconds < 30000) {
-            int poolThreadCount = getPoolThreads(pool).threads.length;
+        // Once we detect (via inspection) that the pool needs to be resized, we should run 
+        // down existing tasks and then resize. Throughout this process we will keep adding 
+        // tasks which should get added to a temp thread pool and then get run as the temp 
+        // thread pool nodes get activated (become the main thread pool nodes).  As tasks 
+        // get run down, the pool should shrink back to its default size.
+        for (;;) {
+            int poolThreadCount = pool.threadCount;
             if (poolThreadCount > maxThreadCount) {
                 maxThreadCount = poolThreadCount;
             }
             if (poolThreadCount < minThreadCount) {
                 minThreadCount = poolThreadCount;
             }
-            // Once we have scaled to 32 threads, dial back the number of new tasks to be
-            // added on each loop iteration so that pool will shrink back down.
-            // Adding 20 tasks with a 10ms wait time is adding 2000ms of work to the pool.
-            // Adding 4 tasks with a 10ms wait time is adding 40ms of work to the pool.
-            // Considering that we are adding these tasks every 20ms, we have the following:
-            // 2 threads * 20ms = 40ms of computation
-            // 4 threads * 20ms = 80ms of computation
-            // 8 threads * 20ms = 160ms of computation
-            // 16 threads * 20ms = 320ms of computation
-            // 32 threads * 20ms = 640ms of computation
-            // 64 threads * 20ms = 1280ms of computation
-            int numberOfNewTasksToAdd = (maxThreadCount < 32) ? 20 : 4;
-            // Add new tasks which in an attempt to collide with pool resize.
+            // Once we have scaled to 128 threads, dial back the number of new tasks to be
+            // added on each loop iteration so that pool will shrink back down to 2 threads.
+            int numberOfNewTasksToAdd = (maxThreadCount >= threadCountToScaleTo) ? threadCountToTasksToAddToShrinkPoolMap
+                    .get(poolThreadCount) : threadCountToTasksToAddToGrowPoolMap.get(poolThreadCount);
+            // Add new tasks which will grow and then shrink number of threads in the pool.
             for (int i = 0; i < numberOfNewTasksToAdd; i++) {
                 WaitingTask task = new WaitingTask(waitTime);
                 tasks.add(task);
                 pool.addTask(task);
             }
             Thread.sleep(loopWaitTimeMilliseconds);
-            runTimeMilliseconds += loopWaitTimeMilliseconds;
+            // The max thread count got all the way to 256 and we are back down to 
+            // 2 threads, so the test is complete.
+            if (maxThreadCount >= threadCountToScaleTo && poolThreadCount == 2) {
+                break;
+            }
         }
         System.out.println("max thread count: " + maxThreadCount);
         System.out.println("min thread count: " + minThreadCount);
