@@ -90,7 +90,7 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
         }
     }
 
-    protected static class WaitingTask extends TaskBase<Void>
+    protected static class WaitingTask extends TaskBase<Boolean>
     {
         private final long waitTime;
 
@@ -101,34 +101,6 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
         }
 
         public WaitingTask(long waitTime)
-        {
-            super();
-            this.waitTime = waitTime;
-        }
-
-        @Override
-        protected void runInternal()
-        {
-            try {
-                Thread.sleep(waitTime);
-            } catch (InterruptedException e) {
-                // Reset interrupt flag.
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    protected static class WaitingTaskWithResult extends TaskBase<Boolean>
-    {
-        private final long waitTime;
-
-        @Override
-        public String getName()
-        {
-            return String.format("%s - %s", this.getClass().getSimpleName(), waitTime);
-        }
-
-        public WaitingTaskWithResult(long waitTime)
         {
             super();
             this.waitTime = waitTime;
