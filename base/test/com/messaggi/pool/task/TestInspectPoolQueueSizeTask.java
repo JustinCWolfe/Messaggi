@@ -15,12 +15,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.messaggi.pool.AutoResizingThreadPool;
 import com.messaggi.pool.ThreadPoolTestCase;
-import com.messaggi.pool.ThreadPoolTestCase.MockAutoResizingThreadPool;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task.State;
 
-public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoResizingThreadPool>
+public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizingThreadPool>
 {
     private InspectPoolQueueSizeTask task;
 
@@ -33,7 +33,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
     public void setUp() throws Exception
     {
         super.setUp();
-        pool = new MockAutoResizingThreadPool();
+        pool = new AutoResizingThreadPool(1, 2);
         task = new InspectPoolQueueSizeTask(pool);
         meanCalculator = getTaskMeanCalculator(task);
         standardDeviationCalculator = getTaskStandardDeviationCalculator(task);
@@ -79,10 +79,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         validatePoolRunningState();
         validateTaskInitialState(task);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
@@ -102,10 +100,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
@@ -127,10 +123,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.NONE));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(0.0));
@@ -154,10 +148,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(1.0));
@@ -183,10 +175,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(2.0));
@@ -216,10 +206,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(2.0));
@@ -256,10 +244,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(25);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), closeTo(9, 1));
@@ -289,10 +275,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(10);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(4.0));
@@ -301,10 +285,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Add another task to put us at the should shrink limit.
         pool.addTask(new WaitingTask(waitTime));
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(5.0));
@@ -313,10 +295,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Add another task to put us above the should shrink limit.
         pool.addTask(new WaitingTask(waitTime));
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.OK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(6.0));
@@ -346,10 +326,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(10);
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.OK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(99.0));
@@ -358,10 +336,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Add another task to put us at the should grow limit.
         pool.addTask(new WaitingTask(waitTime));
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(100.0));
@@ -370,10 +346,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
         // Add another task to put us above the should grow limit.
         pool.addTask(new WaitingTask(waitTime));
         task.run();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(101.0));
@@ -437,10 +411,8 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<MockAutoRes
             pool.addTask(t);
         }
         poolInspectorThread.join();
-        assertThat(
-                (double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
-                closeTo(InspectPoolQueueSizeTask.MILLISECONDS_BETWEEN_SAMPLES *
-                        (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
+        assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
+                closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), closeTo(550.0, 50));

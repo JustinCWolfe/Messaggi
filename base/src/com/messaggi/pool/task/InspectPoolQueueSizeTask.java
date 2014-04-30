@@ -3,7 +3,6 @@ package com.messaggi.pool.task;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
-import com.messaggi.pool.AutoResizingThreadPool;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 
 public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
@@ -12,8 +11,12 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
         NONE, OK, SHOULD_SHRINK, SHOULD_GROW, UNDECIDED, INTERRUPTED;
     }
 
-    // This is accessed by unit tests so must be package protected scoped.
-    protected static final int MILLISECONDS_BETWEEN_SAMPLES = 100;
+    public interface InspectablePool
+    {
+        int getPoolTaskCount();
+
+        long getSecondsBetweenPoolSizeInspections();
+    }
 
     private static final String NAME = "InspectPoolQueueSizeTask";
 
@@ -28,18 +31,27 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
 
     private final Mean meanCalculator;
 
+    private final long millisecondsBetweenSamples;
+
     private PoolSizeOpinion opinion = PoolSizeOpinion.NONE;
 
-    private final AutoResizingThreadPool pool;
+    private final InspectablePool pool;
 
     private final StandardDeviation standardDeviationCalculator;
 
-    public InspectPoolQueueSizeTask(AutoResizingThreadPool pool)
+    public InspectPoolQueueSizeTask(InspectablePool pool)
     {
         super();
         this.meanCalculator = new Mean();
+        // Seconds * 1000 to get milliseconds * .5% (or .005) to get sample time based on inspection interval.
+        this.millisecondsBetweenSamples = pool.getSecondsBetweenPoolSizeInspections() * 5;
         this.pool = pool;
         this.standardDeviationCalculator = new StandardDeviation();
+    }
+
+    public long getMillisecondsBetweenSamples()
+    {
+        return millisecondsBetweenSamples;
     }
 
     @Override
@@ -67,7 +79,7 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
                 meanCalculator.increment(taskCount);
                 standardDeviationCalculator.increment(taskCount);
                 if (sampleIndex < NUMBER_OF_SAMPLES) {
-                    Thread.sleep(MILLISECONDS_BETWEEN_SAMPLES);
+                    Thread.sleep(millisecondsBetweenSamples);
                 }
             }
             double mean = meanCalculator.getResult();

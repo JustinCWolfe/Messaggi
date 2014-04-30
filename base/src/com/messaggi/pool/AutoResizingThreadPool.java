@@ -6,18 +6,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.messaggi.pool.task.InspectPoolQueueSizeTask;
+import com.messaggi.pool.task.InspectPoolQueueSizeTask.InspectablePool;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task;
 
-public class AutoResizingThreadPool extends ThreadPool
+public class AutoResizingThreadPool extends ThreadPool implements InspectablePool
 {
+    private static long DEFAULT_SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 10;
+
+    private static long DEFAULT_SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 20;
+
     private static final int GROW_SHRINK_FACTOR = 2;
-
-    // This is accessed by unit tests so must be package protected scoped.
-    static long SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 10;
-
-    // This is accessed by unit tests so must be package protected scoped.
-    static long SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 20;
 
     private static final int SCHEDULED_SERVICE_POOL_SIZE = 2;
 
@@ -27,13 +26,30 @@ public class AutoResizingThreadPool extends ThreadPool
 
     private final ScheduledExecutorService scheduledExecutorService;
 
+    private long secondsBetweenPoolAwaitTerminationCalls;
+
+    private long secondsBetweenPoolSizeInspections;
+
     public AutoResizingThreadPool()
+    {
+        this(DEFAULT_SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS, DEFAULT_SECONDS_BETWEEN_POOL_SIZE_INSPECTION);
+    }
+
+    public AutoResizingThreadPool(long secondsBetweenPoolAwaitTerminationCalls, long secondsBetweenPoolSizeInspections)
     {
         super();
         resizing = new AtomicBoolean();
+        this.secondsBetweenPoolAwaitTerminationCalls = secondsBetweenPoolAwaitTerminationCalls;
+        this.secondsBetweenPoolSizeInspections = secondsBetweenPoolSizeInspections;
         scheduledExecutorService = Executors.newScheduledThreadPool(SCHEDULED_SERVICE_POOL_SIZE);
         scheduledExecutorService.scheduleWithFixedDelay(new ScheduledInspectPoolQueueSizeTask(this),
-                SECONDS_BETWEEN_POOL_SIZE_INSPECTION, SECONDS_BETWEEN_POOL_SIZE_INSPECTION, TimeUnit.SECONDS);
+                secondsBetweenPoolSizeInspections, secondsBetweenPoolSizeInspections, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public long getSecondsBetweenPoolSizeInspections()
+    {
+        return secondsBetweenPoolSizeInspections;
     }
 
     @Override
@@ -83,7 +99,7 @@ public class AutoResizingThreadPool extends ThreadPool
             for (;;) {
                 System.out.println("In resize tasks remaining: " + getPoolTaskCount());
                 try {
-                    if (awaitTermination(SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS, TimeUnit.SECONDS)) {
+                    if (awaitTermination(secondsBetweenPoolAwaitTerminationCalls, TimeUnit.SECONDS)) {
                         break;
                     }
                 } catch (InterruptedException e) {

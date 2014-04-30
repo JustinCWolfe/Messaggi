@@ -29,7 +29,7 @@ public class TaskConsumer implements Runnable
         System.out.println("Starting..." + threadName);
         for (;;) {
             try {
-                System.out.println("Waiting for work..." + threadName);
+                //System.out.println("Waiting for work..." + threadName);
                 Task<?> task = taskQueue.take();
                 if (EndOfStreamTask.POISON == task) {
                     if (interrupted) {
@@ -39,7 +39,7 @@ public class TaskConsumer implements Runnable
                     System.out.println("Drank poison. Terminating..." + threadName);
                     return;
                 }
-                System.out.println("Doing work on..." + threadName + "(" + task.getName() + ")");
+                //System.out.println("Doing work on..." + threadName + "(" + task.getName() + ")");
                 task.run();
             } catch (InterruptedException e) {
                 System.out.println("Interrupted..." + threadName);

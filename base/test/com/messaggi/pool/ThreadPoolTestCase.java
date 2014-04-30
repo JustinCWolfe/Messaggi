@@ -236,12 +236,4 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
             task.run();
         }
     }
-
-    public static class MockAutoResizingThreadPool extends AutoResizingThreadPool
-    {
-        static {
-            SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS = 1;
-            SECONDS_BETWEEN_POOL_SIZE_INSPECTION = 2;
-        }
-    }
 }
