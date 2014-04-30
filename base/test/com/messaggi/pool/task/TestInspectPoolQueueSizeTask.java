@@ -308,7 +308,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(6.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
-        validateWaitingTaskResults(tasks);
+        validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
     }
 
     @Test
@@ -360,7 +360,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(101.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
-        validateWaitingTaskResults(tasks);
+        validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
     }
 
     @Test
@@ -415,7 +415,15 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         }
         Thread.sleep(100);
         // Add more tasks.
-        for (WaitingTask t : tasks) {
+        List<WaitingTask> tasks2 = new ArrayList<>();
+        // First tasks will be longer so that we will be left with 30 in the queues.
+        tasks2.add(new WaitingTask(waitTime * 50));
+        tasks2.add(new WaitingTask(waitTime * 50));
+        // Next tasks are short ones.
+        for (int i = 0; i < 300; i++) {
+            tasks2.add(new WaitingTask(waitTime));
+        }
+        for (WaitingTask t : tasks2) {
             pool.addTask(t);
         }
         poolInspectorThread.join();
@@ -426,6 +434,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), closeTo(550.0, 50));
         assertThat(standardDeviationCalculator.getResult(), closeTo(250.0, 50));
         validatePoolRunningState();
-        validateWaitingTaskResults(tasks);
+        validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
+        validateWaitingTaskResults(tasks2.toArray(new WaitingTask[tasks2.size()]));
     }
 }
