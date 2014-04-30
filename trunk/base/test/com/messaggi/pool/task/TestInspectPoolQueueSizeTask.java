@@ -107,6 +107,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(t1);
     }
 
     @Test
@@ -130,6 +131,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(0.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(t1, t2);
     }
 
     @Test
@@ -155,6 +157,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(1.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(t1, t2, t3);
     }
 
     @Test
@@ -182,6 +185,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(2.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(t1, t2, t3, t4);
     }
 
     @Test
@@ -213,6 +217,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(2.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(2.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(t1, t2, t3, t4, t5, t6);
     }
 
     @Test
@@ -251,6 +256,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), closeTo(9, 1));
         assertThat(standardDeviationCalculator.getResult(), closeTo(10.0, 1));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
     }
 
     @Test
@@ -302,6 +308,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(6.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -353,6 +360,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), equalTo(101.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -418,5 +426,6 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(meanCalculator.getResult(), closeTo(550.0, 50));
         assertThat(standardDeviationCalculator.getResult(), closeTo(250.0, 50));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 }
