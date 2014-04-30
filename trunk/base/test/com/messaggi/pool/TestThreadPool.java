@@ -55,7 +55,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t5 = new WaitingTask(waitTime * 3);
         WaitingTask t6 = new WaitingTask(waitTime * 3);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6 };
+        validateTaskInitialState(tasks);
         pool.addTask(t1);
         pool.addTask(t2);
         pool.addTask(t3);
@@ -93,6 +94,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertThat((double) t5.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 100));
         assertThat((double) t6.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 3, 100));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -105,8 +107,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t4 = new WaitingTask(waitTime * 2);
         WaitingTask t5 = new WaitingTask(waitTime * 3);
         WaitingTask t6 = new WaitingTask(waitTime * 3);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6 };
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6);
+        validateTaskInitialState(tasks);
         pool.addTaskInternal(t1, true);
         pool.addTaskInternal(t2, true);
         pool.addTaskInternal(t3, true);
@@ -145,6 +148,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertThat((double) t1.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 100));
         assertThat((double) t2.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 1, 100));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -161,8 +165,9 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t8 = new WaitingTask(waitTime * 4);
         WaitingTask t9 = new WaitingTask(waitTime * 5);
         WaitingTask t10 = new WaitingTask(waitTime * 5);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 };
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+        validateTaskInitialState(tasks);
         PoolAddTaskCaller r1 = new PoolAddTaskCaller(pool, t1, false);
         PoolAddTaskCaller r2 = new PoolAddTaskCaller(pool, t2, false);
         PoolAddTaskCaller r3 = new PoolAddTaskCaller(pool, t3, false);
@@ -244,6 +249,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertThat((double) t9.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 100));
         assertThat((double) t10.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 5, 100));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -261,7 +267,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t9 = new WaitingTask(waitTime * 5);
         WaitingTask t10 = new WaitingTask(waitTime * 5);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 };
+        validateTaskInitialState(tasks);
         PoolAddTaskCaller r1 = new PoolAddTaskCaller(pool, t1, true);
         PoolAddTaskCaller r2 = new PoolAddTaskCaller(pool, t2, true);
         PoolAddTaskCaller r3 = new PoolAddTaskCaller(pool, t3, true);
@@ -342,6 +349,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertThat((double) t3.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 100));
         assertThat((double) t4.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 100));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -353,7 +361,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t3 = new WaitingTask(waitTime * 2);
         WaitingTask t4 = new WaitingTask(waitTime * 2);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4);
+        WaitingTask[] tasks = { t1, t2, t3, t4 };
+        validateTaskInitialState(tasks);
         pool.addTask(t1);
         pool.addTask(t2);
         pool.addTask(t3);
@@ -387,6 +396,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
             assertThat(t3.getState(), equalTo(State.COMPLETED));
             assertThat((double) t3.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(waitTime * 2, 100));
             assertThat(t4.getState(), equalTo(State.NONE));
+            WaitingTask[] completedTasks = { t1, t2, t3 };
+            validateWaitingTaskResults(completedTasks);
             return;
         }
         fail("Should not get here");
@@ -407,7 +418,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t9 = new WaitingTask(waitTime * 5);
         WaitingTask t10 = new WaitingTask(waitTime * 5);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 };
+        validateTaskInitialState(tasks);
         PoolAddTaskCaller r1 = new PoolAddTaskCaller(pool, t1, false);
         PoolAddTaskCaller r2 = new PoolAddTaskCaller(pool, t2, false);
         PoolAddTaskCaller r3 = new PoolAddTaskCaller(pool, t3, false);
@@ -511,6 +523,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isTerminated());
         assertFalse(poolThreads.threads[0].isAlive());
         assertFalse(poolThreads.threads[1].isAlive());
+        WaitingTask[] completedTasks = { t1, t2, t3, t4, t5 };
+        validateWaitingTaskResults(completedTasks);
     }
 
     @Test
@@ -735,7 +749,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t3 = new WaitingTask(waitTime * 2);
         WaitingTask t4 = new WaitingTask(waitTime * 2);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4);
+        WaitingTask[] tasks = { t1, t2, t3, t4 };
+        validateTaskInitialState(tasks);
         pool.addTask(t1);
         pool.addTask(t2);
         pool.addTask(t3);
@@ -749,6 +764,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime);
         assertThat(pool.getPoolTaskCount(), equalTo(0));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -767,7 +783,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         WaitingTask t9 = new WaitingTask(waitTime * 5);
         WaitingTask t10 = new WaitingTask(waitTime * 5);
         validatePoolRunningState();
-        validateTaskInitialState(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+        WaitingTask[] tasks = { t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 };
+        validateTaskInitialState(tasks);
         PoolAddTaskCaller r1 = new PoolAddTaskCaller(pool, t1, false);
         PoolAddTaskCaller r2 = new PoolAddTaskCaller(pool, t2, false);
         PoolAddTaskCaller r3 = new PoolAddTaskCaller(pool, t3, false);
@@ -797,6 +814,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         Thread.sleep(waitTime * 4 + 100);
         assertThat(pool.getPoolTaskCount(), equalTo(0));
         validatePoolRunningState();
+        validateWaitingTaskResults(tasks);
     }
 
     @Test
@@ -824,7 +842,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         int waitTime = 500;
         WaitingTask t1 = new WaitingTask(waitTime);
         validatePoolRunningState();
-        validateTaskInitialState(t1);
+        WaitingTask[] tasks = { t1 };
+        validateTaskInitialState(tasks);
         PoolAddTaskCaller r0 = new PoolAddTaskCaller(pool, t1, false);
         PoolShutdownCaller r1 = new PoolShutdownCaller(pool);
         PoolShutdownCaller r2 = new PoolShutdownCaller(pool);
@@ -855,6 +874,6 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(pool.isTerminated());
         // Should do nothing.
         pool.shutdown();
+        validateWaitingTaskResults(tasks);
     }
 }
-

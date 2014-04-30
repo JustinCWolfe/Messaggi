@@ -22,6 +22,13 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
 
     protected T pool;
 
+    protected void validateWaitingTaskResults(WaitingTask... tasks)
+    {
+        for (WaitingTask t : tasks) {
+            assertThat(t.getTaskResult(), equalTo(true));
+        }
+    }
+
     protected void validatePoolRunningState() throws Exception
     {
         assertFalse(pool.isShutdown());
