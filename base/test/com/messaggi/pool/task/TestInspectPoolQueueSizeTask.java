@@ -192,13 +192,12 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
     public void testRun_SixTasksDifferentReadingEachSample() throws Exception
     {
         validatePoolRunningState();
-        long waitTime = 75;
-        WaitingTask t1 = new WaitingTask(waitTime * 1);
-        WaitingTask t2 = new WaitingTask(waitTime * 1);
-        WaitingTask t3 = new WaitingTask(waitTime * 1);
-        WaitingTask t4 = new WaitingTask(waitTime * 1);
-        WaitingTask t5 = new WaitingTask(waitTime * 1);
-        WaitingTask t6 = new WaitingTask(waitTime * 1);
+        WaitingTask t1 = new WaitingTask(task.getMillisecondsBetweenSamples());
+        WaitingTask t2 = new WaitingTask(task.getMillisecondsBetweenSamples());
+        WaitingTask t3 = new WaitingTask(task.getMillisecondsBetweenSamples() / (3 / 2));
+        WaitingTask t4 = new WaitingTask(task.getMillisecondsBetweenSamples() / (3 / 2));
+        WaitingTask t5 = new WaitingTask(task.getMillisecondsBetweenSamples());
+        WaitingTask t6 = new WaitingTask(task.getMillisecondsBetweenSamples());
         validatePoolRunningState();
         validateTaskInitialState(t1, t2, t3, t4, t5, t6, task);
         pool.addTask(t1);
@@ -208,11 +207,13 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         pool.addTask(t5);
         pool.addTask(t6);
         // Give the waiting task time to start before inspecting the pool.
-        Thread.sleep(25);
+        Thread.sleep(task.getMillisecondsBetweenSamples() / 2);
         task.run();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
-        assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
+        // Should give us an opinion of SHOULD_SHRINK because mean is less than 
+        // CHECK_MEAN_VERSUS_STANDARD_DEVIATION_MEAN_LIMIT value.
+        assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_SHRINK));
         assertThat(task.getState(), equalTo(State.COMPLETED));
         assertThat(meanCalculator.getResult(), equalTo(2.0));
         assertThat(standardDeviationCalculator.getResult(), equalTo(2.0));
@@ -223,38 +224,42 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
     @Test
     public void testRun_ShortTasksToGetUndecided() throws Exception
     {
-        validatePoolRunningState();
-        long waitTime = 5;
+        pool = new AutoResizingThreadPool(1, 10);
+        task = new InspectPoolQueueSizeTask(pool);
+        meanCalculator = getTaskMeanCalculator(task);
+        standardDeviationCalculator = getTaskStandardDeviationCalculator(task);
         List<WaitingTask> tasks = new ArrayList<>();
-        // First tasks will be longer so that we will be left with 20 in the queues.
-        tasks.add(new WaitingTask(waitTime * 10));
-        tasks.add(new WaitingTask(waitTime * 10));
-        // Next tasks are short ones.
-        for (int i = 0; i < 10; i++) {
-            tasks.add(new WaitingTask(waitTime));
-        }
-        // Next tasks are longer ones.
-        tasks.add(new WaitingTask(waitTime * 10));
-        tasks.add(new WaitingTask(waitTime * 10));
-        // Next tasks are short ones.
-        for (int i = 0; i < 8; i++) {
-            tasks.add(new WaitingTask(waitTime));
-        }
-        validatePoolRunningState();
-        validateTaskInitialState(task);
-        for (WaitingTask t : tasks) {
-            validateTaskInitialState(t);
+        long longTaskRunTime = task.getMillisecondsBetweenSamples();
+        PoolInspector poolInspector = new PoolInspector(task);
+        List<Thread> testThreads = getTestThreads(poolInspector);
+        Thread poolInspectorThread = testThreads.get(0);
+        // First inspection should find 0 tasks.
+        poolInspectorThread.start();
+        Thread.sleep(longTaskRunTime / 2);
+        // Add 2 long tasks after first but before second inspection.
+        // These tasks will complete between second and third inspections.
+        // When they complete, the short tasks will all run before the 
+        // third inspection.
+        WaitingTask t1 = new WaitingTask(longTaskRunTime);
+        tasks.add(t1);
+        pool.addTask(t1);
+        WaitingTask t2 = new WaitingTask(longTaskRunTime);
+        tasks.add(t2);
+        pool.addTask(t2);
+        // Add many short tasks.
+        long shortTaskRunTime = task.getMillisecondsBetweenSamples() / 100;
+        for (int i = 0; i < 50; i++) {
+            WaitingTask t = new WaitingTask(shortTaskRunTime);
+            tasks.add(t);
             pool.addTask(t);
         }
-        // Give the waiting task time to start before inspecting the pool.
-        Thread.sleep(25);
-        task.run();
+        poolInspectorThread.join();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.UNDECIDED));
         assertThat(task.getState(), equalTo(State.COMPLETED));
-        assertThat(meanCalculator.getResult(), closeTo(9, 1));
-        assertThat(standardDeviationCalculator.getResult(), closeTo(10.0, 1));
+        assertThat(meanCalculator.getResult(), closeTo(16.66, .1));
+        assertThat(standardDeviationCalculator.getResult(), closeTo(28.87, .1));
         validatePoolRunningState();
         validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
     }
@@ -265,7 +270,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         validatePoolRunningState();
         long waitTime = 5;
         List<WaitingTask> tasks = new ArrayList<>();
-        // First tasks will be longer so that we will be left with 30 in the queues.
+        // First tasks will be longer so that we will be left with 4 in the queues.
         tasks.add(new WaitingTask(waitTime * 400));
         tasks.add(new WaitingTask(waitTime * 400));
         // Next tasks are short ones.
@@ -289,7 +294,9 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
         // Add another task to put us at the should shrink limit.
-        pool.addTask(new WaitingTask(waitTime));
+        WaitingTask t1 = new WaitingTask(waitTime);
+        tasks.add(t1);
+        pool.addTask(t1);
         task.run();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
@@ -299,7 +306,9 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
         // Add another task to put us above the should shrink limit.
-        pool.addTask(new WaitingTask(waitTime));
+        WaitingTask t2 = new WaitingTask(waitTime);
+        tasks.add(t2);
+        pool.addTask(t2);
         task.run();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
@@ -317,7 +326,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         validatePoolRunningState();
         long waitTime = 5;
         List<WaitingTask> tasks = new ArrayList<>();
-        // First tasks will be longer so that we will be left with 30 in the queues.
+        // First tasks will be longer so that we will be left with 99 in the queues.
         tasks.add(new WaitingTask(waitTime * 400));
         tasks.add(new WaitingTask(waitTime * 400));
         // Next tasks are short ones.
@@ -341,7 +350,9 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
         // Add another task to put us at the should grow limit.
-        pool.addTask(new WaitingTask(waitTime));
+        WaitingTask t1 = new WaitingTask(waitTime);
+        tasks.add(t1);
+        pool.addTask(t1);
         task.run();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
@@ -351,7 +362,9 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         assertThat(standardDeviationCalculator.getResult(), equalTo(0.0));
         validatePoolRunningState();
         // Add another task to put us above the should grow limit.
-        pool.addTask(new WaitingTask(waitTime));
+        WaitingTask t2 = new WaitingTask(waitTime);
+        tasks.add(t2);
+        pool.addTask(t2);
         task.run();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS),
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
@@ -373,7 +386,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         validateTaskInitialState(task);
         poolInspectorThread.start();
         // Give the inspection task time to start before interrupting.
-        Thread.sleep(20);
+        Thread.sleep(10);
         poolInspectorThread.interrupt();
         poolInspectorThread.join();
         assertThat((double) task.getTotalRunTime(TimeUnit.MILLISECONDS), closeTo(20, 20));
@@ -389,7 +402,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
     {
         long waitTime = 1;
         List<WaitingTask> tasks = new ArrayList<>();
-        // First tasks will be longer so that we will be left with 30 in the queues.
+        // First tasks will be longer so that we will be left with 300 in the queues.
         tasks.add(new WaitingTask(waitTime * 50));
         tasks.add(new WaitingTask(waitTime * 50));
         // Next tasks are short ones.
@@ -408,22 +421,26 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         List<Thread> testThreads = getTestThreads(poolInspector);
         Thread poolInspectorThread = testThreads.get(0);
         poolInspectorThread.start();
-        Thread.sleep(10);
+        Thread.sleep(5);
         // Add tasks while the inspection is occurring.
-        for (WaitingTask t : tasks) {
-            pool.addTask(t);
-        }
-        Thread.sleep(100);
-        // Add more tasks.
         List<WaitingTask> tasks2 = new ArrayList<>();
-        // First tasks will be longer so that we will be left with 30 in the queues.
         tasks2.add(new WaitingTask(waitTime * 50));
         tasks2.add(new WaitingTask(waitTime * 50));
-        // Next tasks are short ones.
         for (int i = 0; i < 300; i++) {
             tasks2.add(new WaitingTask(waitTime));
         }
         for (WaitingTask t : tasks2) {
+            pool.addTask(t);
+        }
+        Thread.sleep(task.getMillisecondsBetweenSamples());
+        // Add more tasks.
+        List<WaitingTask> tasks3 = new ArrayList<>();
+        tasks3.add(new WaitingTask(waitTime * 50));
+        tasks3.add(new WaitingTask(waitTime * 50));
+        for (int i = 0; i < 300; i++) {
+            tasks3.add(new WaitingTask(waitTime));
+        }
+        for (WaitingTask t : tasks3) {
             pool.addTask(t);
         }
         poolInspectorThread.join();
@@ -431,10 +448,11 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
                 closeTo(task.getMillisecondsBetweenSamples() * (InspectPoolQueueSizeTask.NUMBER_OF_SAMPLES - 1), 50));
         assertThat(task.getTaskResult(), equalTo(PoolSizeOpinion.SHOULD_GROW));
         assertThat(task.getState(), equalTo(State.COMPLETED));
-        assertThat(meanCalculator.getResult(), closeTo(550.0, 50));
-        assertThat(standardDeviationCalculator.getResult(), closeTo(250.0, 50));
+        assertThat(meanCalculator.getResult(), equalTo(602.0));
+        assertThat(standardDeviationCalculator.getResult(), equalTo(302.0));
         validatePoolRunningState();
         validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
         validateWaitingTaskResults(tasks2.toArray(new WaitingTask[tasks2.size()]));
+        validateWaitingTaskResults(tasks3.toArray(new WaitingTask[tasks3.size()]));
     }
 }
