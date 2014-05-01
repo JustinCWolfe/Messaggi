@@ -18,6 +18,8 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
         long getSecondsBetweenPoolSizeInspections();
     }
 
+    private static final int CHECK_MEAN_VERSUS_STANDARD_DEVIATION_MEAN_LIMIT = 10;
+
     private static final String NAME = "InspectPoolQueueSizeTask";
 
     // This is accessed by unit tests so must be package protected scoped.
@@ -86,23 +88,45 @@ public class InspectPoolQueueSizeTask extends TaskBase<PoolSizeOpinion>
             double standardDeviation = standardDeviationCalculator.getResult();
             System.out.println("Mean: " + mean);
             System.out.println("StdDev: " + standardDeviation);
-            if (mean != 0) {
-                if (mean <= standardDeviation) {
-                    opinion = PoolSizeOpinion.UNDECIDED;
-                } else if (mean > standardDeviation) {
-                    if (mean >= POOL_SHOULD_GROW_COUNT) {
-                        opinion = PoolSizeOpinion.SHOULD_GROW;
-                    } else if (mean <= POOL_SHOULD_SHRINK_COUNT) {
-                        opinion = PoolSizeOpinion.SHOULD_SHRINK;
-                    } else {
-                        opinion = PoolSizeOpinion.OK;
-                    }
-                }
-            }
+            setOpinionBasedOnMeanAndStandardDeviation(mean, standardDeviation);
         } catch (InterruptedException e) {
             // Reset interrupt flag.
             Thread.currentThread().interrupt();
             opinion = PoolSizeOpinion.INTERRUPTED;
+        }
+    }
+
+    private boolean shouldCalculateOpinionBasedOnMean(double mean, double standardDeviation)
+    {
+        // With small numbers of tasks in the pool, it is very easy for the standard
+        // deviation to be larger than the mean, which would get us stuck in a state
+        // where we could get repeated undecided results. To guard against this, only
+        // do the mean vs standard deviation check if the mean is less than a set number.
+        if (mean > CHECK_MEAN_VERSUS_STANDARD_DEVIATION_MEAN_LIMIT) {
+            return (mean > standardDeviation);
+        }
+        return true;
+    }
+
+    private PoolSizeOpinion calculateOpinionBasedOnMean(double mean)
+    {
+        if (mean >= POOL_SHOULD_GROW_COUNT) {
+            return PoolSizeOpinion.SHOULD_GROW;
+        } else if (mean <= POOL_SHOULD_SHRINK_COUNT) {
+            return PoolSizeOpinion.SHOULD_SHRINK;
+        } else {
+            return PoolSizeOpinion.OK;
+        }
+    }
+
+    private void setOpinionBasedOnMeanAndStandardDeviation(double mean, double standardDeviation)
+    {
+        if (mean != 0) {
+            if (shouldCalculateOpinionBasedOnMean(mean, standardDeviation)) {
+                opinion = calculateOpinionBasedOnMean(mean);
+            } else {
+                opinion = PoolSizeOpinion.UNDECIDED;
+            }
         }
     }
 }
