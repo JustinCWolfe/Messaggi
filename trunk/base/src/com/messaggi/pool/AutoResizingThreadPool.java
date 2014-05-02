@@ -20,6 +20,8 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
 
     private static final int SCHEDULED_SERVICE_POOL_SIZE = 2;
 
+    private static final String DEFAULT_THREAD_NAME_PREFIX = "AutoResizingThreadPool";
+
     private final AtomicBoolean resizing;
 
     private ThreadPool duringResizeTaskQueuingThreadPool;
@@ -30,26 +32,27 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
 
     private long secondsBetweenPoolSizeInspections;
 
-    public AutoResizingThreadPool()
+    protected AutoResizingThreadPool(String threadPrefixName)
     {
-        this(DEFAULT_SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS, DEFAULT_SECONDS_BETWEEN_POOL_SIZE_INSPECTION);
+        this(threadPrefixName, DEFAULT_SECONDS_BETWEEN_POOL_AWAIT_TERMINATION_CALLS,
+                DEFAULT_SECONDS_BETWEEN_POOL_SIZE_INSPECTION);
     }
 
     public AutoResizingThreadPool(long secondsBetweenPoolAwaitTerminationCalls, long secondsBetweenPoolSizeInspections)
     {
-        super();
+        this(DEFAULT_THREAD_NAME_PREFIX, secondsBetweenPoolAwaitTerminationCalls, secondsBetweenPoolSizeInspections);
+    }
+
+    private AutoResizingThreadPool(String threadPrefixName, long secondsBetweenPoolAwaitTerminationCalls,
+            long secondsBetweenPoolSizeInspections)
+    {
+        super(threadPrefixName);
         resizing = new AtomicBoolean();
         this.secondsBetweenPoolAwaitTerminationCalls = secondsBetweenPoolAwaitTerminationCalls;
         this.secondsBetweenPoolSizeInspections = secondsBetweenPoolSizeInspections;
         scheduledExecutorService = Executors.newScheduledThreadPool(SCHEDULED_SERVICE_POOL_SIZE);
         scheduledExecutorService.scheduleWithFixedDelay(new ScheduledInspectPoolQueueSizeTask(this),
                 secondsBetweenPoolSizeInspections, secondsBetweenPoolSizeInspections, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public long getSecondsBetweenPoolSizeInspections()
-    {
-        return secondsBetweenPoolSizeInspections;
     }
 
     @Override
@@ -65,6 +68,12 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
             }
         }
         super.addTaskInternal(task, addToFront);
+    }
+
+    @Override
+    public long getSecondsBetweenPoolSizeInspections()
+    {
+        return secondsBetweenPoolSizeInspections;
     }
 
     private boolean isResizing()
@@ -91,7 +100,7 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
     {
         duringResizeTaskQueuingThreadPool = null;
         if (resizing.compareAndSet(false, true)) {
-            duringResizeTaskQueuingThreadPool = new ThreadPool(newThreadCount, false);
+            duringResizeTaskQueuingThreadPool = new ThreadPool(newThreadCount, false, this.getThreadNamePrefix());
             // Do not shut down the scheduled executor service - just poison the pool threads (so we
             // call super.shutdown instead of shutdown).
             super.shutdown();

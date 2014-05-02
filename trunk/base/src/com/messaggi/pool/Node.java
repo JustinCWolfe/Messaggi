@@ -7,7 +7,9 @@ import com.messaggi.pool.task.Task;
 
 class Node
 {
-    private static final String THREAD_NAME_FORMAT = "ThreadPool-%s";
+    private static final String DEFAULT_THREAD_NAME_PREFIX = "Node";
+
+    private static final String THREAD_NAME_FORMAT = "%s-%s";
 
     private final int index;
 
@@ -15,11 +17,20 @@ class Node
 
     protected final Thread taskThread;
 
+    private final String threadNamePrefix;
+
     Node(int index)
     {
+        this(index, DEFAULT_THREAD_NAME_PREFIX);
+    }
+
+    Node(int index, String threadNamePrefix)
+    {
         this.index = index;
+        this.threadNamePrefix = threadNamePrefix;
         taskQueue = new LinkedBlockingDeque<>();
-        taskThread = new Thread(new TaskConsumer(taskQueue), String.format(THREAD_NAME_FORMAT, this.index));
+        taskThread = new Thread(new TaskConsumer(taskQueue), String.format(THREAD_NAME_FORMAT, this.threadNamePrefix,
+                this.index));
     }
 
     void startTaskThread()

@@ -101,16 +101,16 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
     {
         private final long waitTime;
 
-        @Override
-        public String getName()
-        {
-            return String.format("%s - %s", this.getClass().getSimpleName(), waitTime);
-        }
-
         public WaitingTask(long waitTime)
         {
             super();
             this.waitTime = waitTime;
+        }
+
+        @Override
+        public String getName()
+        {
+            return String.format("%s - %s", this.getClass().getSimpleName(), waitTime);
         }
 
         @Override

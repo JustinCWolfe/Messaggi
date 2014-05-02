@@ -1,9 +1,9 @@
 package com.messaggi.messaging.pool;
 
+import com.messaggi.messages.SendMessageRequest;
+
 public interface SendMessageThreadPool
 {
-    //void sendMessage(ApplicationPlatform appPlat, Device from, Device to, Message msg) throws Exception;
-
-    void shutdownAndAwaitTermination() throws Exception;
+    void sendMessage(SendMessageRequest request) throws Exception;
 }
 
