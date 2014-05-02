@@ -17,6 +17,8 @@ public class ThreadPool
     // This is accessed by unit tests so must be package protected scoped.
     static final int DEFAULT_THREAD_COUNT = 2;
 
+    private static final String DEFAULT_THREAD_NAME_PREFIX = "ThreadPool";
+
     protected List<Node> nodes;
 
     private AtomicBoolean shutdown;
@@ -27,18 +29,21 @@ public class ThreadPool
 
     protected int threadCount;
 
+    private final String threadNamePrefix;
+
     public ThreadPool()
     {
-        this(DEFAULT_THREAD_COUNT);
+        this(DEFAULT_THREAD_COUNT, true, DEFAULT_THREAD_NAME_PREFIX);
     }
     
-    public ThreadPool(int threadCount)
+    protected ThreadPool(String threadNamePrefix)
     {
-        this(threadCount, true);
+        this(DEFAULT_THREAD_COUNT, true, threadNamePrefix);
     }
 
-    public ThreadPool(int threadCount, boolean startNodeTaskThreads)
+    public ThreadPool(int threadCount, boolean startNodeTaskThreads, String threadNamePrefix)
     {
+        this.threadNamePrefix = threadNamePrefix;
         initialize(createNodes(threadCount), startNodeTaskThreads);
     }
 
@@ -93,7 +98,7 @@ public class ThreadPool
     {
         List<Node> nodes = new ArrayList<>(threadCount);
         for (int index = 0; index < threadCount; index++) {
-            nodes.add(new Node(index));
+            nodes.add(new Node(index, threadNamePrefix));
         }
         return nodes;
     }
@@ -112,6 +117,11 @@ public class ThreadPool
     protected int getTaskNodeIndex()
     {
         return targetThreadCounter.getAndIncrement() % threadCount;
+    }
+
+    protected String getThreadNamePrefix()
+    {
+        return threadNamePrefix;
     }
 
     // Final because this is called from the constructor.
