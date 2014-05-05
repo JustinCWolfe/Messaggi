@@ -58,8 +58,8 @@ public abstract class TaskBase<T> implements Task<T>
     public void run()
     {
         resultHolder.clear();
-        state = State.STARTED;
         stopwatch.reset();
+        state = State.STARTED;
         stopwatch.start();
         runInternal();
         T taskResult = getTaskResult();
