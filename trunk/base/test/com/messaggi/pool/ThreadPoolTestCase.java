@@ -136,24 +136,26 @@ public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestC
     {
         private final ThreadPool pool;
 
-        private final WaitingTask waitingTask;
+        private final WaitingTask[] waitingTasks;
 
         private final boolean addToFront;
 
         public boolean isAdded;
 
-        public PoolAddTaskCaller(ThreadPool pool, WaitingTask waitingTask, boolean addToFront)
+        public PoolAddTaskCaller(ThreadPool pool, boolean addToFront, WaitingTask... waitingTasks)
         {
             this.addToFront = addToFront;
             this.pool = pool;
-            this.waitingTask = waitingTask;
+            this.waitingTasks = waitingTasks;
         }
 
         @Override
         public void run()
         {
             try {
-                pool.addTaskInternal(waitingTask, addToFront);
+                for (WaitingTask waitingTask : waitingTasks) {
+                    pool.addTaskInternal(waitingTask, addToFront);
+                }
                 isAdded = true;
             } catch (Exception e) {
             }

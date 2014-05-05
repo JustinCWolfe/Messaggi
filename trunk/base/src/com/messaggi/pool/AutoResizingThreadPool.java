@@ -58,7 +58,7 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
     @Override
     protected void addTaskInternal(Task<?> task, boolean addToFront)
     {
-        if (isResizing()) {
+        if (resizing.get()) {
             // It is possible that we entered the resizing block but have not
             // yet initialized the temporary thread pool.  In this case, queue
             // tasks to the existing pool, which has not yet been shutdown.
@@ -74,11 +74,6 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
     public long getSecondsBetweenPoolSizeInspections()
     {
         return secondsBetweenPoolSizeInspections;
-    }
-
-    private boolean isResizing()
-    {
-        return resizing.get();
     }
 
     private void processInspectionResult(PoolSizeOpinion result)
@@ -146,7 +141,7 @@ public class AutoResizingThreadPool extends ThreadPool implements InspectablePoo
         @Override
         public void run()
         {
-            if (!pool.isResizing()) {
+            if (!pool.resizing.get()) {
                 pool.addTaskInternal(inspectPoolQueueSizeTask, true);
                 pool.processInspectionResult(inspectPoolQueueSizeTask.getResult());
             }
