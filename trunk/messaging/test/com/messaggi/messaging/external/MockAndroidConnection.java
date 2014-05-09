@@ -9,8 +9,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult;
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
+import com.messaggi.messaging.external.connection.AndroidConnection;
+import com.messaggi.messaging.external.message.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 
 public class MockAndroidConnection extends AndroidConnection
 {

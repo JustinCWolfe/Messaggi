@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -11,12 +11,14 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.messaging.external.exception.AndroidExceptionFactory;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMulticastException;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.SendMessageResponse;
+import com.messaggi.external.message.exception.SendMessageException;
+import com.messaggi.messaging.external.message.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.message.exception.AndroidExceptionFactory;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidMulticastException;
 
 public class AndroidConnection implements MessagingServiceConnection
 {

@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.message;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.external.message.SendMessageResponse;
 
 @XmlRootElement
 public class AndroidSendMessageResponse extends SendMessageResponse

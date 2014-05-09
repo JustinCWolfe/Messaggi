@@ -1,9 +1,9 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.message;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.external.message.SendMessageResponse;
 
 @XmlRootElement
 public class AppleSendMessageResponse extends SendMessageResponse

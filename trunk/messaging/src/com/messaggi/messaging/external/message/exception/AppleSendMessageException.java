@@ -1,8 +1,8 @@
-package com.messaggi.messaging.external.exception;
+package com.messaggi.messaging.external.message.exception;
 
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messaging.external.AppleSendMessageRequest;
-import com.messaggi.messaging.external.AppleSendMessageResponse;
+import com.messaggi.external.message.exception.SendMessageException;
+import com.messaggi.messaging.external.message.AppleSendMessageRequest;
+import com.messaggi.messaging.external.message.AppleSendMessageResponse;
 
 public abstract class AppleSendMessageException extends SendMessageException
 {

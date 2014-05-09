@@ -1,8 +1,8 @@
 package com.messaggi.messaging.task;
 
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.exception.SendMessageException;
 import com.messaggi.pool.task.TaskBase;
 
 public class SendMessageTask extends TaskBase<Boolean>
@@ -35,7 +35,7 @@ public class SendMessageTask extends TaskBase<Boolean>
     public void runInternal()
     {
         try {
-            this.msgConnection.sendMessage(this.request);
+            msgConnection.sendMessage(request);
         } catch (SendMessageException e) {
 
         }

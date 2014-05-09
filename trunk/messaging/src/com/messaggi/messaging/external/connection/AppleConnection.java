@@ -1,14 +1,16 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import java.io.ByteArrayInputStream;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messages.SendMessageResponse;
-import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleMulticastException;
-import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleNotConnectedException;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.SendMessageResponse;
+import com.messaggi.external.message.exception.SendMessageException;
+import com.messaggi.messaging.external.message.AppleSendMessageRequest;
+import com.messaggi.messaging.external.message.AppleSendMessageResponse;
+import com.messaggi.messaging.external.message.exception.AppleSendMessageException.AppleMulticastException;
+import com.messaggi.messaging.external.message.exception.AppleSendMessageException.AppleNotConnectedException;
 import com.notnoop.apns.APNS;
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.ApnsServiceBuilder;

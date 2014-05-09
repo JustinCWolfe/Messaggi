@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.message;
 
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;
@@ -6,9 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messaging.external.exception.AppleSendMessageException.AppleInvalidPayloadException;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.exception.SendMessageException;
+import com.messaggi.messaging.external.message.exception.AppleSendMessageException.AppleInvalidPayloadException;
 import com.notnoop.apns.PayloadBuilder;
 
 @XmlRootElement(name = "")

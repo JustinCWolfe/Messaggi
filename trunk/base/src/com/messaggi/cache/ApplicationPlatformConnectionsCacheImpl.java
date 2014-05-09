@@ -11,8 +11,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.messaggi.dao.ApplicationPlatformDAO;
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.external.MessagingServiceConnections;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.connection.MessagingServiceConnections;
 
 public class ApplicationPlatformConnectionsCacheImpl implements ApplicationPlatformConnectionsCache
 {

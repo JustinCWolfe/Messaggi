@@ -2,7 +2,7 @@ package com.messaggi.cache;
 
 import java.util.concurrent.ExecutionException;
 
-import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.external.connection.MessagingServiceConnection;
 
 /**
  * Cache of messaging service connections per application platform. This is a

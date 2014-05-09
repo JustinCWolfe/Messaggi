@@ -1,21 +1,21 @@
-package com.messaggi.messaging.external.exception;
+package com.messaggi.messaging.external.message.exception;
 
 import javax.ws.rs.core.Response;
 
-import com.messaggi.messaging.external.AndroidSendMessageRequest;
-import com.messaggi.messaging.external.AndroidSendMessageResponse;
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult;
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidAuthenticationErrorException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidCanonicalIdException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInternalServerErrorException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInvalidDataKeyException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidInvalidRegistrationIdException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMessageTooBigException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidMissingRegistrationIdException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidTimeoutException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnknownException;
-import com.messaggi.messaging.external.exception.AndroidSendMessageException.AndroidUnregisteredDeviceException;
+import com.messaggi.messaging.external.message.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidAuthenticationErrorException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidCanonicalIdException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidInternalServerErrorException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidInvalidDataKeyException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidInvalidRegistrationIdException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidMessageTooBigException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidMissingRegistrationIdException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidTimeoutException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidUnknownException;
+import com.messaggi.messaging.external.message.exception.AndroidSendMessageException.AndroidUnregisteredDeviceException;
 
 public class AndroidExceptionFactory
 {

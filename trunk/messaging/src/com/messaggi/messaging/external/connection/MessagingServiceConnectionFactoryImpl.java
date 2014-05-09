@@ -1,8 +1,8 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.external.MessagingServiceConnectionFactory;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.connection.MessagingServiceConnectionFactory;
 
 public class MessagingServiceConnectionFactoryImpl implements MessagingServiceConnectionFactory
 {

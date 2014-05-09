@@ -23,8 +23,8 @@ import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import com.messaggi.cache.ApplicationPlatformConnectionsCacheImpl.ConnectionKey;
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messaging.external.MessagingServiceConnectionFactoryImpl;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.messaging.external.connection.MessagingServiceConnectionFactoryImpl;
 
 public class TestApplicationPlatformConnections extends ApplicationPlatformCacheTestCase
 {

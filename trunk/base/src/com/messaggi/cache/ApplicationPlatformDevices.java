@@ -9,13 +9,13 @@ import com.messaggi.domain.Device;
 
 public class ApplicationPlatformDevices
 {
-    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformDevicesCache";
+    private static final ApplicationPlatformDevicesCache CACHE;
 
-    private static final ApplicationPlatformDevicesCache cache;
+    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformDevicesCache";
 
     static {
         try {
-            cache = (ApplicationPlatformDevicesCache) InitialContext.doLookup(CACHE_JNDI_NAME);
+            CACHE = (ApplicationPlatformDevicesCache) InitialContext.doLookup(CACHE_JNDI_NAME);
         } catch (NamingException e) {
             throw new RuntimeException("Could not find " + CACHE_JNDI_NAME, e);
         }
@@ -23,7 +23,7 @@ public class ApplicationPlatformDevices
 
     public static Device getDevice(Integer applicationPlatformId, String deviceCode) throws ExecutionException
     {
-        return cache.getDevice(applicationPlatformId, deviceCode);
+        return CACHE.getDevice(applicationPlatformId, deviceCode);
     }
 }
 
