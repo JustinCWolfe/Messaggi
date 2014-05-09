@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.messaggi.domain.Device;
-import com.messaggi.messages.SendMessageRequest;
+import com.messaggi.external.message.SendMessageRequest;
 
 @XmlRootElement(name = "")
 public class AndroidSendMessageRequest

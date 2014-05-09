@@ -1,4 +1,4 @@
-package com.messaggi.messages;
+package com.messaggi.external.message.exception;
 
 public abstract class SendMessageException extends Exception
 {

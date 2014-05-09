@@ -1,9 +1,9 @@
-package com.messaggi.external;
+package com.messaggi.external.connection;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.SendMessageResponse;
+import com.messaggi.external.message.exception.SendMessageException;
 
 public interface MessagingServiceConnection
 {

@@ -1,4 +1,4 @@
-package com.messaggi.messages;
+package com.messaggi.external.message;
 
 import java.util.Date;
 import java.util.Map;

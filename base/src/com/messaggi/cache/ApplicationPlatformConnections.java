@@ -5,17 +5,17 @@ import java.util.concurrent.ExecutionException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.external.connection.MessagingServiceConnection;
 
 public class ApplicationPlatformConnections
 {
-    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformConnectionsCache";
+    private static final ApplicationPlatformConnectionsCache CACHE;
 
-    private static final ApplicationPlatformConnectionsCache cache;
+    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformConnectionsCache";
 
     static {
         try {
-            cache = (ApplicationPlatformConnectionsCache) InitialContext.doLookup(CACHE_JNDI_NAME);
+            CACHE = (ApplicationPlatformConnectionsCache) InitialContext.doLookup(CACHE_JNDI_NAME);
         } catch (NamingException e) {
             throw new RuntimeException("Could not find " + CACHE_JNDI_NAME, e);
         }
@@ -24,7 +24,7 @@ public class ApplicationPlatformConnections
     public static MessagingServiceConnection getConnection(Integer applicationPlatformId, String fromDeviceCode,
             String toDeviceCode) throws ExecutionException
     {
-        return cache.getConnection(applicationPlatformId, fromDeviceCode, toDeviceCode);
+        return CACHE.getConnection(applicationPlatformId, fromDeviceCode, toDeviceCode);
     }
 }
 

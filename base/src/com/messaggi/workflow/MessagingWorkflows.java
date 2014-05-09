@@ -7,13 +7,13 @@ import javax.naming.NamingException;
 
 public class MessagingWorkflows
 {
-    private static final String FACTORY_JNDI_NAME = "messaggi:/factory/MessagingWorkflowFactory";
+    private static final MessagingWorkflowFactory FACTORY;
 
-    private static final MessagingWorkflowFactory factory;
+    private static final String FACTORY_JNDI_NAME = "messaggi:/factory/MessagingWorkflowFactory";
 
     static {
         try {
-            factory = (MessagingWorkflowFactory) InitialContext.doLookup(FACTORY_JNDI_NAME);
+            FACTORY = (MessagingWorkflowFactory) InitialContext.doLookup(FACTORY_JNDI_NAME);
         } catch (NamingException e) {
             throw new RuntimeException("Could not find " + FACTORY_JNDI_NAME, e);
         }
@@ -21,7 +21,7 @@ public class MessagingWorkflows
 
     public static MessagingWorkflow create(UUID applicationPlatformToken) throws Exception
     {
-        return factory.create(applicationPlatformToken);
+        return FACTORY.create(applicationPlatformToken);
     }
 }
 

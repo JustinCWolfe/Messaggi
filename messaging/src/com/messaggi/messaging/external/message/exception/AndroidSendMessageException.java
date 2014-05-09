@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external.exception;
+package com.messaggi.messaging.external.message.exception;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messaging.external.AndroidSendMessageRequest;
-import com.messaggi.messaging.external.AndroidSendMessageResponse;
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult;
-import com.messaggi.messaging.external.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
+import com.messaggi.external.message.exception.SendMessageException;
+import com.messaggi.messaging.external.message.AndroidSendMessageRequest;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult;
+import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 
 public abstract class AndroidSendMessageException extends SendMessageException
 {

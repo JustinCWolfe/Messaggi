@@ -1,4 +1,4 @@
-package com.messaggi.external;
+package com.messaggi.external.connection;
 
 import com.messaggi.domain.ApplicationPlatform;
 

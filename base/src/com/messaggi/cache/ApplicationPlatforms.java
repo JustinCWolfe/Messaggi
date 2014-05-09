@@ -10,13 +10,13 @@ import com.messaggi.domain.ApplicationPlatform;
 
 public class ApplicationPlatforms
 {
-    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformsCache";
+    private static final ApplicationPlatformsCache CACHE;
 
-    private static final ApplicationPlatformsCache cache;
+    private static final String CACHE_JNDI_NAME = "messaggi:/cache/ApplicationPlatformsCache";
 
     static {
         try {
-            cache = (ApplicationPlatformsCache) InitialContext.doLookup(CACHE_JNDI_NAME);
+            CACHE = (ApplicationPlatformsCache) InitialContext.doLookup(CACHE_JNDI_NAME);
         } catch (NamingException e) {
             throw new RuntimeException("Could not find " + CACHE_JNDI_NAME, e);
         }
@@ -24,13 +24,13 @@ public class ApplicationPlatforms
 
     public static ApplicationPlatform get(Integer id) throws ExecutionException
     {
-        return cache.get(id);
+        return CACHE.get(id);
     }
 
     public static ImmutableMap<Integer, ApplicationPlatform> getAll(Iterable<? extends Integer> ids)
         throws ExecutionException
     {
-        return cache.getAll(ids);
+        return CACHE.getAll(ids);
     }
 }
 

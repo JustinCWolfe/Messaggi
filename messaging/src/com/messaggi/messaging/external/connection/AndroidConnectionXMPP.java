@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import javax.net.ssl.SSLSocketFactory;
 
@@ -14,10 +14,10 @@ import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.util.StringUtils;
 
 import com.messaggi.domain.ApplicationPlatform;
-import com.messaggi.external.MessagingServiceConnection;
-import com.messaggi.messages.SendMessageException;
-import com.messaggi.messages.SendMessageRequest;
-import com.messaggi.messages.SendMessageResponse;
+import com.messaggi.external.connection.MessagingServiceConnection;
+import com.messaggi.external.message.SendMessageRequest;
+import com.messaggi.external.message.SendMessageResponse;
+import com.messaggi.external.message.exception.SendMessageException;
 
 public class AndroidConnectionXMPP implements MessagingServiceConnection
 {

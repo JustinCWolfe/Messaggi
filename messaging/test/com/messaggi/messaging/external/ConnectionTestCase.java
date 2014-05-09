@@ -16,8 +16,9 @@ import com.messaggi.TestDataHelper.Device5;
 import com.messaggi.TestDataHelper.Device6;
 import com.messaggi.domain.ApplicationPlatform;
 import com.messaggi.domain.Device;
-import com.messaggi.external.MessagingServiceConnection;
+import com.messaggi.external.connection.MessagingServiceConnection;
 import com.messaggi.junit.MessaggiTestCase;
+import com.messaggi.messaging.external.connection.MessagingServiceConnectionFactoryImpl;
 
 public abstract class ConnectionTestCase extends MessaggiTestCase
 {
