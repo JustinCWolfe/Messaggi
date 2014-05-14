@@ -63,7 +63,7 @@ public class ThreadPool
             if (shutdown.get()) {
                 throw new RuntimeException("Attempting to assign work to shutdown thread pool.");
             }
-            int index = getTaskNodeIndex();
+            int index = getTaskNodeIndex(task);
             if (addToFront) {
                 addTaskToFront(task, index);
             } else {
@@ -114,7 +114,7 @@ public class ThreadPool
         return taskCount;
     }
 
-    protected int getTaskNodeIndex()
+    protected int getTaskNodeIndex(Task<?> task)
     {
         return targetThreadCounter.getAndIncrement() % threadCount;
     }
