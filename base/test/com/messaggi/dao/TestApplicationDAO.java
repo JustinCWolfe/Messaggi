@@ -52,6 +52,7 @@ public class TestApplicationDAO extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         user1 = User1.getDomainObject();
         user2 = User2.getDomainObject();
         TestDataHelper.createUser(user1);
@@ -68,6 +69,7 @@ public class TestApplicationDAO extends MessaggiTestCase
         TestDataHelper.deleteApplication(app3);
         TestDataHelper.deleteUser(user1);
         TestDataHelper.deleteUser(user2);
+        super.tearDown();
     }
     
     @Test

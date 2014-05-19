@@ -18,7 +18,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -87,19 +86,6 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
     {
         super.setUp();
         pool = new AutoResizingThreadPool(1, 2);
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception
-    {
-        if (!pool.isShutdown()) {
-            pool.shutdown();
-        }
-        if (!pool.isTerminated()) {
-            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        }
-        super.tearDown();
     }
 
     private static boolean getIsResizing(AutoResizingThreadPool pool) throws Exception

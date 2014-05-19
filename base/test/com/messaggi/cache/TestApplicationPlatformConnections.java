@@ -51,6 +51,7 @@ public class TestApplicationPlatformConnections extends ApplicationPlatformCache
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         createCacheReferences();
     }
 

@@ -73,6 +73,7 @@ public class TestDeviceDAO extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         user1 = User1.getDomainObject();
         TestDataHelper.createUser(user1);
         app1 = Application1.getDomainObject();
@@ -105,6 +106,7 @@ public class TestDeviceDAO extends MessaggiTestCase
         TestDataHelper.deleteApplicationPlatform(appPlat3);
         TestDataHelper.deleteApplication(app1);
         TestDataHelper.deleteUser(user1);
+        super.tearDown();
     }
 
     @Test

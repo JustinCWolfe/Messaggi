@@ -45,6 +45,7 @@ public class TestApplicationPlatformTokens extends ApplicationPlatformCacheTestC
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         createCacheReferences();
     }
 

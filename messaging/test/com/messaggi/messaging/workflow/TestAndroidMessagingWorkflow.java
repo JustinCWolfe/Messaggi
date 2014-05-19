@@ -2,9 +2,7 @@ package com.messaggi.messaging.workflow;
 
 import static org.junit.Assert.fail;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -22,18 +20,6 @@ public class TestAndroidMessagingWorkflow extends MessaggiTestCase
     public static void tearDownAfterClass() throws Exception
     {
         messaggiSuiteTearDown();
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception
-    {
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception
-    {
     }
 
     @Test
