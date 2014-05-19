@@ -7,7 +7,7 @@ import com.messaggi.domain.Device;
 import com.messaggi.external.connection.MessagingServiceConnection;
 import com.messaggi.external.connection.MessagingServiceConnections;
 import com.messaggi.external.message.SendMessageRequest;
-import com.messaggi.messaging.task.SendMessageTask;
+import com.messaggi.messaging.pool.task.SendMessageTask;
 import com.messaggi.pool.AutoResizingThreadPool;
 import com.messaggi.pool.task.Task;
 

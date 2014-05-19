@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import java.util.HashMap;
 import java.util.Map;

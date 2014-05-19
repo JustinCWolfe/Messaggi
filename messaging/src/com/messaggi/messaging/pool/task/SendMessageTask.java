@@ -1,4 +1,4 @@
-package com.messaggi.messaging.task;
+package com.messaggi.messaging.pool.task;
 
 import com.messaggi.domain.Device;
 import com.messaggi.external.connection.MessagingServiceConnection;

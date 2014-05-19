@@ -1,4 +1,4 @@
-package com.messaggi.messaging.external;
+package com.messaggi.messaging.external.connection;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,7 +40,7 @@ import com.messaggi.external.connection.MessagingServiceConnection;
 import com.messaggi.external.connection.MessagingServiceConnections;
 import com.messaggi.external.message.SendMessageRequest;
 import com.messaggi.external.message.SendMessageResponse;
-import com.messaggi.messaging.external.MockAndroidConnection.ResponseType;
+import com.messaggi.messaging.external.connection.MockAndroidConnection.ResponseType;
 import com.messaggi.messaging.external.message.AndroidSendMessageResponse;
 import com.messaggi.messaging.external.message.AndroidSendMessageResponse.AndroidResult.GCMErrorMessage;
 import com.messaggi.messaging.external.message.exception.AndroidSendMessageException;
