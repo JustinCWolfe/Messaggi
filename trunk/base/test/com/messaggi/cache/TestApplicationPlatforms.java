@@ -41,6 +41,7 @@ public class TestApplicationPlatforms extends ApplicationPlatformCacheTestCase
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         createCacheReferences();
     }
 

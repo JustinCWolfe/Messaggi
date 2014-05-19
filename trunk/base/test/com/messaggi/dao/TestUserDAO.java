@@ -45,6 +45,7 @@ public class TestUserDAO extends MessaggiTestCase
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         userDAO = new UserDAO();
     }
 
@@ -54,6 +55,7 @@ public class TestUserDAO extends MessaggiTestCase
     {
         TestDataHelper.deleteUser(user1);
         TestDataHelper.deleteUser(user2);
+        super.tearDown();
     }
 
     @Test

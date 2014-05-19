@@ -15,7 +15,6 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -61,16 +60,11 @@ public class TestAppleConnection extends ConnectionTestCase
     }
 
     @Override
-    @Before
-    public void setUp() throws Exception
-    {
-    }
-
-    @Override
     @After
     public void tearDown() throws Exception
     {
         connection.disconnect();
+        super.tearDown();
     }
 
     private ApnsService getServiceReference(MessagingServiceConnection connection) throws Exception

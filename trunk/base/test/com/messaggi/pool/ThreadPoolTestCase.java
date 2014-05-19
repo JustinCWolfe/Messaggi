@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
+import org.junit.After;
+import org.junit.Before;
+
 import com.messaggi.junit.MessaggiLogicTestCase;
 import com.messaggi.pool.ThreadPoolTestHelper.TestingPoolThreads;
 import com.messaggi.pool.ThreadPoolTestHelper.WaitingTask;
@@ -16,6 +19,26 @@ import com.messaggi.pool.task.Task.State;
 public class ThreadPoolTestCase<T extends ThreadPool> extends MessaggiLogicTestCase
 {
     protected T pool;
+
+    @Override
+    @Before
+    public void setUp() throws Exception
+    {
+        super.setUp();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception
+    {
+        if (!pool.isShutdown()) {
+            pool.shutdown();
+        }
+        if (!pool.isTerminated()) {
+            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        }
+        super.tearDown();
+    }
 
     protected void validateWaitingTaskResults(WaitingTask... tasks)
     {

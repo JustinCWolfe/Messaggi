@@ -102,6 +102,7 @@ public class TestApplicationPlatformDevices extends ApplicationPlatformCacheTest
     @Before
     public void setUp() throws Exception
     {
+        super.setUp();
         createCacheReferences();
     }
 

@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,19 +33,6 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
     {
         super.setUp();
         pool = new ThreadPool();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception
-    {
-        if (!pool.isShutdown()) {
-            pool.shutdown();
-        }
-        if (!pool.isTerminated()) {
-            pool.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        }
-        super.tearDown();
     }
 
     @Test

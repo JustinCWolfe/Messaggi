@@ -51,6 +51,5 @@ public abstract class MessaggiLogicTestCase
     {
         Logger.getRootLogger().removeAppender(mockAppender);
     }
-
 }
 
