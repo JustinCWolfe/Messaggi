@@ -18,7 +18,7 @@ public class TestSendMessageThreadPool extends MessaggiTestCase
     public static void setUpBeforeClass() throws Exception
     {
         messaggiSuiteSetUp();
-
+        // Implementation class name for send message thread pool.
         InitialContext ic = new InitialContext();
         ic.bind("messaggi:/pool/SendMessageThreadPool", new SendMessageThreadPoolImpl());
     }

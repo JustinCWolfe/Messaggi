@@ -17,6 +17,9 @@ import org.junit.Test;
 
 import com.messaggi.pool.AutoResizingThreadPool;
 import com.messaggi.pool.ThreadPoolTestCase;
+import com.messaggi.pool.ThreadPoolTestHelper;
+import com.messaggi.pool.ThreadPoolTestHelper.PoolInspector;
+import com.messaggi.pool.ThreadPoolTestHelper.WaitingTask;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask.PoolSizeOpinion;
 import com.messaggi.pool.task.Task.State;
 
@@ -231,7 +234,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         List<WaitingTask> tasks = new ArrayList<>();
         long longTaskRunTime = task.getMillisecondsBetweenSamples();
         PoolInspector poolInspector = new PoolInspector(task);
-        List<Thread> testThreads = getTestThreads(poolInspector);
+        List<Thread> testThreads = ThreadPoolTestHelper.getTestThreads(poolInspector);
         Thread poolInspectorThread = testThreads.get(0);
         // First inspection should find 0 tasks.
         poolInspectorThread.start();
@@ -380,7 +383,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
     public void testRun_Interrupted() throws Exception
     {
         PoolInspector poolInspector = new PoolInspector(task);
-        List<Thread> testThreads = getTestThreads(poolInspector);
+        List<Thread> testThreads = ThreadPoolTestHelper.getTestThreads(poolInspector);
         Thread poolInspectorThread = testThreads.get(0);
         validatePoolRunningState();
         validateTaskInitialState(task);
@@ -418,7 +421,7 @@ public class TestInspectPoolQueueSizeTask extends ThreadPoolTestCase<AutoResizin
         // Give the waiting task time to start before inspecting the pool.
         Thread.sleep(10);
         PoolInspector poolInspector = new PoolInspector(task);
-        List<Thread> testThreads = getTestThreads(poolInspector);
+        List<Thread> testThreads = ThreadPoolTestHelper.getTestThreads(poolInspector);
         Thread poolInspectorThread = testThreads.get(0);
         poolInspectorThread.start();
         Thread.sleep(5);

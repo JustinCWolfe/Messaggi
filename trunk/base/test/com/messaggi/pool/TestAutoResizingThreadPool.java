@@ -23,6 +23,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.messaggi.pool.ThreadPoolTestHelper.PoolAddTaskCaller;
+import com.messaggi.pool.ThreadPoolTestHelper.WaitingTask;
 import com.messaggi.pool.task.InspectPoolQueueSizeTask;
 import com.messaggi.pool.task.Task;
 import com.messaggi.pool.task.Task.State;
@@ -133,7 +135,7 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
         assertThat(getDuringResizeTaskQueuingThreadPool(pool), nullValue());
         assertFalse(getScheduledExecutorService(pool).isShutdown());
         assertFalse(getScheduledExecutorService(pool).isTerminated());
-        assertThat(getPoolThreads(pool).threads.length, equalTo(ThreadPool.DEFAULT_THREAD_COUNT));
+        assertThat(ThreadPoolTestHelper.getPoolThreads(pool).threads.length, equalTo(ThreadPool.DEFAULT_THREAD_COUNT));
     }
 
     @Test
@@ -335,7 +337,7 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
         }
         assertThat (minThreadCount, equalTo(2));
         assertThat(maxThreadCount, greaterThanOrEqualTo(THREAD_COUNT_TO_SCALE_TO));
-        assertThat(getPoolThreads(pool).threads.length, equalTo(2));
+        assertThat(ThreadPoolTestHelper.getPoolThreads(pool).threads.length, equalTo(2));
         System.out.println("total task count: " + tasks.size());
         validateWaitingTaskResults(tasks.toArray(new WaitingTask[tasks.size()]));
     }
@@ -454,7 +456,7 @@ public class TestAutoResizingThreadPool extends ThreadPoolTestCase<AutoResizingT
 
         assertThat(minThreadCount, equalTo(2));
         assertThat(maxThreadCount, greaterThanOrEqualTo(THREAD_COUNT_TO_SCALE_TO));
-        assertThat(getPoolThreads(pool).threads.length, equalTo(2));
+        assertThat(ThreadPoolTestHelper.getPoolThreads(pool).threads.length, equalTo(2));
         int totalTaskCount = 0;
         for (AddTaskThread t : threads) {
             totalTaskCount += t.tasks.size();

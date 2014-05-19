@@ -19,6 +19,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Stopwatch;
+import com.messaggi.pool.ThreadPoolTestHelper.PoolAddTaskCaller;
+import com.messaggi.pool.ThreadPoolTestHelper.PoolAwaitTerminationCaller;
+import com.messaggi.pool.ThreadPoolTestHelper.PoolShutdownCaller;
+import com.messaggi.pool.ThreadPoolTestHelper.TestingPoolThreads;
+import com.messaggi.pool.ThreadPoolTestHelper.WaitingTask;
 import com.messaggi.pool.task.Task.State;
 
 public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
@@ -178,7 +183,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAddTaskCaller r8 = new PoolAddTaskCaller(pool, false, t8);
         PoolAddTaskCaller r9 = new PoolAddTaskCaller(pool, false, t9);
         PoolAddTaskCaller r10 = new PoolAddTaskCaller(pool, false, t10);
-        List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
+        List<Thread> testThreads1 = ThreadPoolTestHelper.getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads1) {
             t.start();
             Thread.sleep(10);
@@ -279,7 +284,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAddTaskCaller r8 = new PoolAddTaskCaller(pool, true, t8);
         PoolAddTaskCaller r9 = new PoolAddTaskCaller(pool, true, t9);
         PoolAddTaskCaller r10 = new PoolAddTaskCaller(pool, true, t10);
-        List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
+        List<Thread> testThreads1 = ThreadPoolTestHelper.getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads1) {
             t.start();
             Thread.sleep(5);
@@ -370,7 +375,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         pool.shutdown();
         assertTrue(pool.isShutdown());
         assertFalse(pool.isTerminated());
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertTrue(t.isAlive());
         }
@@ -431,7 +436,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAddTaskCaller r9 = new PoolAddTaskCaller(pool, false, t9);
         PoolAddTaskCaller r10 = new PoolAddTaskCaller(pool, false, t10);
         validatePoolRunningState();
-        List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5);
+        List<Thread> testThreads1 = ThreadPoolTestHelper.getTestThreads(r1, r2, r3, r4, r5);
         for (Thread t : testThreads1) {
             t.start();
             Thread.sleep(10);
@@ -442,11 +447,11 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         pool.shutdown();
         assertTrue(pool.isShutdown());
         assertFalse(pool.isTerminated());
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertTrue(t.isAlive());
         }
-        List<Thread> testThreads2 = getTestThreads(r6, r7, r8, r9, r10);
+        List<Thread> testThreads2 = ThreadPoolTestHelper.getTestThreads(r6, r7, r8, r9, r10);
         for (Thread t : testThreads2) {
             t.start();
             Thread.sleep(10);
@@ -576,7 +581,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(terminated4);
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertFalse(t.isAlive());
         }
@@ -601,7 +606,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAwaitTerminationCaller r19 = new PoolAwaitTerminationCaller(pool, waitTime1);
         PoolAwaitTerminationCaller r110 = new PoolAwaitTerminationCaller(pool, waitTime1);
 
-        List<Thread> testThreads1 = getTestThreads(r11, r12, r13, r14, r15, r16, r17, r18, r19, r110);
+        List<Thread> testThreads1 = ThreadPoolTestHelper.getTestThreads(r11, r12, r13, r14, r15, r16, r17, r18, r19,
+                r110);
         sw.start();
         for (Thread t : testThreads1) {
             t.start();
@@ -637,7 +643,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAwaitTerminationCaller r28 = new PoolAwaitTerminationCaller(pool, waitTime2);
         PoolAwaitTerminationCaller r29 = new PoolAwaitTerminationCaller(pool, waitTime2);
         PoolAwaitTerminationCaller r210 = new PoolAwaitTerminationCaller(pool, waitTime2);
-        List<Thread> testThreads2 = getTestThreads(r21, r22, r23, r24, r25, r26, r27, r28, r29, r210);
+        List<Thread> testThreads2 = ThreadPoolTestHelper.getTestThreads(r21, r22, r23, r24, r25, r26, r27, r28, r29,
+                r210);
         sw.start();
         for (Thread t : testThreads2) {
             t.start();
@@ -673,7 +680,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAwaitTerminationCaller r38 = new PoolAwaitTerminationCaller(pool, waitTime3);
         PoolAwaitTerminationCaller r39 = new PoolAwaitTerminationCaller(pool, waitTime3);
         PoolAwaitTerminationCaller r310 = new PoolAwaitTerminationCaller(pool, waitTime3);
-        List<Thread> testThreads3 = getTestThreads(r31, r32, r33, r34, r35, r36, r37, r38, r39, r310);
+        List<Thread> testThreads3 = ThreadPoolTestHelper.getTestThreads(r31, r32, r33, r34, r35, r36, r37, r38, r39,
+                r310);
         sw.start();
         for (Thread t : testThreads3) {
             t.start();
@@ -709,7 +717,8 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAwaitTerminationCaller r48 = new PoolAwaitTerminationCaller(pool, waitTime4);
         PoolAwaitTerminationCaller r49 = new PoolAwaitTerminationCaller(pool, waitTime4);
         PoolAwaitTerminationCaller r410 = new PoolAwaitTerminationCaller(pool, waitTime4);
-        List<Thread> testThreads4 = getTestThreads(r41, r42, r43, r44, r45, r46, r47, r48, r49, r410);
+        List<Thread> testThreads4 = ThreadPoolTestHelper.getTestThreads(r41, r42, r43, r44, r45, r46, r47, r48, r49,
+                r410);
         pool.shutdown();
         sw.start();
         for (Thread t : testThreads4) {
@@ -732,7 +741,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertTrue(r410.isTerminated);
         assertTrue(pool.isShutdown());
         assertTrue(pool.isTerminated());
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertFalse(t.isAlive());
         }
@@ -795,7 +804,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolAddTaskCaller r8 = new PoolAddTaskCaller(pool, false, t8);
         PoolAddTaskCaller r9 = new PoolAddTaskCaller(pool, false, t9);
         PoolAddTaskCaller r10 = new PoolAddTaskCaller(pool, false, t10);
-        List<Thread> testThreads1 = getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
+        List<Thread> testThreads1 = ThreadPoolTestHelper.getTestThreads(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads1) {
             t.start();
             Thread.sleep(10);
@@ -826,7 +835,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertFalse(pool.isTerminated());
         // Give the threads time to terminate.
         Thread.sleep(500);
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertFalse(t.isAlive());
         }
@@ -855,7 +864,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         PoolShutdownCaller r8 = new PoolShutdownCaller(pool);
         PoolShutdownCaller r9 = new PoolShutdownCaller(pool);
         PoolShutdownCaller r10 = new PoolShutdownCaller(pool);
-        List<Thread> testThreads = getTestThreads(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
+        List<Thread> testThreads = ThreadPoolTestHelper.getTestThreads(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10);
         for (Thread t : testThreads) {
             t.start();
             Thread.sleep(10);
@@ -867,7 +876,7 @@ public class TestThreadPool extends ThreadPoolTestCase<ThreadPool>
         assertFalse(pool.isTerminated());
         // Give the threads time to terminate.
         Thread.sleep(waitTime * 2);
-        TestingPoolThreads poolThreads = getPoolThreads(pool);
+        TestingPoolThreads poolThreads = ThreadPoolTestHelper.getPoolThreads(pool);
         for (Thread t : poolThreads.threads) {
             assertFalse(t.isAlive());
         }
